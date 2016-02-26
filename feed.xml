@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2016-02-27T04:41:30+09:00</updated><id>/</id><title>ご注文は機械学習ですか？</title><subtitle>自身の勉強用メモです</subtitle><entry><title>強化学習（1）- 価値反復</title><link href="/2016/02/27/reinforcement-learning-1/" rel="alternate" type="text/html" title="強化学習（1）- 価値反復" /><published>2016-02-27T00:00:00+09:00</published><updated>2016-02-27T00:00:00+09:00</updated><id>/2016/02/27/reinforcement-learning-1</id><content type="html" xml:base="/2016/02/27/reinforcement-learning-1/">&lt;p&gt;最近（というか昨日）、Sutton本と呼ばれる「&lt;a href=&quot;http://www.amazon.co.jp/dp/4627826613&quot;&gt;強化学習&lt;/a&gt;」という本を使って勉強を始めました。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2016-02-27T04:46:13+09:00</updated><id>/</id><title>ご注文は機械学習ですか？</title><subtitle>自身の勉強用メモです</subtitle><entry><title>強化学習（1）- 価値反復</title><link href="/2016/02/27/reinforcement-learning-1/" rel="alternate" type="text/html" title="強化学習（1）- 価値反復" /><published>2016-02-27T00:00:00+09:00</published><updated>2016-02-27T00:00:00+09:00</updated><id>/2016/02/27/reinforcement-learning-1</id><content type="html" xml:base="/2016/02/27/reinforcement-learning-1/">&lt;p&gt;最近（というか昨日）、Sutton本と呼ばれる「&lt;a href=&quot;http://www.amazon.co.jp/dp/4627826613&quot;&gt;強化学習&lt;/a&gt;」という本を使って勉強を始めました。&lt;/p&gt;
 
 &lt;p&gt;今回は価値反復の章（p.107）の例4.3「ギャンブラーの問題」についてプログラムを作成しました。&lt;/p&gt;
 
@@ -50,6 +50,10 @@
 &lt;p&gt;これは本に載っている結果と一致しました。&lt;/p&gt;
 
 &lt;p&gt;しかし本の方は収束するのにsweep 32までかかっていますが、私の実装ではsweep 11で収束しました。&lt;/p&gt;
+
+&lt;p&gt;この結果は、現在の所持金が$s$の時の$V(s)$（つまり勝率）を表しています。&lt;/p&gt;
+
+&lt;p&gt;今回はコインの表が出る確率が$0.4$なので、所持金50ドルの時の勝率も$0.4$付近となっておりこの結果は正しいと言えると思います。（全部賭けたら$0.4$の確率で100ドルに到達できます）&lt;/p&gt;
 
 &lt;p&gt;次に最終的に得られた最適方策です。&lt;/p&gt;
 
