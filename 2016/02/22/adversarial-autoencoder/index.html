@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Adversarial Autoencoders [arXiv:1511.05644] – ご注文は機械学習ですか？ – 自身の勉強用メモです</title>
+
+	    <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="概要
+
+" />
+    <meta property="og:description" content="概要
+
+" />
+    
+    <meta name="author" content="ご注文は機械学習ですか？" />
+
+    
+    <meta property="og:title" content="Adversarial Autoencoders [arXiv:1511.05644]" />
+    <meta property="twitter:title" content="Adversarial Autoencoders [arXiv:1511.05644]" />
+    
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+		<link rel="stylesheet" type="text/css" href="/style.css" />
+		<link rel="alternate" type="application/rss+xml" title="ご注文は機械学習ですか？ - 自身の勉強用メモです" href="/feed.xml" />
+
+		
+<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+		TeX: { 
+			equationNumbers: { 
+				autoNumber: "AMS" 
+			} 
+		},
+		tex2jax: {
+			inlineMath: [ ['$','$'], ['\(', '\)'] ],
+			displayMath: [ ['$$','$$'] ],
+			processEscapes: true,
+		}
+	});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+		<!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+	</head>
+
+	<body>
+		<div class="wrapper-masthead">
+			<div class="container">
+				<header class="masthead clearfix">
+					<a href="/" class="site-avatar"><img src="http://static.beluga.fm/profile_images/225/feKPO6j83pM0/grande.jpg" /></a>
+
+					<div class="site-info">
+						<h1 class="site-name"><a href="/">ご注文は機械学習ですか？</a></h1>
+						<p class="site-description">自身の勉強用メモです</p>
+					</div>
+
+					<nav>
+						<a href="/about/">概要</a>
+					</nav>
+				</header>
+			</div>
+		</div>
+
+		<div id="main" role="main" class="container">
+			<article class="post">
+	<h1>Adversarial Autoencoders [arXiv:1511.05644]</h1>
+	<div class="date">
+		2016年02月22日
+	</div>
+
+	<div class="entry">
+		<h2 id="section">概要</h2>
+
+<ul>
+  <li><a href="http://arxiv.org/abs/1511.05644">Adversarial Autoencoders</a> を読んだ</li>
+  <li>Chainerで実装した</li>
+</ul>
+
+<h2 id="section-1">はじめに</h2>
+
+<p>Adversarial Autoencoderは、通常のオートエンコーダの隠れ層の出力ベクトル$\boldsymbol z$を、任意の事前分布$p(\boldsymbol z)$に押し込むことで正則化するオートエンコーダです。</p>
+
+<p>パラメータの学習は <a href="http://arxiv.org/abs/1406.2661">Generative Adversarial Networks</a> の枠組みで行うので、まずGANについて簡単に説明します。</p>
+
+<h2 id="adversarial-networks">Adversarial Networks</h2>
+
+<p>いま訓練データとして$\boldsymbol x$が与えられ、その生成過程を表す確率分布$p_{data}(\boldsymbol x)$を推定することを考えます。</p>
+
+<p>Adversarial Networksでは、まず任意のノイズ分布$p_z(\boldsymbol z)$を考え、そこからサンプリングしたノイズ$\boldsymbol z$を偽のデータ$\boldsymbol x_{gen}$へ変換する関数$G(\boldsymbol z)$をニューラルネットで定義します。</p>
+
+<p>次に任意のデータ$\boldsymbol x$に対し、それが訓練データ由来の本物のデータ$\boldsymbol x_{real}$なのか、それとも$G$が生成した偽のデータ$\boldsymbol x_{gen}$なのかを識別する$D(\boldsymbol x)$を同様にニューラルネットで定義します。</p>
+
+<p>このような設定のもとで、著者らは$G$と$D$にゲームをさせました。</p>
+
+<p>まず$G$は自らが生成する偽のデータ$\boldsymbol x_{gen}$をより本物のデータに近づけることで$D$を騙そうとします。</p>
+
+<p>一方で$D$は僅かな違いから本物と偽物を区別できるように訓練します。</p>
+
+<p>このゲームを式にすると以下のような目的関数になります。</p>
+
+<script type="math/tex; mode=display">\begin{align}
+		\min_G\max_DV(G,D) = \mathbb E_{\boldsymbol x \sim p_{data}(\boldsymbol x)} [{\rm log}D(\boldsymbol x)]+\mathbb E_{\boldsymbol z \sim p_z(\boldsymbol z)}[{\rm log}(1-D(G(\boldsymbol z)))]
+	\end{align}</script>
+
+<p>これを繰り返していくと、$G$は真のデータ分布$p_{data}(\boldsymbol x)$に近づくことができ、結果的に本来の目的であるデータ分布の推定が達成されます。</p>
+
+<h2 id="adversarial-autoencoder">Adversarial Autoencoder</h2>
+
+<p>Adversarial Autoencoderは基本的には通常のオートエンコーダで、入力$\boldsymbol x$を隠れ変数ベクトル$\boldsymbol z$に符号化したり、逆に$\boldsymbol z$から$\boldsymbol x$に復号化するものですが、以下の点が変更されています。</p>
+
+<ul>
+  <li>$\boldsymbol x$を符号化した$\boldsymbol z_{gen}$を偽のデータと考える。</li>
+  <li>任意の隠れ変数分布$p_z(\boldsymbol z)$からサンプリングした$\boldsymbol z_{real}$を本物のデータと考える。</li>
+  <li>オートエンコーダの符号化部分を$G$とみなし、$G(\boldsymbol x)$と表す。</li>
+  <li>$D$は$\boldsymbol z$を入力とする新たなニューラルネット$D(\boldsymbol z)$で定義する。</li>
+  <li>$D$は与えられた$\boldsymbol z$が$p_z(\boldsymbol z)$由来なのか、それとも$G$が生成した$\boldsymbol z_{gen}$なのかを識別する。</li>
+</ul>
+
+<p>以上のような変更により、このオートエンコーダで$\boldsymbol x$を$\boldsymbol z$に符号化すると、その$\boldsymbol z$は$p_z(\boldsymbol z)$に従うようになります。</p>
+
+<p>パラメータの学習では、復号化誤差を最小化する通常のオートエンコーダとしての学習と、以下の目的関数を用いた2段階の学習を行います。</p>
+
+<script type="math/tex; mode=display">\begin{align}
+		\min_G\max_DV(G,D) = \mathbb E_{\boldsymbol z \sim p_z(\boldsymbol z)} [{\rm log}D(\boldsymbol z)]+\mathbb E_{\boldsymbol x \sim p_{data}(\boldsymbol x)}[{\rm log}(1-D(G(\boldsymbol x)))]
+	\end{align}</script>
+
+<p>GANの時とは$\boldsymbol x$と$\boldsymbol z$が逆になっていることに注意が必要です。</p>
+
+<h2 id="section-2">実装</h2>
+
+<p>$D$を実装する際、初めは出力ユニットを1つにして確率を出力するようにしていましたがうまくいきませんでした。</p>
+
+<p>他の方の実装例を見ていると、ユニットを2つにし片方は真のデータであることを表し、もう片方は偽のデータを表すようにしてソフトマックス層として確率を求めているようでしたので、今回はそのように実装しました。</p>
+
+<p>コードはGitHubにあります。</p>
+
+<p><a href="https://github.com/musyoku/adversarial-autoencoder">adversarial-autoencoder</a></p>
+
+<p>ルートにimagesディレクトリを作成しそこに訓練用データを入れてください。</p>
+
+<p>もしくは実行時にimage_dir引数で指定することもできます。</p>
+
+<h2 id="section-3">実験</h2>
+
+<p><a href="http://arxiv.org/abs/1511.05644">論文</a>では、教師あり学習でガウス混合分布とSwiss Roll分布（と著者が呼んでいる分布）に隠れ変数をマッチさせていたので、同様の実験を行いました。</p>
+
+<p>隠れ変数$\boldsymbol z$は今回2次元とします。</p>
+
+<p>まず$p_z(\boldsymbol z)$に従わせるガウス混合分布を以下のようにします。</p>
+
+<p><img src="https://github.com/musyoku/adversarial-autoencoder/blob/master/example/10_2d-gaussian_train_labeled_z.png?raw=true" alt="10 2D-Gaussian" /></p>
+
+<p>それぞれの羽に各数字の隠れ変数$\boldsymbol z$を押し込むことが目的です。</p>
+
+<p>各数字100枚で学習を行い、9,000枚のテストデータの隠れ変数$\boldsymbol z$を可視化したものが以下になります。</p>
+
+<p><img src="https://github.com/musyoku/adversarial-autoencoder/blob/master/example/10_2d-gaussian_test_labeled_z.png?raw=true" alt="10 2D-Gaussian" /></p>
+
+<p>次にSwiss Roll分布は以下の様な分布になっています。</p>
+
+<p>Swiss Roll（ロールケーキ）の名前通り渦を巻いた分布で、中心に近い部分から順に数字の0, 1, 2, …を押し込みます。</p>
+
+<p><img src="https://github.com/musyoku/adversarial-autoencoder/blob/master/example/swiss_roll_train_labeled_z.png?raw=true" alt="Swiss Roll" /></p>
+
+<p>ガウス混合分布の時と同様に各数字100枚で学習を行い、9,000枚のテストデータの隠れ変数$\boldsymbol z$を可視化したものが以下になります。</p>
+
+<p><img src="https://github.com/musyoku/adversarial-autoencoder/blob/master/example/swiss_roll_test_labeled_z.png?raw=true" alt="Swiss Roll" /></p>
+
+<h2 id="section-4">おわりに</h2>
+
+<p>画像のクラス分類を行う場合、オートエンコーダが出力する隠れ変数$\boldsymbol z$をソフトマックス層に繋いで分類を行いますが、上記の実験結果のようにオートエンコーダ側でそれぞれの数字の$\boldsymbol z$を分離させておくと分類精度を上げやすいのではないかと思いました。</p>
+
+<p>またChainer初心者のためラベル情報の付加のやりかたがわからなかったため、隠れ変数ベクトルの次元を10拡張してone-hotなラベルで置き換えるやり方をしていますが、正しいやり方はどうなんでしょう。</p>
+
+	</div>
+
+ 	
+<div id="disqus_thread"></div>
+<script>
+/**
+* RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+* LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+
+s.src = '//musyoku.disqus.com/embed.js';
+
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+</article>
+
+		</div>
+
+		<div class="wrapper-footer">
+			<div class="container">
+				<footer class="footer">
+					
+
+
+
+<a href="https://github.com/musyoku"><i class="svg-icon github"></i></a>
+
+
+
+
+
+
+
+
+<a href="http://beluga.fm/stark"><i class="svg-icon beluga"></i></a>
+<a href="https://qiita.com/maxwell"><i class="svg-icon qiita"></i></a>
+
+				</footer>
+			</div>
+		</div>
+
+		
+
+	</body>
+</html>
