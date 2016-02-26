@@ -95,18 +95,48 @@
 
 <p>このような状況で、所持金を100ドルにするためには何ドル賭ければ良いのか（これを最適方策と呼びます）を強化学習によって求めます。</p>
 
-<p>興味深いのは実行結果です。</p>
+<p>価値反復では動的計画法により以下のように価値関数を更新します。</p>
+
+<script type="math/tex; mode=display">\begin{align}
+		V_{k+1}(s)=\max_a\sum_{s'}{\cal P}_{ss'}^a[{\cal R}_{ss'}^a+\gamma V_k(s')]
+	\end{align}</script>
+
+<p>エピソード的タスクなので割引率$\gamma=1$です。</p>
+
+<h2 id="section">実験</h2>
+
+<p>この本によれば学習結果は以下のようになるそうです。</p>
 
 <p><img src="http://webdocs.cs.ualberta.ca/~sutton/book/ebook/figtmp17.png" alt="実行結果" />
 <a href="http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node44.html">http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node44.html</a>より引用</p>
 
-<p>下のグラフは学習完了後のもので、横軸が現在の所持金を表し、縦軸はその所持金のうちいくらを賭ければ勝つ確率が一番高いかを表しています。</p>
+<p>下段のグラフは学習完了後のもので、横軸が現在の所持金を表し、縦軸はその所持金のうちいくらを賭ければ勝つ確率が一番高いかを表しています。</p>
 
 <p>これはコインの表が出る確率$p=0.4$とした時の結果です。</p>
 
 <p>注目すべき所は、所持金が50ドルの時は50ドル全部賭けてしまうのに、所持金が51ドルだとたった1ドルしか賭けないということです。</p>
 
 <p>練習問題4.7はこの現象の理由を考察せよとなっていますので、実装して検証しました。</p>
+
+<p>コードは<a href="https://github.com/musyoku/reinforcement-learning/tree/master/value_iteration">GitHub</a>にあります。</p>
+
+<p>まず価値関数の変化は以下のようになりました。</p>
+
+<p><img src="https://raw.githubusercontent.com/musyoku/reinforcement-learning/master/value_iteration/value_estimates.png" alt="価値関数" /></p>
+
+<p>これは本に載っている結果と一致しました。</p>
+
+<p>しかし本の方は収束するのにsweep 32までかかっていますが、私の実装ではsweep 11で収束しました。</p>
+
+<p>次に最終的に得られた最適方策です。</p>
+
+<p><img src="https://raw.githubusercontent.com/musyoku/reinforcement-learning/master/value_iteration/final_policy.png" alt="最適方策" /></p>
+
+<p>これは本の結果と違うものになりました。</p>
+
+<p>そして練習問題4.7の答えですが、今回はちょうど100ドルに達した時のみ報酬が与えられる（つまり101ドルでは何も貰えない）という設定のせいではないかと思います。</p>
+
+<p>50ドル全賭けして当たれば100ドルに達しますが、51ドルの場合は全部賭けると当たれば102ドル（無報酬）、外れば50ドル（無報酬ただし次に当てれば100ドル到達）になりますので、51ドルの時はわざと1ドル賭けて負けて50ドルにしないと100ドルに到達しないからだと思います。</p>
 
 	</div>
 

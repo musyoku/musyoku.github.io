@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2016-02-27T04:04:35+09:00</updated><id>/</id><title>ご注文は機械学習ですか？</title><subtitle>自身の勉強用メモです</subtitle><entry><title>強化学習（1）- 価値反復</title><link href="/2016/02/27/reinforcement-learning-1/" rel="alternate" type="text/html" title="強化学習（1）- 価値反復" /><published>2016-02-27T00:00:00+09:00</published><updated>2016-02-27T00:00:00+09:00</updated><id>/2016/02/27/reinforcement-learning-1</id><content type="html" xml:base="/2016/02/27/reinforcement-learning-1/">&lt;p&gt;最近、Sutton本と呼ばれる「&lt;a href=&quot;http://www.amazon.co.jp/dp/4627826613&quot;&gt;強化学習&lt;/a&gt;」という本を使って勉強を始めました。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2016-02-27T04:36:37+09:00</updated><id>/</id><title>ご注文は機械学習ですか？</title><subtitle>自身の勉強用メモです</subtitle><entry><title>強化学習（1）- 価値反復</title><link href="/2016/02/27/reinforcement-learning-1/" rel="alternate" type="text/html" title="強化学習（1）- 価値反復" /><published>2016-02-27T00:00:00+09:00</published><updated>2016-02-27T00:00:00+09:00</updated><id>/2016/02/27/reinforcement-learning-1</id><content type="html" xml:base="/2016/02/27/reinforcement-learning-1/">&lt;p&gt;最近、Sutton本と呼ばれる「&lt;a href=&quot;http://www.amazon.co.jp/dp/4627826613&quot;&gt;強化学習&lt;/a&gt;」という本を使って勉強を始めました。&lt;/p&gt;
 
 &lt;p&gt;今回は価値反復の章（p.107）の例4.3「ギャンブラーの問題」についてプログラムを作成しました。&lt;/p&gt;
 
@@ -18,18 +18,48 @@
 
 &lt;p&gt;このような状況で、所持金を100ドルにするためには何ドル賭ければ良いのか（これを最適方策と呼びます）を強化学習によって求めます。&lt;/p&gt;
 
-&lt;p&gt;興味深いのは実行結果です。&lt;/p&gt;
+&lt;p&gt;価値反復では動的計画法により以下のように価値関数を更新します。&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\begin{align}
+		V_{k+1}(s)=\max_a\sum_{s&#39;}{\cal P}_{ss&#39;}^a[{\cal R}_{ss&#39;}^a+\gamma V_k(s&#39;)]
+	\end{align}&lt;/script&gt;
+
+&lt;p&gt;エピソード的タスクなので割引率$\gamma=1$です。&lt;/p&gt;
+
+&lt;h2 id=&quot;section&quot;&gt;実験&lt;/h2&gt;
+
+&lt;p&gt;この本によれば学習結果は以下のようになるそうです。&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;http://webdocs.cs.ualberta.ca/~sutton/book/ebook/figtmp17.png&quot; alt=&quot;実行結果&quot; /&gt;
 &lt;a href=&quot;http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node44.html&quot;&gt;http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node44.html&lt;/a&gt;より引用&lt;/p&gt;
 
-&lt;p&gt;下のグラフは学習完了後のもので、横軸が現在の所持金を表し、縦軸はその所持金のうちいくらを賭ければ勝つ確率が一番高いかを表しています。&lt;/p&gt;
+&lt;p&gt;下段のグラフは学習完了後のもので、横軸が現在の所持金を表し、縦軸はその所持金のうちいくらを賭ければ勝つ確率が一番高いかを表しています。&lt;/p&gt;
 
 &lt;p&gt;これはコインの表が出る確率$p=0.4$とした時の結果です。&lt;/p&gt;
 
 &lt;p&gt;注目すべき所は、所持金が50ドルの時は50ドル全部賭けてしまうのに、所持金が51ドルだとたった1ドルしか賭けないということです。&lt;/p&gt;
 
-&lt;p&gt;練習問題4.7はこの現象の理由を考察せよとなっていますので、実装して検証しました。&lt;/p&gt;</content><category term="強化学習" /><category term="実装" /><category term="強化学習" /><summary>最近、Sutton本と呼ばれる「強化学習」という本を使って勉強を始めました。</summary></entry><entry><title>Adversarial Autoencoders [arXiv:1511.05644]</title><link href="/2016/02/22/adversarial-autoencoder/" rel="alternate" type="text/html" title="Adversarial Autoencoders [arXiv:1511.05644]" /><published>2016-02-22T00:00:00+09:00</published><updated>2016-02-22T00:00:00+09:00</updated><id>/2016/02/22/adversarial-autoencoder</id><content type="html" xml:base="/2016/02/22/adversarial-autoencoder/">&lt;h2 id=&quot;section&quot;&gt;概要&lt;/h2&gt;
+&lt;p&gt;練習問題4.7はこの現象の理由を考察せよとなっていますので、実装して検証しました。&lt;/p&gt;
+
+&lt;p&gt;コードは&lt;a href=&quot;https://github.com/musyoku/reinforcement-learning/tree/master/value_iteration&quot;&gt;GitHub&lt;/a&gt;にあります。&lt;/p&gt;
+
+&lt;p&gt;まず価値関数の変化は以下のようになりました。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/musyoku/reinforcement-learning/master/value_iteration/value_estimates.png&quot; alt=&quot;価値関数&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;これは本に載っている結果と一致しました。&lt;/p&gt;
+
+&lt;p&gt;しかし本の方は収束するのにsweep 32までかかっていますが、私の実装ではsweep 11で収束しました。&lt;/p&gt;
+
+&lt;p&gt;次に最終的に得られた最適方策です。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/musyoku/reinforcement-learning/master/value_iteration/final_policy.png&quot; alt=&quot;最適方策&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;これは本の結果と違うものになりました。&lt;/p&gt;
+
+&lt;p&gt;そして練習問題4.7の答えですが、今回はちょうど100ドルに達した時のみ報酬が与えられる（つまり101ドルでは何も貰えない）という設定のせいではないかと思います。&lt;/p&gt;
+
+&lt;p&gt;50ドル全賭けして当たれば100ドルに達しますが、51ドルの場合は全部賭けると当たれば102ドル（無報酬）、外れば50ドル（無報酬ただし次に当てれば100ドル到達）になりますので、51ドルの時はわざと1ドル賭けて負けて50ドルにしないと100ドルに到達しないからだと思います。&lt;/p&gt;</content><category term="強化学習" /><category term="実装" /><category term="強化学習" /><summary>最近、Sutton本と呼ばれる「強化学習」という本を使って勉強を始めました。</summary></entry><entry><title>Adversarial Autoencoders [arXiv:1511.05644]</title><link href="/2016/02/22/adversarial-autoencoder/" rel="alternate" type="text/html" title="Adversarial Autoencoders [arXiv:1511.05644]" /><published>2016-02-22T00:00:00+09:00</published><updated>2016-02-22T00:00:00+09:00</updated><id>/2016/02/22/adversarial-autoencoder</id><content type="html" xml:base="/2016/02/22/adversarial-autoencoder/">&lt;h2 id=&quot;section&quot;&gt;概要&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;&lt;a href=&quot;http://arxiv.org/abs/1511.05644&quot;&gt;Adversarial Autoencoders&lt;/a&gt; を読んだ&lt;/li&gt;
