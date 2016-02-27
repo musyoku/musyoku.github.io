@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2016-02-27T17:26:43+09:00</updated><id>/</id><title>ご注文は機械学習ですか？</title><subtitle>自身の勉強用メモです</subtitle><entry><title>強化学習（1）- 価値反復</title><link href="/2016/02/27/reinforcement-learning-1/" rel="alternate" type="text/html" title="強化学習（1）- 価値反復" /><published>2016-02-27T00:00:00+09:00</published><updated>2016-02-27T00:00:00+09:00</updated><id>/2016/02/27/reinforcement-learning-1</id><content type="html" xml:base="/2016/02/27/reinforcement-learning-1/">&lt;p&gt;最近（というか昨日）、Sutton本と呼ばれる「&lt;a href=&quot;http://www.amazon.co.jp/dp/4627826613&quot;&gt;強化学習&lt;/a&gt;」という本を使って勉強を始めました。&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.1.2">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2016-02-27T23:50:28+09:00</updated><id>/</id><title>ご注文は機械学習ですか？</title><subtitle>自身の勉強用メモです</subtitle><entry><title>強化学習（1）- 価値反復</title><link href="/2016/02/27/reinforcement-learning-1/" rel="alternate" type="text/html" title="強化学習（1）- 価値反復" /><published>2016-02-27T00:00:00+09:00</published><updated>2016-02-27T00:00:00+09:00</updated><id>/2016/02/27/reinforcement-learning-1</id><content type="html" xml:base="/2016/02/27/reinforcement-learning-1/">&lt;p&gt;最近（というか昨日）、Sutton本と呼ばれる「&lt;a href=&quot;http://www.amazon.co.jp/dp/4627826613&quot;&gt;強化学習&lt;/a&gt;」という本を使って勉強を始めました。&lt;/p&gt;
 
 &lt;p&gt;今回は価値反復の章（p.107）の例4.3「ギャンブラーの問題」についてプログラムを作成しました。&lt;/p&gt;
 
@@ -26,11 +26,24 @@
 
 &lt;p&gt;エピソード的タスクなので割引率$\gamma=1$です。&lt;/p&gt;
 
+&lt;p&gt;ちなみに&lt;script type=&quot;math/tex&quot;&gt;{\cal P}_{ss&#39;}^a&lt;/script&gt;と&lt;script type=&quot;math/tex&quot;&gt;{\cal R}_{ss&#39;}^a&lt;/script&gt;は以下のように求めます。&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;% &lt;![CDATA[
+\begin{eqnarray}
+		{\cal P}_{ss&#39;}^a&amp;=&amp;P(s&#39;\mid s,a)\\
+		{\cal R}_{ss&#39;}^a&amp;=&amp;{\double E}_{P(s&#39;\mid s,a)}[r_{t+1}]\\
+		&amp;=&amp;P(s&#39;\mid s,a)*r_{t+1}
+	\end{eqnarray} %]]&gt;&lt;/script&gt;
+
+&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;{\cal P}_{ss&#39;}^a&lt;/script&gt;は$(s,a)$が与えられた時に$s’$に遷移する確率を表します。&lt;/p&gt;
+
+&lt;p&gt;また、&lt;script type=&quot;math/tex&quot;&gt;{\cal R}_{ss&#39;}^a&lt;/script&gt;は$(s,a)$から$s’$に遷移した時に貰える報酬の期待値です。よって実際に貰った報酬$r_{t+1}$に対して、その状態$s’$が起こる確率&lt;script type=&quot;math/tex&quot;&gt;P(s&#39;\mid s,a)&lt;/script&gt;を掛けます。&lt;/p&gt;
+
 &lt;h2 id=&quot;section&quot;&gt;実験&lt;/h2&gt;
 
 &lt;p&gt;この本によれば学習結果は以下のようになるそうです。&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://webdocs.cs.ualberta.ca/~sutton/book/ebook/figtmp17.png&quot; alt=&quot;実行結果&quot; /&gt;
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/musyoku/reinforcement-learning/master/value_iteration/figtmp17.png&quot; alt=&quot;実行結果&quot; /&gt;
 &lt;a href=&quot;http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node44.html&quot;&gt;http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node44.html&lt;/a&gt;より引用&lt;/p&gt;
 
 &lt;p&gt;下段のグラフは学習完了後のもので、横軸が現在の所持金を表し、縦軸はその所持金のうちいくらを賭ければ勝つ確率が一番高いかを表しています。&lt;/p&gt;
