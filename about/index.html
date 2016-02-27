@@ -29,7 +29,12 @@
 		TeX: { 
 			equationNumbers: { 
 				autoNumber: "AMS" 
-			} 
+			},
+			Macros: {
+				bm: ["\\boldsymbol{#1}", 1],
+				argmax: ["\\mathop{\\rm arg\\,max}\\limits"],
+				argmin: ["\\mathop{\\rm arg\\,min}\\limits"],
+			}
 		},
 		tex2jax: {
 			inlineMath: [ ['$','$'], ['\(', '\)'] ],
