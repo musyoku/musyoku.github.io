@@ -88,6 +88,10 @@ ul {
   list-style-type: disc;
 }
 
+li {
+  padding: 5px 0;
+}
+
 ol {
   list-style-type: decimal;
 }
@@ -120,6 +124,37 @@ img {
 .date {
   font-style: italic;
   color: $gray;
+}
+
+table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin: 20px 0
+}
+
+tr {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+tr th {
+  padding: 6px 13px;
+  border: 1px solid #ddd;
+  font-weight: bold;
+}
+
+tr td {
+  padding: 6px 13px;
+  border: 1px solid #ddd;
+}
+
+tr:nth-child(2n) {
+  background-color: #f8f8f8;
 }
 
 // Specify the color of the selection
@@ -298,6 +333,14 @@ nav {
 
   h2{
     margin-top: 60px;
+
+    &:first-child{
+      margin-top: 0;
+    }
+  }
+
+  h3{
+    margin-top: 20px;
 
     &:first-child{
       margin-top: 0;
