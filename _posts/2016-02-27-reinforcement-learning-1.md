@@ -44,7 +44,7 @@ $$
 	\begin{eqnarray}
 		{\cal P}_{ss'}^a&=&P(s'\mid s,a)\\
 		{\cal R}_{ss'}^a&=&{\double E}_{P(s'\mid s,a)}[r_{t+1}]\\
-		&=&P(s'\mid s,a)*r_{t+1}
+		&=&P(s'\mid s,a)\times r_{t+1}
 	\end{eqnarray}
 $$
 
