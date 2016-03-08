@@ -6,4 +6,4 @@ permalink: /about/
 
 ### プロフィール
 
-Chainerを広めよう運動
+Chainerはいいぞ
