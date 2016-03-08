@@ -200,3 +200,4 @@ ALEの--send_rgb はtrueで構いません。falseにするとグレースケー
 学習開始から12時間を過ぎた頃から徐々に点を取れるようになってきました。
 
 ![Episode-4560](/images/post/2016-03-06/playing-breakout-ep4560.gif)
+
