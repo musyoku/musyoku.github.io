@@ -145,7 +145,7 @@ $$
 	- どうやら.debの方をインストールすると失敗するみたいなのでソース（3.04.tar.gz）を落としてコンパイルする方が良いみたいです。
 - [PL-Glue Python codec](https://sites.google.com/a/rl-community.org/rl-glue/Home/Extensions/python-codec)
 	- RL-GlueをPythonで使えるようにするものです。
-- [Atari 2600 VCS ROM Collection](http://www.arcadelearningenvironment.org/)
+- [Atari 2600 VCS ROM Collection](http://www.atarimania.com/rom_collection_archive_atari_2600_roms.html)
 	- ブロック崩しやインベーダーなどのROMです。
 - [deep-q-network](https://github.com/musyoku/deep-q-network)
 	- 今回実装したDQNのコードです。
