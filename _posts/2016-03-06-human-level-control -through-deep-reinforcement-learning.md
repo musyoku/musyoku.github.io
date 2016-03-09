@@ -195,9 +195,26 @@ ALEの--send_rgb はtrueで構いません。falseにするとグレースケー
 
 残念ながらメモリが足りず論文通りのReplay Memory Sizeでは動かないので、サイズを10分の1にしました。
 
-### 結果
+### Atari Breakout
 
-学習開始から12時間を過ぎた頃から徐々に点を取れるようになってきました。
+Breakoutはブロック崩しです。
 
-![Episode-4560](/images/post/2016-03-06/playing-breakout-ep4560.gif)
+合計42時間の学習（8200プレイ・53世代・467万フレーム）を行いました。
 
+本当は10000プレイさせたかったのですが突然コンピュータがシャットダウンしてしまったため中途半端な結果になってしましました。
+
+#### プレイ回数とスコアの関係:
+
+![Breakout episode-score](http://musyoku.github.io/images/post/2016-03-06/breakout_episode_reward.png)
+
+#### プレイ回数とハイスコア:
+
+![Breakout episode-highscore](http://musyoku.github.io/images/post/2016-03-06/breakout_training_episode_highscore.png)
+
+また、$\epsilon-greedy$手法の$\epsilon$を$0.05$に固定してDQNの評価を行いました。
+
+学習100プレイごとに評価を20プレイ行い、スコアの平均を取りました。
+
+#### 平均スコア:
+
+![Breakout episode-average](http://musyoku.github.io/images/post/2016-03-06/breakout_evaluation_episode_average_reward.png)
