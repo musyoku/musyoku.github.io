@@ -197,6 +197,8 @@ ALEの--send_rgb はtrueで構いません。falseにするとグレースケー
 
 ### Atari Breakout
 
+![Breakout](http://musyoku.github.io/images/post/2016-03-06/breakout_result.gif)
+
 Breakoutはブロック崩しです。
 
 合計42時間の学習（8200プレイ・53世代・467万フレーム）を行いました。
