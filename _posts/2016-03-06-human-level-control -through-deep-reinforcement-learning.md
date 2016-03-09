@@ -211,7 +211,7 @@ Breakoutはブロック崩しです。
 
 ![Breakout episode-highscore](http://musyoku.github.io/images/post/2016-03-06/breakout_training_episode_highscore.png)
 
-また、$\epsilon-greedy$手法の$\epsilon$を$0.05$に固定してDQNの評価を行いました。
+また、$\epsilon--greedy$手法の$\epsilon$を$0.05$に固定してDQNの評価を行いました。
 
 学習100プレイごとに評価を20プレイ行い、スコアの平均を取りました。
 
