@@ -58,10 +58,10 @@ DQNは文字通り**最適行動価値関数Q**をDeepなニューラルネッ�
 
 たとえばブロック崩しでは以下の4枚の画像から1つの状態$s$が構成されます。
 
-![preprocessing](/images/post/2016-03-06/state-0.png)
-![preprocessing](/images/post/2016-03-06/state-1.png)
-![preprocessing](/images/post/2016-03-06/state-2.png)
-![preprocessing](/images/post/2016-03-06/state-3.png)
+![frame-0](http://musyoku.github.io/images/post/2016-03-06/breakout_state0.png)
+![frame-1](http://musyoku.github.io/images/post/2016-03-06/breakout_state1.png)
+![frame-2](http://musyoku.github.io/images/post/2016-03-06/breakout_state2.png)
+![frame-3](http://musyoku.github.io/images/post/2016-03-06/breakout_state3.png)
 
 
 ### 畳み込み層
