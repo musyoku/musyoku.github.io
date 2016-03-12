@@ -6,4 +6,4 @@ permalink: /about/
 
 ### プロフィール
 
-Chainerに人生を救われました
+Chainerはいいぞ
