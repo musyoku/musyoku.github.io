@@ -48,7 +48,7 @@ DQNは文字通り**最適行動価値関数Q**をDeepなニューラルネッ�
 
 前処理後のフレームは以下のようになります。（ブロック崩しの場合）
 
-![preprocessing](/images/post/2016-03-06/state-0.png)
+![frame-0](http://musyoku.github.io/images/post/2016-03-06/breakout_state0.png)
 
 前処理として、ここからさらに余計なスコア表示領域などを削れば学習速度は上がりますが、今回は行いません。
 
