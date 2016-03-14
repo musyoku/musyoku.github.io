@@ -4,6 +4,6 @@ title:
 permalink: /about/
 ---
 
-### プロフィール
+## プロフィール
 
 Chainerはいいぞ

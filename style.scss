@@ -314,8 +314,9 @@ nav {
 }
 
 .entry{
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: 1em;
+  padding-bottom: 1em;
+  margin-left: 2em;
 
   p{
     margin: 0;
@@ -332,15 +333,25 @@ nav {
   }
 
   h2{
-    margin-top: 60px;
-
+    margin-top: 2em;
+    margin-bottom: 1em;
+    color: $blue;
+    padding-left: 2em;
+    margin-left: -2em;
+    margin-right: 25%;
+    padding-bottom: .5em;
+    padding-top: 2em;
+    border-bottom: 2px solid $blue;
+    font-weight: normal;
+    
     &:first-child{
       margin-top: 0;
+      padding-top: 0;
     }
   }
 
   h3{
-    margin-top: 20px;
+    margin-top: 1em;
 
     &:first-child{
       margin-top: 0;
@@ -349,14 +360,14 @@ nav {
 }
 
 .wrapper-footer {
-  margin-top: 50px;
+  margin-top: 5em;
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   background-color: $lightGray;
 }
 
 footer {
-  padding: 20px 0;
+  padding: 2em 0;
   text-align: center;
 }
 
