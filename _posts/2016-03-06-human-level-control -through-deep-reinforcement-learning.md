@@ -9,6 +9,7 @@ tags:
 - Chainer
 - 実装
 - 論文読み
+- 強化学習
 - DQN
 excerpt_separator: <!--more-->
 ---
