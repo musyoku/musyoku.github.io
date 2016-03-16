@@ -50,15 +50,15 @@ $Q_{\theta}(s,a)$はパラメータ$\theta$を持つニューラルネット（D
 
 $Q_{\pi}(s,a)$は教師信号出力用のニューラルネットで、$Q_{\theta}(s,a)$のコピーになっています。（詳細は[前回の記事](/2016/03/06/human-level-control-through-deep-reinforcement-learning/)）
 
-式((1))は$Q_{\theta}(s,a)$を$$r+\gamma \max_{a'}Q_{\pi}(s',a')$$に近づける働きがあるため、教師信号$target$を
+式((1))は$Q_{\theta}(s,a)$を$$r+\gamma \max_{a'}Q_{\pi}(s',a')$$に近づける働きがあるため、教師あり学習とみなすことができます。
+
+そこでDQNでは教師信号$target$を以下のように定義します。
 
 $$
 	\begin{align}
 		target\equiv r+\gamma \max_{a'}Q_{\pi}(s',a')
 	\end{align}
 $$
-
-とすることができます。
 
 Double DQNではこの$target$を以下のように変更します。
 
