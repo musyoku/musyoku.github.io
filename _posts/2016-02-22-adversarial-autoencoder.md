@@ -3,9 +3,6 @@ layout: post
 title: Adversarial Autoencoders [arXiv:1511.05644]
 category: 論文
 tags:
-- Deep Learning
-- Python
-- arXiv
 - Chainer
 - 実装
 - 論文読み
@@ -116,3 +113,7 @@ Swiss Roll（ロールケーキ）の名前通り渦を巻いた分布で、中�
 ## 余談
 
 Chainer初心者なのでラベル情報の付加のやりかたがわからなかったため、隠れ変数ベクトルの次元を10拡張してone-hotなラベルで置き換えるやり方をしていますが、正しいやり方はどうなんでしょう。
+
+（追記）
+
+[ChainerでVariableにラベル情報を付加する方法](/2016/03/25/ChainerでVariableにラベル情報を付加する方法/)

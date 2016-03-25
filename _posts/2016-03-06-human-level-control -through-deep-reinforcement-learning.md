@@ -3,9 +3,6 @@ layout: post
 title: Human-level control through deep reinforcement learning [Nature Letter]
 category: 論文
 tags:
-- Deep Learning
-- Python
-- Nature
 - Chainer
 - 実装
 - 論文読み

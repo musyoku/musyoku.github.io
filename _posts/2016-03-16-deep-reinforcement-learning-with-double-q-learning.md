@@ -3,9 +3,6 @@ layout: post
 title: Deep Reinforcement Learning with Double Q-learning [arXiv:1509.06461]
 category: 論文
 tags:
-- Deep Learning
-- Python
-- arXiv
 - Chainer
 - 実装
 - 論文読み
