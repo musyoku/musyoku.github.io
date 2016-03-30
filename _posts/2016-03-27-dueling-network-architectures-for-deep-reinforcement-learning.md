@@ -18,3 +18,23 @@ excerpt_separator: <!--more-->
 - DQN・Double DQNと比較した
 
 <!--more-->
+
+**DQN**
+
+```
+Conv +--> 512 +--> 512 +--> 4
+```
+
+**Double DQN**
+
+```
+Conv +--> 512 +--> 512 +--> 4
+```
+
+**Double DQN + Dueling Network**
+
+```
+                 +--> 256 +--+
+Conv +--> 512 +--+           +--> 4
+                 +--> 256 +--+
+```
