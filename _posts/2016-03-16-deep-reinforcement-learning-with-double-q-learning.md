@@ -168,3 +168,7 @@ Breakoutはブロック崩しです。
 見た感じDouble DQNのほうが性能が良さそうですが、どの実験もすべて１回しか行っていないのでなんとも言えません。
 
 １回実験を行うのに40時間くらいかかるのですが、DeepMindの発表によると数時間程度でスコア100を超えるそうなので、私の実装に何か不備があるとしか思えません。
+
+## 関連
+
+- [DQN](http://localhost:4000/2016/03/06/human-level-control-through-deep-reinforcement-learning/)
