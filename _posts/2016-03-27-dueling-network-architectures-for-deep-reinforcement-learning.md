@@ -146,6 +146,22 @@ ALEを使った実験はとにかく時間がかかる（数日以上）ので�
 
 DeepMindの論文では全てのゲームで2000万フレームを２週間かけて学習させていますが、私の環境では100万フレームの学習に２５時間くらいかかります。
 
+#### プレイ回数とスコアの関係:
+
+![Breakout episode-score](/images/post/2016-03-27/episode_reward.png)
+
+論文にも書いてありましたが、Dueling NetworkはBreakoutが苦手みたいです。
+
+#### プレイ回数とハイスコア:
+
+![Breakout episode-highscore](/images/post/2016-03-27/training_episode_highscore.png)
+
+#### 平均スコア:
+
+![Breakout episode-average](/images/post/2016-03-27/evaluation_episode_reward.png)
+
+そもそも訓練回数が圧倒的に足りていないので何ともいえません。
+
 ## 関連
 
 - [DQN](http://localhost:4000/2016/03/06/human-level-control-through-deep-reinforcement-learning/)
