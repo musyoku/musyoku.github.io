@@ -83,7 +83,7 @@ C.T: [[11, 23], [12, 24], [13, 25], [0, 26], [-1, 27], [-1, 0]]
 
 ```
 for c0, c1 in zip(seq_batch[:-1], seq_batch[1:]):
-	c0[c0 == -1.0] = 0.0
+	c0[c0 == -1] = 0
 	c0 = Variable(xp.asarray(c0, dtype=np.int32))
 	c1 = Variable(xp.asarray(c1, dtype=np.int32))
 ```
