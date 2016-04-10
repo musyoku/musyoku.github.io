@@ -88,7 +88,7 @@ for c0, c1 in zip(seq_batch[:-1], seq_batch[1:]):
 	c1 = Variable(xp.asarray(c1, dtype=np.int32))
 ```
 
-なぜ-1で埋めるかというと、softmax_cross_entropyの正解ラベルに-1を指定すると、対応する入力は無視され、誤差も0になってくれるからです。
+なぜ-1で埋めるかというと、softmax_cross_entropyの正解ラベルに-1を指定すると、対応する入力は無視され、誤差も$0$になってくれるからです。
 
 ```
 loss = F.softmax_cross_entropy(output, c1)
