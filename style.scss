@@ -392,8 +392,8 @@ pre {
 code {
   display: inline;
   max-width: initial;
-  padding: 2px 4px;
-  margin: 0 2px;
+  padding: 0;
+  margin: 0;
   overflow: initial;
   line-height: inherit;
   word-wrap: normal;
@@ -401,6 +401,12 @@ code {
   font-size: 100%;
   word-break: normal;
   white-space: pre;
-  background-color: #f2f2f2;
+  background: transparent;
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+
+  .highlighter-rouge {
+    background-color: #f2f2f2;
+    padding: 2px 4px;
+    margin: 0 2px;
+  }
 }
