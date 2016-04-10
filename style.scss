@@ -403,10 +403,10 @@ code {
   white-space: pre;
   background: transparent;
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
 
-  .highlighter-rouge {
-    background-color: #f2f2f2;
-    padding: 2px 4px;
-    margin: 0 2px;
-  }
+code.highlighter-rouge {
+  background-color: #f2f2f2;
+  padding: 2px 4px;
+  margin: 0 2px;
 }
