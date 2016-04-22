@@ -90,8 +90,8 @@ for c0, c1 in zip(seq_batch[:-1], seq_batch[1:]):
 
 なぜ-1で埋めるかというと、softmax_cross_entropyの正解ラベルに-1を指定すると、対応する入力は無視され、誤差も$0$になってくれるからです。
 
+終端記号から-1への遷移を学習する必要はありませんので。
+
 ```
 loss = F.softmax_cross_entropy(output, c1)
 ```
-
-終端記号から-1への遷移を学習する必要はありません。
