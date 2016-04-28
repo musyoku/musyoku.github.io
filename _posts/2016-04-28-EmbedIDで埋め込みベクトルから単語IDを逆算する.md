@@ -53,3 +53,15 @@ cosine_similarity = inner_product / norm
 ```
 
 こうするとcosine_similarityの最初の軸が単語IDに対応するので（2番目の軸はバッチ）、argmax(axis=0)で類似度が最も高いIDが出てきます。
+
+## 応用
+
+RNNで自然言語処理をする場合、出力層としてソフトマックス層を使い、教師IDとのsoftmax_cross_entropy()で誤差を求めると思います。
+
+今回の拡張EmbedIDを用いるには、まずネットワークからソフトマックス層を取り除き、代わりに埋め込みベクトルを直接出力するように変更します。
+
+そして教師埋め込みベクトルとのmean_squared_error()で二乗誤差を計算し学習を行います。
+
+推論時には出力された埋め込みベクトルをEmbedID.reverseでIDに変換します。
+
+この応用が何の役に立つのかは不明です。
