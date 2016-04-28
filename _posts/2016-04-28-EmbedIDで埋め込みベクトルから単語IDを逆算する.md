@@ -52,4 +52,4 @@ norm = w_norm.reshape(1, -1).T.dot(v_norm.reshape(1, -1)) + 1e-6
 cosine_similarity = inner_product / norm
 ```
 
-こうすると$cosine_similarity$の最初の軸が単語IDに対応するので、argmax(axis=0)で類似度が最も高いIDが出てきます。
+こうするとcosine_similarityの最初の軸が単語IDに対応するので、argmax(axis=0)で類似度が最も高いIDが出てきます。
