@@ -55,11 +55,11 @@ cosine_similarity = inner_product / norm
 
 ## 応用
 
-RNNで自然言語処理をする場合、出力層としてソフトマックス層を使い、教師IDとのsoftmax_cross_entropy()で誤差を求めると思います。
+RNNで自然言語処理をする場合、出力層としてソフトマックス層を使い、教師IDとのsoftmax_cross_entropyで誤差を求めると思います。
 
 今回の拡張EmbedIDを用いるには、まずネットワークからソフトマックス層を取り除き、代わりに埋め込みベクトルを直接出力するように変更します。
 
-そして教師埋め込みベクトルとのmean_squared_error()で二乗誤差を計算し学習を行います。
+そして教師埋め込みベクトルとのmean_squared_errorで二乗誤差を計算し学習を行います。
 
 推論時には出力された埋め込みベクトルをEmbedID.reverseでIDに変換します。
 
