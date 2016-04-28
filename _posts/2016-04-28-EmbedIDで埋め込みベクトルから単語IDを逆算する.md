@@ -25,7 +25,7 @@ ChainerのEmbedIDは、単語ID（整数値）から対応する埋め込みベ�
 
 ## 使い方
 
-単語ベクトル（最初の軸はバッチ）のVariableを入力します。
+単語ベクトル（最初の軸はバッチ）のndarrayを入力します。
 
 ```
 from embed_id import EmbedID
@@ -34,7 +34,7 @@ from embed_id import EmbedID
 
 embed = EmbedID(n_ids, ndim_vec)
 vec = embed(id)
-id = embed.reverse(vec)
+id = embed.reverse(vec.data)
 ```
 
 ## 実装
@@ -42,7 +42,6 @@ id = embed.reverse(vec)
 入力ベクトルと、EmbedID.Wのそれぞれのベクトルとのコサイン類似度を計算します。
 
 ```
-vec = vec.data
 W = self.W.data
 xp = cuda.get_array_module(*(vec,))
 w_norm = xp.sqrt(xp.sum(W ** 2, axis=1))
