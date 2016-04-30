@@ -108,7 +108,7 @@ $$
 	\end{align}
 $$
 
-つまり、$\boldsymbol x$を入力として取る関数に確率的なノイズ$\boldsymbol \epsilon$を乗せることで、サンプリングを決定論的に求めることができます
+つまり、$\boldsymbol x$を入力として取る関数に確率的なノイズ$\boldsymbol \epsilon$を乗せることで、サンプリングを決定論的に求めることができます。
 
 たとえばある隠れ変数$\tilde z$が、データ$x$によって決まる平均$\mu(x)$、分散$\sigma(x)^2$の正規分布に従っているとします。
 
@@ -128,10 +128,57 @@ $$
 
 ここでは簡単のため${\rm log}p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z)$を単に$f(\boldsymbol z)$と表記します。
 
-式(6)の期待値部分は、reparameterization trickを用いて以下のように近似できます。
+式(6)の期待値部分は、データ$\boldsymbol x^{(i)}$に対して、reparameterization trickを用いて以下のように近似できます。
 
 $$
 	\begin{align}
-		\double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x^{(i)})}[f(\boldsymbol z)] &= \double E_{p(\boldsymbol \epsilon)}\bigl[f\bigl(g_{\boldsymbol \phi}(\boldsymbol \epsilon, \boldsymbol x^{(i)})\bigr)\bigr]
+		\double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x^{(i)})}[f(\boldsymbol z)] &= \double E_{p(\boldsymbol \epsilon)}\bigl[f\bigl(g_{\boldsymbol \phi}(\boldsymbol \epsilon, \boldsymbol x^{(i)})\bigr)\bigr]\\
+		&\simeq \frac{1}{L}\sum_{l=1}^{L}f\bigl(g_{\boldsymbol \phi}(\boldsymbol \epsilon^{(l)}, \boldsymbol x^{(i)})\bigr)\\
+		&{\rm where}\hspace{10pt}\boldsymbol \epsilon^{(l)} \sim p(\boldsymbol \epsilon)\nonumber
 	\end{align}
 $$
+
+これは、$L$個の$\boldsymbol z$をサンプリングし、その平均を期待値の推定として用いていることを表しています。
+
+そもそも期待値は本質的には平均のことですので、この推定は当然のことです。
+
+サイコロで例えると、$L=1$の場合、1回だけ振って期待値を推定することに相当します。
+
+6の目が出れば期待値の推定は6となります。
+
+$L=10000$もあれば、出た目の平均は真の期待値$3.5$に近づくでしょう。
+
+### SGVB
+
+上記のモンテカルロサンプリングを用いることによって、データ$\boldsymbol x^{(i)}$に対する誤差関数は最終的に以下のようになります。
+
+
+$$
+	\begin{align}
+		{\cal L}(\boldsymbol \theta, \boldsymbol \phi, \boldsymbol x^{(i)}) &= -{\rm log}p_{\boldsymbol \theta}(\boldsymbol x^{(i)})\\
+		&\simeq D_{KL}(q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x^{(i)})||p_{\boldsymbol \theta}(\boldsymbol z)) - \frac{1}{L}\sum_{l=1}^{L}\bigl({\rm log}p_{\boldsymbol \theta}(\boldsymbol x^{(i)} \mid \boldsymbol z^{(i, l)})\bigr)\\
+		&{\rm where}\hspace{10pt}\boldsymbol z^{(i, l)} = g_{\boldsymbol \phi}(\boldsymbol \epsilon^{(i, l)}, \boldsymbol x^{(i)})\hspace{10pt}and\hspace{10pt}\boldsymbol \epsilon^{(l)} \sim p(\boldsymbol \epsilon)\nonumber
+	\end{align}
+$$
+
+
+次に、$\boldsymbol z$が正規分布に従うと場合を考えます。
+
+つまり、$z \sim p(z \mid x) = {\cal N}(\mu, \sigma^2)$となるとき、$D_{KL}$は解析的に求めることができます。（論文のAppendix B参照）
+
+この場合、reparametarization trickを用いると$z = \mu + \sigma\epsilon \hspace{10pt}{\rm with}\hspace{10pt} \epsilon \sim {\cal N}(0, 1)$となり、
+
+$$
+	\begin{align}
+		\double E_{ {\cal N}(z;\mu, \sigma^2)}[f(z)] &= \double E_{ {\cal N}(0,1)}[f(\mu + \sigma\epsilon)]\\
+		&\simeq \frac{1}{L}\sum_{l=1}^{L}f(\mu+\sigma\epsilon^{(l)})\\
+		&{\rm where}\hspace{10pt}\epsilon^{(l)}\sim{\cal N}(0,1) \nonumber
+	\end{align}
+$$
+
+となります。
+
+## 応用例
+
+- 変分オートエンコーダ（開発中）
+- 変分RNN（開発中）
