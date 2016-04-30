@@ -80,6 +80,58 @@ $D_{KL}(q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x)\|\|p_{\boldsymbol \
 
 $q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x)$を、$\boldsymbol x$に無関係な$\boldsymbol z$の事前分布$p_{\boldsymbol \theta}(\boldsymbol z)$に近づけることで過学習を防ぐことができると考えられるので、この項は正則化項と呼ばれています。
 
-### 第二項について
+### 誤差関数
 
+式(6)は尤度なので、値が大きくなることが望ましいです。
 
+そのため誤差関数は負の対数周辺尤度となります。
+
+$$
+	\begin{align}
+		{\cal L}(\boldsymbol \theta, \boldsymbol \phi, \boldsymbol x) = -{\rm log}p_{\boldsymbol \theta}(\boldsymbol x)
+	\end{align}
+$$
+
+## Stochastic Gradient Variational Bayes(SGVB)
+
+式(7)の誤差関数を、それぞれのパラメータ$\boldsymbol \theta$、$\boldsymbol  \phi$で微分することを考えます。
+
+### reparameterization trick
+
+確率変数$\tilde {\boldsymbol z} \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x)$を、微分可能な関数$q_{\boldsymbol \phi}(\boldsymbol \epsilon, \boldsymbol x)$を用いて以下のように表します。
+
+$$
+	\begin{align}
+		\tilde {\boldsymbol z} = q_{\boldsymbol \phi}(\boldsymbol \epsilon, \boldsymbol x)
+		\hspace{10pt}{\rm with}\hspace{10pt} 
+		\boldsymbol \epsilon \sim p(\boldsymbol \epsilon)
+	\end{align}
+$$
+
+つまり、$\boldsymbol x$を入力として取る関数に確率的なノイズ$\boldsymbol \epsilon$を乗せることで、サンプリングを決定論的に求めることができます
+
+たとえばある隠れ変数$\tilde z$が、データ$x$によって決まる平均$\mu(x)$、分散$\sigma(x)^2$の正規分布に従っているとします。
+
+この時、$\tilde z$のサンプリングは以下のように行います。
+
+$$
+	\begin{align}
+		\tilde z = \mu(x) + \sigma(x) * \epsilon
+		\hspace{10pt}{\rm with}\hspace{10pt} 
+		\epsilon \sim {\cal N}(0, 1)
+	\end{align}
+$$
+
+このようにすれば、$\mu(x)$や$\sigma(x)$のそれぞれのパラメータで$\tilde z$を微分することができます。
+
+### Monte Carlo estimates
+
+ここでは簡単のため${\rm log}p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z)$を単に$f(\boldsymbol z)$と表記します。
+
+式(6)の期待値部分は、reparameterization trickを用いて以下のように近似できます。
+
+$$
+	\begin{align}
+		\double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x^{(i)})}[f(\boldsymbol z)] &= \double E_{p(\boldsymbol \epsilon)}\bigl[f\bigl(g_{\boldsymbol \phi}(\boldsymbol \epsilon, \boldsymbol x^{(i)})\bigr)\bigr]
+	\end{align}
+$$
