@@ -106,3 +106,5 @@ lstm = BNLSTM(n_in, n_out)
 ## 実験
 
 手元にあったツイッターの投稿データ50万文を学習させてみたところ、処理速度は通常版LSTMの方が2倍ほど早かったのですが、同じ時間動かした時の収束の速さはバッチ正規化LSTMの方が早かったです。
+
+実験に用いたコードは[GitHub](https://github.com/musyoku/NLP/tree/master/LSTM)にあります。
