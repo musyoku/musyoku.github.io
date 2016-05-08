@@ -35,7 +35,7 @@ Twitterなどから取得したツイートのテキストデータをそのま�
 
 ファイル名やファイル数に制限はありません。フォルダ内のすべてのファイルが読み込まれます。
 
-学習には`train.py`を使い、文章生成には`eval.py`を使います。
+学習には`train.py`を使い、文章生成には`validate.py`を使います。
 
 Windows 7 + GTX 970Mで動作確認済みです。
 
@@ -95,3 +95,10 @@ for c0, c1 in zip(seq_batch[:-1], seq_batch[1:]):
 ```
 loss = F.softmax_cross_entropy(output, c1)
 ```
+# 追記
+
+Chainer 1.8に対応させました。
+
+1.8からはEmbedIDにignore_label=-1を指定することで終端記号を無視できるようになっています。
+
+ただし旧バージョンでは動作しませんのでご注意ください。
