@@ -23,7 +23,7 @@ ChainerでLSTMを実装するサンプルはいくつかありますが、英語
 
 そこでChainer 1.7でLSTMを実装してみました。
 
-コードは[GitHub](https://github.com/musyoku/NLP/tree/master/LSTM)にあります。
+コードは[GitHub](https://github.com/musyoku/lstm)にあります。
 
 ## 使い方
 
