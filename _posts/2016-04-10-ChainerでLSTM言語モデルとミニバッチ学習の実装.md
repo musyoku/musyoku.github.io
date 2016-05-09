@@ -100,6 +100,6 @@ loss = F.softmax_cross_entropy(output, c1)
 
 Chainer 1.8に対応させました。
 
-1.8からはEmbedIDにignore_label=-1を指定することで終端記号を無視できるようになっています。
+1.8からはEmbedIDにignore_label=-1を指定することで-1を無視できるようになっています。
 
 ただし1.7含む旧バージョンでは動作しませんのでご注意ください。
