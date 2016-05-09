@@ -95,6 +95,7 @@ for c0, c1 in zip(seq_batch[:-1], seq_batch[1:]):
 ```
 loss = F.softmax_cross_entropy(output, c1)
 ```
+
 ## 追記
 
 Chainer 1.8に対応させました。
