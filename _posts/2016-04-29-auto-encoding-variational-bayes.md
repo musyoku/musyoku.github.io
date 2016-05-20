@@ -180,5 +180,5 @@ $$
 
 ## 応用例
 
-- 変分オートエンコーダ（開発中）
+- [変分オートエンコーダ](/2016/05/20/semi-supervised-learning-with-deep-generative-models/)
 - 変分RNN（開発中）
