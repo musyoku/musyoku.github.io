@@ -13,6 +13,7 @@ excerpt_separator: <!--more-->
 - Chainer 1.8で実装した
 - モデルM1、M2、M1+M2の実装方法の解説
 - モデルM2で100ラベルのエラー率9%を達成した
+- モデルM1+M2では報告sれている結果が出なかった
 
 <!--more-->
 
@@ -44,7 +45,7 @@ MNISTを用いた場合、50000枚の訓練画像のうち、たった100枚に�
 
 その後M2で$z$を用いた半教師あり学習を行ます。
 
-MNISTで100枚だけに正解ラベルを与えた半教師あり学習でも、クラス分類精度が97%を超える結果が出ます。
+MNISTで100枚だけに正解ラベルを与えた半教師あり学習でも、クラス分類精度が97%を超える結果が出ると論文に書いてありましたが、私の実装では残念ながら出ませんでした。
 
 ## コード
 
@@ -157,17 +158,19 @@ ${\rm diag}$は分散共分散行列を作る関数ですが気にする必要�
 
 chainer.functions.gaussian_nllは引数として$\boldsymbol x$、$\boldsymbol \mu_{\theta}(\boldsymbol z)$の出力、$$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$$の出力の3つを取りますが、$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$の出力値の扱いには注意が必要です。
 
-分散$\boldsymbol \sigma^2$は負の値を取ってはいけませんが、ニューラルネットの出力である$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$は負の値を取ります。（シグモイド関数を使えば別ですが）
+分散$\boldsymbol \sigma^2$は負の値を取ってはいけませんが、ニューラルネットの出力である$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$は負の値を取り得ます。
 
 そこで$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$の出力値を、$\boldsymbol \sigma^2$ではなく${\rm log}(\boldsymbol \sigma^2)$とみなすことで負の値を許容します。
 
 従って、chainer.functions.gaussian_nllに$$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$$の出力値を入力するときは負の値を気にする必要はありません。
 
+（そのため$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$の出力は活性化関数を通す前の値である必要があります。）
+
 ### 第2項
 
 式(6)の第2項はchainer.functions.gaussian_kl_divergenceを使うと求めることができます。
 
-こちらも同様に負の値を気にせず$$\boldsymbol \sigma^2_{\phi}(\boldsymbol x)$$の出力を引数に渡します。
+こちらも同様に負の値を気にせず$$\boldsymbol \sigma^2_{\phi}(\boldsymbol x)$$の出力（ただし活性化関数を通す前の値）を引数に渡します。
 
 ### 実装
 
@@ -477,19 +480,6 @@ def gaussian_kl_divergence_keepbatch(self, mean, ln_var):
 ```
 
 2番目の軸についてのみ和を取るように変更しています。
-
-この時、以下のように2番目の軸について要素数で割って平均を取るべきだと考えていましたが、これをするとクラス分類性能が著しく低下したので平均は取らないようにしています。
-
-```
-こうではなく
-return F.sum(nll, axis=1)
-
-こうすべきだと思った
-return F.sum(nll, axis=1) / x.data.shape[1]
-```
-
-原因がよくわからないのですがもしかしたら私の気づいていないバグがあるのかもしれません。
-
 
 ## 実験
 
