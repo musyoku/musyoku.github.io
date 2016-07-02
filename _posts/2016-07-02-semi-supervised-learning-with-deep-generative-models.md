@@ -192,13 +192,12 @@ $p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z)$も同様です。
 
 ## M2の実装
 
-M2の実装では、以下の5点に注意します。
+M2の実装では、以下の4点に注意します。
 
 - モデル定義 
 - 誤差関数の計算方法
 - 周辺化のテクニック
 - gaussian_nll、bernoulli_nll、gaussian_kl_divergenceの拡張
-- 変分下限計算の闇
 
 ### モデル定義
 
@@ -452,33 +451,6 @@ def gaussian_kl_divergence_keepbatch(self, mean, ln_var):
 
 2番目の軸についてのみ和を取るように変更しています。
 
-### 変分下限計算の闇
-
-$\boldsymbol x$と$\boldsymbol z$がともにガウシアンの場合（たとえばM1+M2でのM2）の場合、上で説明した実装で学習を行うと以下の様な不思議な現象が起こります。
-
-- 学習が進みそれなりの分類精度が出るが高い精度は出ない
-- ラベル無しデータの変分下限が無限大に飛ぶ
-
-この現象を解決するために1ヶ月以上試行錯誤を重ね、最終的に著者であるKingma氏の[実装](https://github.com/dpkingma/nips14-ssl)をヒントに解決方法を見つけ出しました。
-
-説明を行う前にまずラベル付きデータの対数尤度の変分下限を再掲します。
-
-$$
-	\begin{align}
-		{\rm log}p_{\theta}(\boldsymbol x, y) \simeq {\rm log}p_{\theta}(\boldsymbol x\mid \boldsymbol z^{(l)},y)+{\rm log}p(y)-D_{KL}\left(q_{\phi}(\boldsymbol z\mid\boldsymbol x,y)||p(\boldsymbol z)\right)
-	\end{align}\
-$$
-
-次に[Auto-Encoding Variational Bayes](http://arxiv.org/abs/1312.6114)の付録から、$D_{KL}$の計算式を載せます。
-
-$$
-	\begin{align}
-		\int q(\boldsymbol z){\rm log}p(\boldsymbol z)d\boldsymbol z &= -\frac{J}{2}{\rm log}(2\pi)-\frac{1}{2}\sum_{j=1}^{J}(\mu_j^2+\sigma_j^2)\\
-		\int q(\boldsymbol z){\rm log}q(\boldsymbol z)d\boldsymbol z &= -\frac{J}{2}{\rm log}(2\pi)-\frac{1}{2}\sum_{j=1}^{J}(1+{\rm log}(\sigma_j^2))\\
-		D_{KL}(q(\boldsymbol z)||p(\boldsymbol z)) &= \int q(\boldsymbol z)\left({\rm log}p(\boldsymbol z) - {\rm log}q(\boldsymbol z)\right)d\boldsymbol z\\
-		&= \frac{1}{2}\sum_{j=1}^{J}(\mu_j^2 + \sigma_j^2 - {\rm log}(\sigma_j^2) - 1)\\
-	\end{align}\
-$$
 
 ## 実験
 
