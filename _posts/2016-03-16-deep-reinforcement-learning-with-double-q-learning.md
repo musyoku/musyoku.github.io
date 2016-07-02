@@ -171,4 +171,4 @@ Breakoutはブロック崩しです。
 
 ## 関連
 
-- [DQN](http://localhost:4000/2016/03/06/human-level-control-through-deep-reinforcement-learning/)
+- [DQN](/2016/03/06/human-level-control-through-deep-reinforcement-learning/)
