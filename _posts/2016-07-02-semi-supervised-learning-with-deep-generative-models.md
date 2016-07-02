@@ -113,8 +113,8 @@ $$
 		{\rm log}\frac{p_{\boldsymbol \theta}(\boldsymbol z)}{q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x)}+{\rm log}p_{\boldsymbol \theta}(\boldsymbol x\mid \boldsymbol z)
 		\biggr\}d\boldsymbol z\nonumber\\
 		&=\int q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x){\rm log}p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z)d\boldsymbol z-\int q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x){\rm log}\frac{q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x)}{p_{\boldsymbol \theta}(\boldsymbol z)}d\boldsymbol z\nonumber\\
-		&=\double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x)}[{\rm log}p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z)] - D_{KL}(q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x)||p_{\boldsymbol \theta}(\boldsymbol z))\\
-		&\simeq {\rm log}p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z^{(l)}) - D_{KL}(q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x)||p_{\boldsymbol \theta}(\boldsymbol z))
+		&=\double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x)}[{\rm log}p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z)] - D_{KL}(q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x) \mid\mid p_{\boldsymbol \theta}(\boldsymbol z))\\
+		&\simeq {\rm log}p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z^{(l)}) - D_{KL}(q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x) \mid\mid p_{\boldsymbol \theta}(\boldsymbol z))
 	\end{align}
 $$
 
@@ -288,8 +288,8 @@ $$
 		{\rm log}p_{\theta}(\boldsymbol x, y) &\geq \double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x, y)}[{\rm log}p_{\theta}(\boldsymbol x\mid \boldsymbol z,y)+{\rm log}p(y)+{\rm log}p(\boldsymbol z)-{\rm log}q_{\phi}(\boldsymbol z\mid\boldsymbol x,y)]\nonumber\\
 		&= \double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x, y)}[{\rm log}p_{\theta}(\boldsymbol x\mid \boldsymbol z,y)+{\rm log}p(y)]+\double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x, y)}\left[{\rm log}\frac{p(\boldsymbol z)}{q_{\phi}(\boldsymbol z\mid\boldsymbol x,y)}\right]\nonumber\\
 		&= \double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x, y)}[{\rm log}p_{\theta}(\boldsymbol x\mid \boldsymbol z,y)+{\rm log}p(y)]-\double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x, y)}\left[{\rm log}\frac{q_{\phi}(\boldsymbol z\mid\boldsymbol x,y)}{p(\boldsymbol z)}\right]\nonumber\\
-		&= \double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x, y)}[{\rm log}p_{\theta}(\boldsymbol x\mid \boldsymbol z,y)+{\rm log}p(y)]-D_{KL}\left(q_{\phi}(\boldsymbol z\mid\boldsymbol x,y)||p(\boldsymbol z)\right)\nonumber\\
-		&\simeq {\rm log}p_{\theta}(\boldsymbol x\mid \boldsymbol z^{(l)},y)+{\rm log}p(y)-D_{KL}\left(q_{\phi}(\boldsymbol z\mid\boldsymbol x,y)||p(\boldsymbol z)\right)\\
+		&= \double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x, y)}[{\rm log}p_{\theta}(\boldsymbol x\mid \boldsymbol z,y)+{\rm log}p(y)]-D_{KL}\left(q_{\phi}(\boldsymbol z\mid\boldsymbol x,y) \mid\mid p(\boldsymbol z)\right)\nonumber\\
+		&\simeq {\rm log}p_{\theta}(\boldsymbol x\mid \boldsymbol z^{(l)},y)+{\rm log}p(y)-D_{KL}\left(q_{\phi}(\boldsymbol z\mid\boldsymbol x,y) \mid\mid p(\boldsymbol z)\right)\\
 		&= -{\cal L}(\boldsymbol x, y)
 	\end{align}\
 $$
@@ -450,7 +450,6 @@ def gaussian_kl_divergence_keepbatch(self, mean, ln_var):
 ```
 
 2番目の軸についてのみ和を取るように変更しています。
-
 
 ## 実験
 

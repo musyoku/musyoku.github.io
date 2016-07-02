@@ -102,9 +102,8 @@ $$
 
 $$
 	\begin{align}
-		\tilde {\boldsymbol z} = q_{\boldsymbol \phi}(\boldsymbol \epsilon, \boldsymbol x)
-		\hspace{10pt}{\rm with}\hspace{10pt} 
-		\boldsymbol \epsilon \sim p(\boldsymbol \epsilon)
+		\boldsymbol \epsilon &\sim p(\boldsymbol \epsilon)\nonumber\\
+		\tilde {\boldsymbol z} &= q_{\boldsymbol \phi}(\boldsymbol \epsilon, \boldsymbol x)\\
 	\end{align}
 $$
 
@@ -116,9 +115,8 @@ $$
 
 $$
 	\begin{align}
-		\tilde z = \mu(x) + \sigma(x) * \epsilon
-		\hspace{10pt}{\rm with}\hspace{10pt} 
-		\epsilon \sim {\cal N}(0, 1)
+		\epsilon &\sim {\cal N}(0, 1)\nonumber \\
+		\tilde z &= \mu(x) + \epsilon\cdot\sigma(x)\\
 	\end{align}
 $$
 
@@ -134,7 +132,7 @@ $$
 	\begin{align}
 		\double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x^{(i)})}[f(\boldsymbol z)] &= \double E_{p(\boldsymbol \epsilon)}\bigl[f\bigl(g_{\boldsymbol \phi}(\boldsymbol \epsilon, \boldsymbol x^{(i)})\bigr)\bigr]\\
 		&\simeq \frac{1}{L}\sum_{l=1}^{L}f\bigl(g_{\boldsymbol \phi}(\boldsymbol \epsilon^{(l)}, \boldsymbol x^{(i)})\bigr)\\
-		&{\rm where}\hspace{10pt}\boldsymbol \epsilon^{(l)} \sim p(\boldsymbol \epsilon)\nonumber
+		{\rm where}\hspace{10pt}\boldsymbol \epsilon^{(l)} &\sim p(\boldsymbol \epsilon)\nonumber
 	\end{align}
 $$
 
@@ -155,30 +153,14 @@ $L=10000$もあれば、出た目の平均は真の期待値$3.5$に近づくで
 
 $$
 	\begin{align}
+		\boldsymbol \epsilon^{(l)} &\sim p(\boldsymbol \epsilon)\nonumber\\
+		\boldsymbol z^{(i, l)} &= g_{\boldsymbol \phi}(\boldsymbol \epsilon^{(i, l)}, \boldsymbol x^{(i)})\\
 		{\cal L}(\boldsymbol \theta, \boldsymbol \phi, \boldsymbol x^{(i)}) &= -{\rm log}p_{\boldsymbol \theta}(\boldsymbol x^{(i)})\\
 		&\simeq D_{KL}(q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x^{(i)})||p_{\boldsymbol \theta}(\boldsymbol z)) - \frac{1}{L}\sum_{l=1}^{L}\bigl({\rm log}p_{\boldsymbol \theta}(\boldsymbol x^{(i)} \mid \boldsymbol z^{(i, l)})\bigr)\\
-		&{\rm where}\hspace{10pt}\boldsymbol z^{(i, l)} = g_{\boldsymbol \phi}(\boldsymbol \epsilon^{(i, l)}, \boldsymbol x^{(i)})\hspace{10pt}and\hspace{10pt}\boldsymbol \epsilon^{(l)} \sim p(\boldsymbol \epsilon)\nonumber
 	\end{align}
 $$
-
-
-次に、$\boldsymbol z$が正規分布に従うと場合を考えます。
-
-つまり、$z \sim p(z \mid x) = {\cal N}(\mu, \sigma^2)$となるとき、$D_{KL}$は解析的に求めることができます。（論文のAppendix B参照）
-
-この場合、reparametarization trickを用いると$z = \mu + \sigma\epsilon \hspace{10pt}{\rm with}\hspace{10pt} \epsilon \sim {\cal N}(0, 1)$となり、
-
-$$
-	\begin{align}
-		\double E_{ {\cal N}(z;\mu, \sigma^2)}[f(z)] &= \double E_{ {\cal N}(0,1)}[f(\mu + \sigma\epsilon)]\\
-		&\simeq \frac{1}{L}\sum_{l=1}^{L}f(\mu+\sigma\epsilon^{(l)})\\
-		&{\rm where}\hspace{10pt}\epsilon^{(l)}\sim{\cal N}(0,1) \nonumber
-	\end{align}
-$$
-
-となります。
 
 ## 応用例
 
-- [変分オートエンコーダ](/2016/05/20/semi-supervised-learning-with-deep-generative-models/)
+- [変分オートエンコーダ](/2016/07/02/semi-supervised-learning-with-deep-generative-models/)
 - 変分RNN（開発中）
