@@ -128,7 +128,7 @@ $D_{KL}$はKLダイバージェンスですが、これは解析的に求まる�
 
 ### 第１項
 
-式(6)の第一項はchainer.functions.bernoulli_nllまたはchainer.functions.gaussian_nllで求めることができます。
+式(6)の第一項は`chainer.functions.bernoulli_nll`または`chainer.functions.gaussian_nll`で求めることができます。
 
 入力画像がMNISTの場合は、2値化した$\boldsymbol x$がベルヌーイ分布に従っていると仮定し、$p_{\theta}(\boldsymbol x \mid \boldsymbol z)$を以下のように表します。
 
@@ -140,11 +140,11 @@ $$
 
 $\boldsymbol \pi_{\theta}(\boldsymbol z)$がニューラルネットで、$[0,1]$の実数値（つまり、画素値が1になる確率）を出力します。
 
-出力された$\boldsymbol \pi_{\theta}(\boldsymbol z)$と入力画像$\boldsymbol x$をchainer.functions.bernoulli_nllに与えると、第1項である$\boldsymbol z$の対数尤度${\rm log}p_{\theta}(\boldsymbol x \mid \boldsymbol z)$にマイナスを掛けた値を計算してくれます。
+出力された$\boldsymbol \pi_{\theta}(\boldsymbol z)$と入力画像$\boldsymbol x$を`bernoulli_nll`に与えると、第1項である$\boldsymbol z$の対数尤度${\rm log}p_{\theta}(\boldsymbol x \mid \boldsymbol z)$にマイナスを掛けた値を計算してくれます。
 
 （nllはnegative log likelihoodの頭文字を表しています。negativeはマイナスのことです。）
 
-このとき、chainer.functions.bernoulli_nllに渡す$\boldsymbol \pi_{\theta}(\boldsymbol z)$の出力は、sigmoid関数を通す前の値（つまり$[0,1]$に正規化する前の状態）でなければなりません。
+このとき、`bernoulli_nll`に渡す$\boldsymbol \pi_{\theta}(\boldsymbol z)$の出力は、sigmoid関数を通す前の値（つまり$[0,1]$に正規化する前の状態）でなければなりません。
 
 $\boldsymbol x$が正規分布に従うと仮定してデコーダを作る場合、$p_{\theta}(\boldsymbol x \mid \boldsymbol z)$は以下の様に表されます。
 
@@ -156,19 +156,19 @@ $$
 
 ${\rm diag}$は分散共分散行列を作る関数ですが気にする必要はありません。表記に使われるだけです。
 
-chainer.functions.gaussian_nllは引数として$\boldsymbol x$、$\boldsymbol \mu_{\theta}(\boldsymbol z)$の出力、$$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$$の出力の3つを取りますが、$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$の出力値の扱いには注意が必要です。
+`gaussian_nll`は引数として$\boldsymbol x$、$\boldsymbol \mu_{\theta}(\boldsymbol z)$の出力、$$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$$の出力の3つを取りますが、$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$の出力値の扱いには注意が必要です。
 
 分散$\boldsymbol \sigma^2$は負の値を取ってはいけませんが、ニューラルネットの出力である$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$は負の値を取り得ます。
 
 そこで$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$の出力値を、$\boldsymbol \sigma^2$ではなく${\rm log}(\boldsymbol \sigma^2)$とみなすことで負の値を許容します。
 
-従って、chainer.functions.gaussian_nllに$$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$$の出力値を入力するときは負の値を気にする必要はありません。
+従って、`gaussian_nll`に$$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$$の出力値を入力するときは負の値を気にする必要はありません。
 
 （そのため$\boldsymbol \sigma^2_{\theta}(\boldsymbol z)$の出力は活性化関数を通す前の値、つまり$\boldsymbol W\boldsymbol x + \boldsymbol b$である必要があります。）
 
 ### 第2項
 
-式(6)の第2項はchainer.functions.gaussian_kl_divergenceを使うと求めることができます。
+式(6)の第2項は`chainer.functions.gaussian_kl_divergence`を使うと求めることができます。
 
 こちらも同様に負の値を気にせず$$\boldsymbol \sigma^2_{\phi}(\boldsymbol x)$$の出力（ただし活性化関数を通す前の値）を引数に渡します。
 
@@ -186,7 +186,7 @@ $p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z)$も同様です。
 
 また、VAEでは誤差関数に含まれる$$-\double E_{\boldsymbol z \sim q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x)}[{\rm log}p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z)]$$のことを復号誤差と呼びます。
 
-他の方の実装ではこの部分を通常のオートエンコーダと同じくchainer.functions.loss.mean_squared_errorで計算しているものがありましたが、VAEの定義通りに実装する場合はbernoulli_nllかgaussian_nllを使います。
+他の方の実装ではこの部分を通常のオートエンコーダと同じく`chainer.functions.loss.mean_squared_error`で計算しているものがありましたが、VAEの定義通りに実装する場合はbernoulli_nllかgaussian_nllを使います。
 
 ## M2の実装
 
@@ -231,7 +231,7 @@ ${\cal Categorical }$はカテゴリカル分布です。日本語版のwikipedi
 
 サイコロでは$i$番目の目が出る確率が$p_i$であり、$\sum_{i}^{}p_i=1$です。
 
-これは単純にクラスの数だけ出力ユニットを作り、chainer.functions.activation.softmaxをすれば実現できます。
+これは単純にクラスの数だけ出力ユニットを作り、`chainer.functions.activation.softmax`をすれば実現できます。
 
 MNISTの場合、$\boldsymbol \pi_{\phi}(\boldsymbol x)$は出力ユニットが10個あり、$i$番目のユニットは$\boldsymbol x$がクラス$i$に属する確率を出力します。
 
@@ -349,7 +349,7 @@ $\double E_{\boldsymbol x,y \sim \tilde{ p_l}}[-{\rm log}q_{\phi}(y\mid\boldsymb
 
 また$\alpha$は論文によると総データ数÷ラベルありデータ数にすると書かれていますが、これだと$\alpha$は数百～数千という巨大な値になります。
 
-私は$\alpha=1$に固定し、${\cal J}^{\alpha}$は使わず${\cal J}$を使ってパラメータ更新し、その後`chainer.functions.loss.softmax_cross_entropy`でクラス分類を学習しパラメータ更新、という感じに分けて行いましたが上手く学習できました。
+私は$\alpha=1$に固定し、${\cal J}^{\alpha}$は使わず${\cal J}$を使ってパラメータ更新し、その後`softmax_cross_entropy`でクラス分類を学習しパラメータ更新、という感じに分けて行いましたが上手く学習できました。
 
 ### 周辺化のテクニック
 
@@ -357,7 +357,7 @@ $\double E_{\boldsymbol x,y \sim \tilde{ p_l}}[-{\rm log}q_{\phi}(y\mid\boldsymb
 
 ラベル無しデータの場合、たとえばMNISTでは$y$は高々10種類しかないため、式(20)はすべての$y$について計算します。
 
-私は初めfor文を用いて各$y$について${\cal L}$を計算し、chainer.functions.array.select_itemで$q_{\phi}(y\mid\boldsymbol x)$の対応する$y$の要素を取り出して計算していましたが、たまたまGitHubで見ていた[auxiliary-deep-generative-models](https://github.com/larsmaaloee/auxiliary-deep-generative-models)の実装に使われていたテクニックが非常に素晴らしいものでしたので紹介しておきます。
+私は初めfor文を用いて各$y$について${\cal L}$を計算し、`chainer.functions.array.select_item`で$q_{\phi}(y\mid\boldsymbol x)$の対応する$y$の要素を取り出して計算していましたが、たまたまGitHubで見ていた[auxiliary-deep-generative-models](https://github.com/larsmaaloee/auxiliary-deep-generative-models)の実装に使われていたテクニックが良いものでしたので紹介しておきます。
 
 まずラベル無しデータ$\boldsymbol x$をクラスの数だけ複製します。
 
@@ -434,7 +434,7 @@ lower_bound_u = y_distribution * (lower_bound_u - F.log(y_distribution + 1e-6))
 
 ### gaussian_nll、bernoulli_nll、gaussian_kl_divergenceの拡張
 
-上記の周辺化の計算ではchainerのgaussian_nll、bernoulli_nll、gaussian_kl_divergenceを使うのですが、これらの関数が返す値はミニバッチの総和になっています。
+上記の周辺化の計算ではchainerの`gaussian_nll`、`bernoulli_nll`、`gaussian_kl_divergence`を使うのですが、これらの関数が返す値はミニバッチの総和になっています。
 
 上記の計算をする際はミニバッチの情報を残す必要があるため、以下ような関数を作ります。
 
