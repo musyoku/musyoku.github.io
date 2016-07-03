@@ -345,11 +345,11 @@ $$
 	\end{align}\
 $$
 
-$\double E_{\boldsymbol x,y \sim \tilde{ p_l}}[-{\rm log}q_{\phi}(y\mid\boldsymbol x)]$の部分はchainer.functions.loss.softmax_cross_entropyで計算できます。
+$\double E_{\boldsymbol x,y \sim \tilde{ p_l}}[-{\rm log}q_{\phi}(y\mid\boldsymbol x)]$の部分は`chainer.functions.loss.softmax_cross_entropy`で計算できます。
 
 また$\alpha$は論文によると総データ数÷ラベルありデータ数にすると書かれていますが、これだと$\alpha$は数百～数千という巨大な値になります。
 
-私は$\alpha=1$に固定してやりましたが上手く学習できました。
+私は$\alpha=1$に固定し、${\cal J}^{\alpha}$は使わず${\cal J}$を使ってパラメータ更新し、その後`chainer.functions.loss.softmax_cross_entropy`でクラス分類を学習しパラメータ更新、という感じに分けて行いましたが上手く学習できました。
 
 ### 周辺化のテクニック
 
