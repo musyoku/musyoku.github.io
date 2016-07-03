@@ -47,8 +47,6 @@ MNISTを用いた場合、50000枚の訓練画像のうち、たった100枚に�
 
 MNISTで100枚だけに正解ラベルを与えた半教師あり学習でも、クラス分類精度が96%を超える結果が出ると論文に書いてありましたが、私の実装では残念ながら95%しか出ませんでした。
 
-またこの精度を出すのに2ヶ月かかりました。
-
 ## コード
 
 すべての実装は[GitHub](https://github.com/musyoku/variational-autoencoder)にあります。
@@ -224,7 +222,7 @@ $N_c$はクラス数です。MNISTなら10となります。
 
 $$
 	\begin{align}
-		q_{\phi}(y \mid \boldsymbol x) &= {\cal Categorical }(y \mid \boldsymbol \pi_{\phi}(\boldsymbol x))\\
+		q_{\phi}(y \mid \boldsymbol x) &= {\cal Categorical }(y \mid \boldsymbol \lambda_{\phi}(\boldsymbol x))\\
 		q_{\phi}(\boldsymbol z \mid \boldsymbol x, y) &={\cal N}(\boldsymbol x \mid \boldsymbol \mu_{\phi}(\boldsymbol x, y), {\rm diag}(\boldsymbol \sigma^2_{\phi}(\boldsymbol x, y)))
 	\end{align}\
 $$
@@ -263,6 +261,8 @@ $$
 	- $\boldsymbol x$と$y$から隠れ変数$\boldsymbol z$の各要素の平均を出力
 - $\boldsymbol \sigma^2_{\phi}(\boldsymbol x, y)$
 	- $\boldsymbol x$と$y$から隠れ変数$\boldsymbol z$の各要素の分散（正確には${\rm log}\sigma^2$）を出力
+- $\lambda_{\phi}(\boldsymbol x)$
+	- $\boldsymbol x$から$y$の分布を出力
 
 ![VAEのM2のモデル定義](/images/post/2016-07-02/m2bernoulli.png)
 
@@ -276,6 +276,8 @@ $$
 	- $\boldsymbol x$と$y$から隠れ変数$\boldsymbol z$の各要素の平均を出力
 - $\boldsymbol \sigma^2_{\phi}(\boldsymbol x, y)$
 	- $\boldsymbol x$と$y$から隠れ変数$\boldsymbol z$の各要素の分散（正確には${\rm log}\sigma^2$）を出力
+- $\lambda_{\phi}(\boldsymbol x)$
+	- $\boldsymbol x$から$y$の分布を出力
 
 ![VAEのM2のモデル定義](/images/post/2016-07-02/m2gaussian.png)
 
