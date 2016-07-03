@@ -192,13 +192,12 @@ $p_{\boldsymbol \theta}(\boldsymbol x\mid\boldsymbol z)$も同様です。
 
 ## M2の実装
 
-M2の実装では、以下の5点に注意します。
+M2の実装では、以下の4点に注意します。
 
 - モデル定義 
 - 誤差関数の計算方法
 - 周辺化のテクニック
 - gaussian_nll、bernoulli_nll、gaussian_kl_divergenceの拡張
-- 変分下限計算の闇
 
 ### モデル定義
 
@@ -265,7 +264,9 @@ $$
 - $\boldsymbol \sigma^2_{\phi}(\boldsymbol x, y)$
 	- $\boldsymbol x$と$y$から隠れ変数$\boldsymbol z$の各要素の分散（正確には${\rm log}\sigma^2$）を出力
 
-の3つ、または
+![VAEのM2のモデル定義](/images/post/2016-07-02/m2bernoulli.png)
+
+または
 
 - $\mu_{\theta}(\boldsymbol z, y)$
 	- $\boldsymbol z$と$y$から隠れ変数$\boldsymbol x$の各画素値の平均を出力
@@ -276,7 +277,9 @@ $$
 - $\boldsymbol \sigma^2_{\phi}(\boldsymbol x, y)$
 	- $\boldsymbol x$と$y$から隠れ変数$\boldsymbol z$の各要素の分散（正確には${\rm log}\sigma^2$）を出力
 
-の4つになります。
+![VAEのM2のモデル定義](/images/post/2016-07-02/m2gaussian.png)
+
+になります。
 
 ### 誤差関数の計算方法
 
@@ -451,72 +454,6 @@ def gaussian_kl_divergence_keepbatch(self, mean, ln_var):
 ```
 
 2番目の軸についてのみ和を取るように変更しています。
-
-### 変分下限計算の闇
-
-$\boldsymbol x$と$\boldsymbol z$がともにガウシアンの場合（たとえばM1+M2でのM2）の場合、上で説明した実装で学習を行うと以下の様な不思議な現象が起こります。
-
-- 学習が進みそれなりに高い分類精度が出るが、論文で報告されているような精度は出ない
-- ラベル無しデータの変分下限が巨大な値に飛ぶ
-
-この現象を解決するために試行錯誤を重ねた結果以下のことがわかりました。
-
-- 学習を始めた最初の数epochは、ラベルありなしどちらのデータの変分下限も上がる
-- ラベルありデータの変分下限が高くなってくると、ラベルなしデータの下限が急に下がり始める
-- ラベルなしデータの下限が巨大な値になる
-
-この原因の１つは`gaussian_nll_keepbatch`において、分散で割る部分に非常に小さな分散が入るせいでした。
-
-そこで以下のように小さすぎる分散をclipしました
-
-```
-clip_min = math.log(0.001)
-clip_max = math.log(10)
-ln_var = F.clip(ln_var, clip_min, clip_max)
-```
-
-実際は過学習を起こさないかぎり非常に小さな分散が出力されることは稀ですが、入れたほうが性能が良かったので入れています。
-
-しかしこれでも中途半端な精度しか出ず、あらゆるパラメータを試しても上手くいかなかったのですが、著者であるKingma氏の[実装](https://github.com/dpkingma/nips14-ssl)をヒントに解決方法を見つけ出しました。
-
-説明を行う前にまずラベル付きデータの対数尤度の変分下限を再掲します。
-
-$$
-	\begin{align}
-		{\rm log}p_{\theta}(\boldsymbol x, y) \simeq {\rm log}p_{\theta}(\boldsymbol x\mid \boldsymbol z^{(l)},y)+{\rm log}p(y)-D_{KL}\left(q_{\phi}(\boldsymbol z\mid\boldsymbol x,y) \mid\mid p(\boldsymbol z)\right)
-	\end{align}\
-$$
-
-次に[Auto-Encoding Variational Bayes](http://arxiv.org/abs/1312.6114)の付録から、$D_{KL}$の計算式を載せます。
-
-$$
-	\begin{align}
-		\int q(\boldsymbol z){\rm log}p(\boldsymbol z)d\boldsymbol z &= -\frac{J}{2}{\rm log}(2\pi)-\frac{1}{2}\sum_{j=1}^{J}(\mu_j^2+\sigma_j^2)\\
-		\int q(\boldsymbol z){\rm log}q(\boldsymbol z)d\boldsymbol z &= -\frac{J}{2}{\rm log}(2\pi)-\frac{1}{2}\sum_{j=1}^{J}(1+{\rm log}(\sigma_j^2))\\
-		D_{KL}(q(\boldsymbol z) \mid\mid p(\boldsymbol z)) &= \int q(\boldsymbol z)\left({\rm log}p(\boldsymbol z) - {\rm log}q(\boldsymbol z)\right)d\boldsymbol z\\
-		&= \frac{1}{2}\sum_{j=1}^{J}(\mu_j^2 + \sigma_j^2 - {\rm log}(\sigma_j^2) - 1)\\
-	\end{align}\
-$$
-
-式(24)を実装する場合、${\rm log}p_{\theta}(\boldsymbol x\mid \boldsymbol z^{(l)},y)$は`gaussian_nll_keepbatch`で計算し、${\rm log}p(y)$は定数となります。
-
-そして$D_{KL}$は式(28)に従って以下のように計算するのですが、
-
-```
-kld = F.sum(mean * mean + var - ln_var - 1, axis=1) * 0.5
-```
-
-この式(28)は式(25)-式(26)で求まることに着目し、以下のように式(25)と式(26)をそれぞれ求めてから$D_{KL}$を求めます。
-
-```
-log_pz = -0.5 * F.sum(math.log(2.0 * math.pi) + mean * mean + F.exp(ln_var), axis=1)
-log_qz_xy = -0.5 * F.sum((math.log(2.0 * math.pi) + 1 + ln_var), axis=1)
-kld = log_pz - log_qz_xy
-```
-
-どのような求め方をしても$D_{KL}$は同じ値になるので、このやり方は一見何の意味もなさそうに思えますが、なぜか後者の実装でM1+M2を学習させると、前者に比べて分類精度が7%ほど高くなりました。
-
-この現象が何故起こるのかを調べる気力はもうないのでこのままにしておきますが、原因が分かる方はコメントしてくださると幸いです。
 
 ## 実験
 
