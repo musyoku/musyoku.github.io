@@ -11,6 +11,7 @@ excerpt_separator: <!--more-->
 ## 概要
 
 - n次元ベクトルのVariableにone-hotなラベルベクトルのVariableを付加する方法
+- 追記あり
 
 <!--more-->
 
@@ -82,3 +83,30 @@ backward時、ラベル情報は定数なので勾配を伝播する必要はな
 new_variable = add_label(x_variable, label_variable)
 new_variable = add_label(label_variable, x_variable)	# 本質的には同じ
 ```
+
+## 追記
+
+後から知ったのですがChainerにはVariableを結合するconcat関数があります。
+
+```
+new_variable = F.concat((x_variable, label_variable), axis=1)
+```
+
+これを使えば上記の手法は必要ありません。
+
+また[VAE](http://musyoku.github.io/2016/07/02/semi-supervised-learning-with-deep-generative-models/)ではconcatしないラベルの付加手法を使っていますので紹介しておきます。
+
+隠れ層のユニット数が100、入力ベクトルが50次元、ラベルが10次元の場合、
+
+```
+merge_layer_x = L.Linear(50, 100)
+merge_layer_y = L.Linear(10, 100, nobias=True)
+```
+
+のようなレイヤーを作り、
+
+```
+merged_vector = merge_layer_x(x_variable) + merge_layer_y(label_variable)
+```
+
+のようにしてから隠れ層に入力します。
