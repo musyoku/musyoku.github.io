@@ -100,7 +100,7 @@ new_variable = F.concat((x_variable, label_variable), axis=1)
 
 ```
 merge_layer_x = L.Linear(50, 100)
-merge_layer_y = L.Linear(10, 100, nobias=True)
+merge_layer_y = L.Linear(10, 100)
 ```
 
 のようなレイヤーを作り、
@@ -110,3 +110,5 @@ merged_vector = merge_layer_x(x_variable) + merge_layer_y(label_variable)
 ```
 
 のようにしてから隠れ層に入力します。
+
+ちなみに`merge_layer_y`は`nobias=True`にすべきではないかと思いましたが、`True`にするとVAEでは性能が低下しました。
