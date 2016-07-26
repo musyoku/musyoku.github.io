@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>EmbedIDで埋め込みベクトルから単語IDを逆算する – ご注文は機械学習ですか？</title>
+
+	    <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="自身の勉強用メモです">
+    <meta property="og:description" content="自身の勉強用メモです" />
+    
+    <meta name="author" content="ご注文は機械学習ですか？" />
+
+    
+    <meta property="og:title" content="EmbedIDで埋め込みベクトルから単語IDを逆算する" />
+    <meta property="twitter:title" content="EmbedIDで埋め込みベクトルから単語IDを逆算する" />
+    
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+		<link rel="stylesheet" type="text/css" href="/style.css" />
+		<link rel="alternate" type="application/rss+xml" title="ご注文は機械学習ですか？ - 自身の勉強用メモです" href="/feed.xml" />
+
+		
+<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+		TeX: { 
+			equationNumbers: { 
+				autoNumber: "AMS" 
+			},
+			Macros: {
+				bold: ["\\boldsymbol{#1}", 1],
+				double: ["\\mathbb{#1}", 1],
+				argmax: ["\\mathop{\\rm arg\\,max}\\limits"],
+				argmin: ["\\mathop{\\rm arg\\,min}\\limits"],
+			}
+		},
+		tex2jax: {
+			inlineMath: [ ['$','$'] ],
+			displayMath: [ ['$$','$$'] ],
+			processEscapes: true,
+		}
+	});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+		<!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+	</head>
+
+	<body>
+		<div class="wrapper-masthead">
+			<div class="container">
+				<header class="masthead clearfix">
+					<a href="/" class="site-avatar"><img src="http://static.beluga.fm/profile_images/225/feKPO6j83pM0/grande.jpg" /></a>
+
+					<div class="site-info">
+						<h1 class="site-name"><a href="/">ご注文は機械学習ですか？</a></h1>
+						<p class="site-description">自身の勉強用メモです</p>
+					</div>
+
+					<nav>
+						<a href="/about/">概要</a>
+					</nav>
+				</header>
+			</div>
+		</div>
+
+		<div id="main" role="main" class="container">
+			<article class="post">
+	<h1>EmbedIDで埋め込みベクトルから単語IDを逆算する</h1>
+	<div class="date">
+		2016年04月28日
+	</div>
+
+	<div class="entry">
+		<h2 id="section">概要</h2>
+
+<ul>
+  <li>ChainerのEmbedIDを拡張した</li>
+  <li>コサイン類似度をもとに埋め込みベクトルから単語IDを求める</li>
+</ul>
+
+<!--more-->
+
+<h2 id="section-1">はじめに</h2>
+
+<p>ChainerのEmbedIDは、単語ID（整数値）から対応する埋め込みベクトル（多次元実数ベクトル）を出力します。</p>
+
+<p>今回はこの埋め込みベクトルから単語IDを知るための手法の紹介です。</p>
+
+<p>コードは<a href="https://github.com/musyoku/embed-id-extended">embed-id-extended</a>に置いてます。</p>
+
+<h2 id="section-2">使い方</h2>
+
+<p>単語ベクトル（最初の軸はバッチ）のndarrayを入力します。</p>
+
+<p>```
+from embed_id import EmbedID</p>
+
+<p>…</p>
+
+<p>embed = EmbedID(n_ids, ndim_vec)
+vec = embed(id)
+id = embed.reverse(vec.data)
+```</p>
+
+<h2 id="section-3">実装</h2>
+
+<p>入力ベクトルと、EmbedID.Wのそれぞれのベクトルとのコサイン類似度を計算します。</p>
+
+<p><code>
+W = self.W.data
+xp = cuda.get_array_module(*(vec,))
+w_norm = xp.sqrt(xp.sum(W ** 2, axis=1))
+v_norm = xp.sqrt(xp.sum(vec ** 2, axis=1))
+inner_product = W.dot(vec.T)
+norm = w_norm.reshape(1, -1).T.dot(v_norm.reshape(1, -1)) + 1e-6
+cosine_similarity = inner_product / norm
+</code></p>
+
+<p>こうするとcosine_similarityの最初の軸が単語IDに対応するので（2番目の軸はバッチ）、argmax(axis=0)で類似度が最も高いIDが出てきます。</p>
+
+<h2 id="section-4">応用</h2>
+
+<p>RNNで自然言語処理をする場合、出力層としてソフトマックス層を使い、教師IDとのsoftmax_cross_entropyで誤差を求めると思います。</p>
+
+<p>今回の拡張EmbedIDを用いるには、まずネットワークからソフトマックス層を取り除き、代わりに埋め込みベクトルを直接出力するように変更します。</p>
+
+<p>そして教師埋め込みベクトルとのmean_squared_errorで二乗誤差を計算し学習を行います。</p>
+
+<p>推論時には出力された埋め込みベクトルをEmbedID.reverseでIDに変換します。</p>
+
+<p>この応用が何の役に立つのかは不明です。</p>
+
+<h2 id="section-5">おまけ</h2>
+
+<p>これを利用したLSTMは<a href="https://github.com/musyoku/lstm">こちら</a></p>
+
+	</div>
+
+ 	
+<div id="disqus_thread"></div>
+<script>
+/**
+* RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+* LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+
+s.src = '//musyoku.disqus.com/embed.js';
+
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+</article>
+
+		</div>
+
+		<div class="wrapper-footer">
+			<div class="container">
+				<footer class="footer">
+					
+
+
+
+<a href="https://github.com/musyoku"><i class="svg-icon github"></i></a>
+
+
+
+
+
+
+
+
+<a href="http://beluga.fm/stark"><i class="svg-icon beluga"></i></a>
+<a href="https://qiita.com/jarvis"><i class="svg-icon qiita"></i></a>
+
+				</footer>
+			</div>
+		</div>
+
+		
+
+	</body>
+</html>

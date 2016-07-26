@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Human-level control through deep reinforcement learning [Nature Letter] – ご注文は機械学習ですか？</title>
+
+	    <meta charset="utf-8" />
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0'>
+
+    
+    <meta name="description" content="自身の勉強用メモです">
+    <meta property="og:description" content="自身の勉強用メモです" />
+    
+    <meta name="author" content="ご注文は機械学習ですか？" />
+
+    
+    <meta property="og:title" content="Human-level control through deep reinforcement learning [Nature Letter]" />
+    <meta property="twitter:title" content="Human-level control through deep reinforcement learning [Nature Letter]" />
+    
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+		<link rel="stylesheet" type="text/css" href="/style.css" />
+		<link rel="alternate" type="application/rss+xml" title="ご注文は機械学習ですか？ - 自身の勉強用メモです" href="/feed.xml" />
+
+		
+<script type="text/x-mathjax-config">
+	MathJax.Hub.Config({
+		TeX: { 
+			equationNumbers: { 
+				autoNumber: "AMS" 
+			},
+			Macros: {
+				bold: ["\\boldsymbol{#1}", 1],
+				double: ["\\mathbb{#1}", 1],
+				argmax: ["\\mathop{\\rm arg\\,max}\\limits"],
+				argmin: ["\\mathop{\\rm arg\\,min}\\limits"],
+			}
+		},
+		tex2jax: {
+			inlineMath: [ ['$','$'] ],
+			displayMath: [ ['$$','$$'] ],
+			processEscapes: true,
+		}
+	});
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+		<!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
+	</head>
+
+	<body>
+		<div class="wrapper-masthead">
+			<div class="container">
+				<header class="masthead clearfix">
+					<a href="/" class="site-avatar"><img src="http://static.beluga.fm/profile_images/225/feKPO6j83pM0/grande.jpg" /></a>
+
+					<div class="site-info">
+						<h1 class="site-name"><a href="/">ご注文は機械学習ですか？</a></h1>
+						<p class="site-description">自身の勉強用メモです</p>
+					</div>
+
+					<nav>
+						<a href="/about/">概要</a>
+					</nav>
+				</header>
+			</div>
+		</div>
+
+		<div id="main" role="main" class="container">
+			<article class="post">
+	<h1>Human-level control through deep reinforcement learning [Nature Letter]</h1>
+	<div class="date">
+		2016年03月06日
+	</div>
+
+	<div class="entry">
+		<h2 id="section">概要</h2>
+
+<ul>
+  <li><a href="http://www.nature.com/nature/journal/v518/n7540/full/nature14236.html">Human-level control through deep reinforcement learning</a> を読んだ</li>
+  <li>Deep Q-Network（DQN）をChainerで実装した</li>
+</ul>
+
+<!--more-->
+
+<h2 id="section-1">はじめに</h2>
+
+<p>今回の論文は内容的には <a href="http://arxiv.org/abs/1312.5602">Playing Atari with Deep Reinforcement Learning</a> とほとんど同じです。</p>
+
+<p>ただしNature版のほうがハイパーパラメータの設定が詳細に載っています。</p>
+
+<p>また実装や理論の理解に関して <a href="http://qiita.com/Ugo-Nama/items/08c6a5f6a571335972d5">DQNの生い立ち＋Deep Q-NetworkをChainerで書いた</a> が非常に参考になりました。</p>
+
+<p>Q学習などの説明はそちらに譲り、今回は実装について書こうと思います。</p>
+
+<h2 id="section-2">実装</h2>
+
+<p>今回も実装にはChainerを使います。</p>
+
+<p>DQNは文字通り<strong>最適行動価値関数Q</strong>をDeepなニューラルネットにしたもので、ゲームのスクリーン画像を状態$s$として直接入力し、それぞれのゲーム操作$a$の行動価値$Q(s, a)$を出力します。</p>
+
+<h3 id="section-3">前処理</h3>
+
+<p>ゲームのスクリーンのサイズは基本的に$160\times210$ピクセルです。ゲームによっては$120\times280$ピクセルになったりもしますが、掛け算した値は常に$33600$になるように画面サイズが決定されています。</p>
+
+<p>ここではNature版に従った前処理を行います。</p>
+
+<p>まず、ゲームのスクリーンはすべてグレースケールに変換し、$84\times84$ピクセルにリサイズします。</p>
+
+<p>次に一つ前のフレームと現在のフレームで最大値を取ります。</p>
+
+<p>私はあまり詳しくないのですが、Atari 2600は同時に表示できるスプライトの数に制限があり、偶数（または奇数）フレームにしか出現しないオブジェクトがあるからです。</p>
+
+<p>前処理後のフレームは以下のようになります。（ブロック崩しの場合）</p>
+
+<p><img src="http://musyoku.github.io/images/post/2016-03-06/breakout_state0.png" alt="frame-0" /></p>
+
+<p>前処理として、ここからさらに余計なスコア表示領域などを削れば学習速度は上がりますが、そのような処理は論文の趣旨と異なりますので今回は行いません。</p>
+
+<h3 id="s">状態$s$の構成</h3>
+
+<p>今回は直近4フレームを1つの状態$s$とみなします。</p>
+
+<p>たとえばブロック崩しでは以下の4枚の画像から1つの状態$s$が構成されます。</p>
+
+<p><img src="http://musyoku.github.io/images/post/2016-03-06/breakout_state0.png" alt="frame-0" />
+<img src="http://musyoku.github.io/images/post/2016-03-06/breakout_state1.png" alt="frame-1" />
+<img src="http://musyoku.github.io/images/post/2016-03-06/breakout_state2.png" alt="frame-2" />
+<img src="http://musyoku.github.io/images/post/2016-03-06/breakout_state3.png" alt="frame-3" /></p>
+
+<h3 id="section-4">畳み込み層</h3>
+
+<p>上記の4枚の画像を、<strong>4チャネルで構成される1枚の画像</strong>とみなして畳み込みニューラルネットに入力します。</p>
+
+<p>また畳み込み層の最上位層は、出力をベクトルにするため出力マップに対して全結合する単層ネットワークを置きます。</p>
+
+<h3 id="section-5">全結合層</h3>
+
+<p>全結合層は畳み込み層の出力を受け取り、出力としてそれぞれのゲーム操作に対する行動価値観数Qの値を出力します。</p>
+
+<p>たとえばブロック崩しでは、可能な操作として「何もしない」「右移動」「左移動」「発射」の4種類あります。</p>
+
+<p>（発射だけ謎なんですがこれは失敗した時に新たなボールをセットするものなんでしょうか）</p>
+
+<p>したがって全結合層の最上位出力ユニットの数は4となります。</p>
+
+<p>それらのユニットの中から最大値を出力しているユニットを選ぶことで、最適行動<script type="math/tex">\pi(s)=\argmax_aQ(s,a)</script>を決定します。</p>
+
+<h3 id="section-6">フレームスキップ</h3>
+
+<p>ALEはデフォルトで1秒間に画面が60回更新されます。毎フレーム行動を取るのは無意味ですので、今回は4フレームに1回行動を取るようにします。</p>
+
+<p>これはALEに–frame_skipオプションで4を指定するだけで実現できます。</p>
+
+<h3 id="section-7">学習</h3>
+
+<p>ここでQ関数の学習について簡単に説明します。</p>
+
+<p>いま状態$s$で行動$s$を取り、報酬$r$と次の状態$s’$を得たとします。</p>
+
+<p>この時Q関数は以下のように更新されます。</p>
+
+<script type="math/tex; mode=display">
+	\begin{align}
+		Q(s,a)\gets Q(s,a)+\alpha(r+\gamma \max_{a'}Q(s',a')-Q(s,a))
+	\end{align}
+</script>
+
+<p>今回はQ関数の近似としてパラメータ$\theta$を持つニューラルネットを用いているので、近似された関数を$Q_{\theta}(s,a)$と表すことにします。</p>
+
+<p>式((1))が収束する条件は<script type="math/tex">r+\gamma \max_{a'}Q(s',a')=Q(s,a)</script>ですので、この式は<script type="math/tex">Q(s,a)</script>を<script type="math/tex">r+\gamma \max_{a'}Q(s',a')</script>に近づける働きがあります。</p>
+
+<p>よって教師信号を</p>
+
+<script type="math/tex; mode=display">
+	\begin{align}
+		target\equiv r+\gamma \max_{a'}Q_{\theta}(s',a')
+	\end{align}
+</script>
+
+<p>とし、誤差関数を</p>
+
+<script type="math/tex; mode=display">
+	\begin{align}
+		L_{\theta}(s,a)=\frac{1}{2}(target-Q_{\theta}(s,a))^2
+	\end{align}
+</script>
+
+<p>とします。これは一般的な二乗誤差関数で、$Q_{\theta}(s,a)$が$target$から離れているほど誤差が大きくなります。</p>
+
+<p>あとはこの誤差関数をChainerで組み立てて誤差逆伝播すればよいのですが、本来定数であるべき$target$が微分されないように注意する必要があります。</p>
+
+<p>式((3))の<script type="math/tex">target</script>は、式((2))から明らかなようにパラメータ$\theta$を持っています。</p>
+
+<p>したがって誤差$L<em>{\theta}(s,a)$をChainerでbackpropすると$target$まで含めて微分をしてしまうため、$target$の方が$Q</em>{\theta}(s,a)$に近づいてしまいます。</p>
+
+<p>そこでパラメータ$\theta$をコピーした$\phi$を作り、教師信号は$Q_{\phi}(s,a)$から出力させることでこの現象を防ぐことができます。</p>
+
+<p>ただし定期的に$\phi\gets \theta$として更新する必要があります。</p>
+
+<h2 id="section-8">実際に動かしてみる</h2>
+
+<h3 id="section-9">必要なもの</h3>
+
+<ul>
+  <li><a href="http://www.arcadelearningenvironment.org/">Arcade Learning Environment（ALE）</a>
+    <ul>
+      <li>エミュレータであり、ゲームを起動し後述のRL-Glueと接続してくれます。強化学習で言うところの<strong>環境</strong>と<strong>エージェント</strong>です。</li>
+    </ul>
+  </li>
+  <li><a href="https://code.google.com/archive/p/rl-glue-ext/wikis/RLGlueCore.wiki">RL-Glue</a>
+    <ul>
+      <li>ALEで起動したゲームの操作をプログラムから行えるようにするものです。</li>
+      <li>どうやら.debの方をインストールすると失敗するみたいなのでソース（3.04.tar.gz）を落としてコンパイルする方が良いみたいです。</li>
+    </ul>
+  </li>
+  <li><a href="https://sites.google.com/a/rl-community.org/rl-glue/Home/Extensions/python-codec">PL-Glue Python codec</a>
+    <ul>
+      <li>RL-GlueをPythonで使えるようにするものです。</li>
+    </ul>
+  </li>
+  <li><a href="http://www.atarimania.com/rom_collection_archive_atari_2600_roms.html">Atari 2600 VCS ROM Collection</a>
+    <ul>
+      <li>ブロック崩しやインベーダーなどのROMです。</li>
+    </ul>
+  </li>
+  <li><a href="https://github.com/musyoku/deep-q-network">deep-q-network</a>
+    <ul>
+      <li>今回実装したDQNのコードです。</li>
+    </ul>
+  </li>
+  <li><strong>Chainer 1.6</strong>
+    <ul>
+      <li>古いバージョンのChainerで動くかどうかはわかりません。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>環境構築に関しては <a href="http://vaaaaaanquish.hatenablog.com/entry/2015/12/11/215417">DQN-chainerリポジトリを動かすだけ</a> が参考になります。</p>
+
+<h3 id="section-10">実験</h3>
+
+<p>今回はDQNにAtari Breakoutをプレイさせます。</p>
+
+<p>ダウンロードしたROMにはBreakoutが2つ入っており、片方は画面サイズがALE非対応のため起動できなくなっています。</p>
+
+<p>起動できる方をbreakout.binにリネームしておいてください。</p>
+
+<p>ターミナルを4つ起動し、以下をそれぞれのターミナルで実行します。</p>
+
+<p><code>
+rl_glue
+</code></p>
+
+<p><code>
+cd path_to_deep-q-network
+python experiment.py --csv_dir breakout/csv --plot_dir breakout/plot
+</code></p>
+
+<p><code>
+cd path_to_deep-q-network/breakout
+python train.py
+</code></p>
+
+<p><code>
+cd /home/your_name/ALE
+./ale -game_controller rlglue -use_starting_actions true -random_seed time -display_screen true -frame_skip 4 -send_rgb true /path_to_rom/breakout.bin
+</code></p>
+
+<p>ALEの–send_rgb はtrueで構いません。falseにするとグレースケールのスクリーンを取得できますが、なぜかALEネイティブのグレースケール変換は不自然だったのでDQN側で変換するようになっています。</p>
+
+<p>実験に用いたコンピュータのスペックは以下の通りです。</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>OS</td>
+      <td>Ubuntu 14.04 LTS</td>
+    </tr>
+    <tr>
+      <td>CPU</td>
+      <td>Core i7</td>
+    </tr>
+    <tr>
+      <td>RAM</td>
+      <td>16GB</td>
+    </tr>
+    <tr>
+      <td>GPU</td>
+      <td>GTX 970M 6GB</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>残念ながらメモリが足りず論文通りのReplay Memory Sizeでは動かないので、サイズを10分の1にしました。</p>
+
+<h3 id="atari-breakout">Atari Breakout</h3>
+
+<p><img src="http://musyoku.github.io/images/post/2016-03-06/breakout_result.gif" alt="Breakout" /></p>
+
+<p>Breakoutはブロック崩しです。</p>
+
+<p>合計42時間の学習（8200プレイ・93世代・467万フレーム）を行いました。</p>
+
+<p>本当は10000プレイさせたかったのですが突然コンピュータがシャットダウンしてしまったため中途半端な結果になってしましました。</p>
+
+<h4 id="section-11">プレイ回数とスコアの関係:</h4>
+
+<p><img src="http://musyoku.github.io/images/post/2016-03-06/breakout_episode_reward.png" alt="Breakout episode-score" /></p>
+
+<h4 id="section-12">プレイ回数とハイスコア:</h4>
+
+<p><img src="http://musyoku.github.io/images/post/2016-03-06/breakout_training_episode_highscore.png" alt="Breakout episode-highscore" /></p>
+
+<p>また、$\epsilon–greedy$手法の$\epsilon$を$0.05$に固定してDQNの評価を行いました。</p>
+
+<p>学習100プレイごとに評価を20プレイ行い、スコアの平均を取りました。</p>
+
+<h4 id="section-13">平均スコア:</h4>
+
+<p><img src="http://musyoku.github.io/images/post/2016-03-06/breakout_evaluation_episode_average_reward.png" alt="Breakout episode-average" /></p>
+
+	</div>
+
+ 	
+<div id="disqus_thread"></div>
+<script>
+/**
+* RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+* LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+
+s.src = '//musyoku.disqus.com/embed.js';
+
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+</article>
+
+		</div>
+
+		<div class="wrapper-footer">
+			<div class="container">
+				<footer class="footer">
+					
+
+
+
+<a href="https://github.com/musyoku"><i class="svg-icon github"></i></a>
+
+
+
+
+
+
+
+
+<a href="http://beluga.fm/stark"><i class="svg-icon beluga"></i></a>
+<a href="https://qiita.com/jarvis"><i class="svg-icon qiita"></i></a>
+
+				</footer>
+			</div>
+		</div>
+
+		
+
+	</body>
+</html>
