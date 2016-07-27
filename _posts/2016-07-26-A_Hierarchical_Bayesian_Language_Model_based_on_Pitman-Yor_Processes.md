@@ -68,7 +68,7 @@ HPYLMではこの文脈木を用いて単語の数をカウントします。
 
 そうするとhe willの後にlikeが続く回数は依然$0$ですが、willに続いてlikeが来る回数が$1$になります。
 
-よって$P(sing\mid he\ will)$を求めるときに、$c(sing\mid he\ will)$と$c(sing\mid will)$をうまく補完すれば$0$ではない値にすることが可能になります。（$c(\cdot)$は客数を表します）
+よって$P(like\mid he\ will)$を求めるときに、$c(like\mid he\ will)$と$c(like\mid will)$をうまく補完すれば$0$ではない値にすることが可能になります。（$c(\cdot)$は客数を表します）
 
 これがスムージングの考え方で、HPYLMではPitman-Yor過程と呼ばれる確率過程を用いて補完しています。
 
@@ -159,7 +159,7 @@ $$
 $$
 	\begin{align}
 		{\rm WordProbability}(\boldsymbol u, w)&=\nonumber\\
-		P(w\mid \boldsymbol u, $\boldsymbol\Theta$)&=\frac{c_{\boldsymbol uw\cdot} - d_{\mid\boldsymbol u\mid}t_{\boldsymbol uw}}{\theta_{\mid\boldsymbol u\mid}+c_{\boldsymbol u\cdot\cdot}}
+		P(w\mid \boldsymbol u, \boldsymbol\Theta)&=\frac{c_{\boldsymbol uw\cdot} - d_{\mid\boldsymbol u\mid}t_{\boldsymbol uw}}{\theta_{\mid\boldsymbol u\mid}+c_{\boldsymbol u\cdot\cdot}}
 		+\frac{\theta_{\mid\boldsymbol u\mid}+d_{\mid\boldsymbol u\mid}t_{\boldsymbol u\cdot}}{\theta_{\mid\boldsymbol u\mid}+c_{\boldsymbol u\cdot\cdot}}{\rm WordProbability}(\pi(\boldsymbol u), w)\nonumber
 	\end{align}\
 $$
@@ -173,16 +173,16 @@ $$
 
 追加する際は、
 
-- $max(0, c_{\boldsymbol uwk} - d_{\mid\boldsymbol u\mid})$に比例する確率で、$w$を提供しているすべてのテーブルの中の$k$番目のテーブルに追加
-- $(\theta_{\boldsymbol u} + d_{\boldsymbol u})P(w \mid \pi(\boldsymbol u))$に比例する確率で、$w$を提供する新しいテーブルを作成しそこに追加
+- $max(0, c_{\boldsymbol uwk} - d_{\mid\boldsymbol u\mid}t_{\boldsymbol uw})$に比例する確率で、$w$を提供しているすべてのテーブルの中の$k$番目のテーブルに追加
+- $(\theta_{\boldsymbol u} + d_{\boldsymbol u}t_{\boldsymbol u\cdot}){\rm WordProbability}(\pi(\boldsymbol u), w)$に比例する確率で、$w$を提供する新しいテーブルを作成しそこに追加
 	- この時親レストラン$\pi(\boldsymbol u)$に対し${\rm AddCustomer}(\pi(\boldsymbol u), w)$
-	- したがって親レストランでも同様に、ある確率でさらにその親に対して${\rm AddCustomer}(\pi(\pi(\boldsymbol u)))$
+	- したがって親レストランでも同様に、新たなテーブルができればさらにその親に対して${\rm AddCustomer}(\pi(\pi(\boldsymbol u)), w)$
 
 のように確率的に客をテーブルに追加します。
 
 ### RemoveCustomer($\boldsymbol u$, $w$)
 
-客を削除する際は、$c_{\boldsymbol uwk}$に比例する確率で、$w$を提供しているテーブルの中の$k$番目のテーブルから客を削除します。
+客を削除する際は$c_{\boldsymbol uwk}$に比例する確率で、$w$を提供しているすべてのテーブルの$k$番目のテーブルから客を削除します。
 
 $k$番目のテーブルに客が一人もいなくなった場合はそのテーブルを削除し、親レストラン$\pi(\boldsymbol u)$に対し${\rm RemoveCustomer}(\pi(\boldsymbol u), w)$を実行します。
 
@@ -202,7 +202,7 @@ $$
 	\end{align}\
 $$
 
-ベータ分布・ガンマ分布からサンプリングします。
+これらの補助変数を用いてベータ分布・ガンマ分布からサンプリングします。
 
 $$
 	\begin{align}
