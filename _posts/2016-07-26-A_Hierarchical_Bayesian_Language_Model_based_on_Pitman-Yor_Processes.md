@@ -159,7 +159,7 @@ $$
 $$
 	\begin{align}
 		{\rm WordProbability}(\boldsymbol u, w)&=\nonumber\\
-		P^{HPY}(w\mid \boldsymbol u)&=\frac{c_{\boldsymbol uw\cdot} - d_{\mid\boldsymbol u\mid}t_{\boldsymbol uw}}{\theta_{\mid\boldsymbol u\mid}+c_{\boldsymbol u\cdot\cdot}}
+		P(w\mid \boldsymbol u, $\boldsymbol\Theta$)&=\frac{c_{\boldsymbol uw\cdot} - d_{\mid\boldsymbol u\mid}t_{\boldsymbol uw}}{\theta_{\mid\boldsymbol u\mid}+c_{\boldsymbol u\cdot\cdot}}
 		+\frac{\theta_{\mid\boldsymbol u\mid}+d_{\mid\boldsymbol u\mid}t_{\boldsymbol u\cdot}}{\theta_{\mid\boldsymbol u\mid}+c_{\boldsymbol u\cdot\cdot}}{\rm WordProbability}(\pi(\boldsymbol u), w)\nonumber
 	\end{align}\
 $$
