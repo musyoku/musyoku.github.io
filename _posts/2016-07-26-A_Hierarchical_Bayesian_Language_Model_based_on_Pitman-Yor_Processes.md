@@ -341,7 +341,7 @@ C++の[gamma_distribution](http://www.cplusplus.com/reference/random/gamma_distr
 
 ## 関連
 
-- Pitman-Yor 過程に基づく可変長 n-gram 言語モデル（準備中）
+- [Pitman-Yor 過程に基づく可変長 n-gram 言語モデル](/2016/07/28/Pitman-Yor過程に基つ-く可変長n-gram言語モテ-ル/)
 - ベイズ階層言語モデルによる教師なし形態素解析（準備中）
 - 隠れセミマルコフモデルに基づく教師なし完全形態素解析（準備中）
 
