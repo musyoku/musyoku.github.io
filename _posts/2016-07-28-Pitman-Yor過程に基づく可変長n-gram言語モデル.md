@@ -172,7 +172,7 @@ $$
 
 $$
 	\begin{align}
-		P(w_t\mid h_l)=\frac{c(w_t\mid h_l) - d\cdot t_{h_{l}w_{t}}}{\theta + c(h_l)}+\frac{\theta + d\cdot t_{h_l}}{\theta + c(h_l)}P(w_t\mid h_l')
+		P(w_t\mid h_l)=\frac{c(w_t\mid h_l) - d_{\mid h_l \mid}\cdot t_{h_{l}w_{t}}}{\theta_{\mid h_l \mid} + c(h_l)}+\frac{\theta_{\mid h_l \mid} + d_{\mid h_l \mid}\cdot t_{h_l}}{\theta_{\mid h_l \mid} + c(h_l)}P(w_t\mid h_l')
 	\end{align}\
 $$
 
@@ -181,13 +181,13 @@ $$
 $$
 	\begin{align}
 		P(w_t\mid h_l)=\frac{
-			c_{h_{l}w_{t}\cdot} - d\cdot t_{h_{l}w_{t}}
+			c_{h_{l}w_{t}\cdot} - d_{\mid h_l \mid}\cdot t_{h_{l}w_{t}}
 		}{
-			\theta + c_{h_{l}\cdot\cdot}
+			\theta_{\mid h_l \mid} + c_{h_{l}\cdot\cdot}
 		}+\frac{
-			\theta + d\cdot t_{h_l\cdot}
+			\theta_{\mid h_l \mid} + d_{\mid h_l \mid}\cdot t_{h_l\cdot}
 		}{
-			\theta + c_{h_l\cdot\cdot}
+			\theta_{\mid h_l \mid} + c_{h_l\cdot\cdot}
 		}P(w_t\mid \pi(h_l))
 	\end{align}\
 $$
