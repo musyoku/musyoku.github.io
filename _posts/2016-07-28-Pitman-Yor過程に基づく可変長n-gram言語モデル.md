@@ -198,7 +198,7 @@ $$
 
 ## 実験
 
-今回も[Alice in Wonderland](https://www.cs.cmu.edu/~rgs/alice-table.html)を用いて実験を行いました。
+今回も[Alice in Wonderland](https://www.cs.cmu.edu/~rgs/alice-table.html)のスペース除去版を用いて文字n-gramの実験を行いました。
 
 ### VPYLMとHPYLM
 
