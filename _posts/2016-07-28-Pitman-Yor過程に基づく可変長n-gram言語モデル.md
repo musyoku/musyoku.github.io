@@ -84,7 +84,7 @@ $$
 
 と表します。
 
-$\boldsymbol \Theta$は文脈木の代理客を含めたすべての客を表す隠れ変数、$\boldsymbol n=n_1n_2...n_T$は$\boldsymbol w$のそれぞれの単語が生成された隠れたn-gram長を表します。
+$\boldsymbol \Theta$は文脈木の代理客を含めたすべての客の配置を表す隠れ変数、$\boldsymbol n=n_1n_2...n_T$は$\boldsymbol w$のそれぞれの単語が生成された隠れたn-gram長を表します。
 
 HPYLMと同様に客の配置$\boldsymbol \Theta$は推定すべきパラメータであり、VPYLMでは$\boldsymbol \Theta$と$\boldsymbol n$の両方をギブスサンプリングによって推定します。
 
@@ -103,7 +103,7 @@ $$
 $$
 	\begin{align}
 		P(n_t\mid \boldsymbol w, \boldsymbol n_{-t}, \boldsymbol \Theta_{-t}) \propto  
-		P(w_t\mid \boldsymbol w_{-t}, \boldsymbol n, \boldsymbol s_{-t})P(n_t\mid\boldsymbol w_{-t}, \boldsymbol n_{-t}, \boldsymbol \Theta_{-t})
+		P(w_t\mid \boldsymbol w_{-t}, \boldsymbol n, \boldsymbol \Theta_{-t})P(n_t\mid\boldsymbol w_{-t}, \boldsymbol n_{-t}, \boldsymbol \Theta_{-t})
 	\end{align}\
 $$
 
