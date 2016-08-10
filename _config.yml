@@ -6,7 +6,7 @@
 name: ご注文は機械学習ですか？
 
 # Short bio or description (displayed in the header)
-description: 自身の勉強用メモです
+description: 自分の勉強用メモです
 
 # URL of your avatar or profile pic (you could use your GitHub profile pic)
 avatar: http://static.beluga.fm/profile_images/225/feKPO6j83pM0/grande.jpg
@@ -22,7 +22,7 @@ footer-links:
   facebook:
   flickr:
   github: musyoku
-  qiita: jarvis
+  qiita: deleted
   beluga: stark
   instagram:
   linkedin:
