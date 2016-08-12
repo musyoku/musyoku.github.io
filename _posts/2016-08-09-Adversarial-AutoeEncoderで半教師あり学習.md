@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Adversarial AutoEcoderで半教師あり学習
+title: Adversarial AutoEncoderで半教師あり学習
 category: 論文
 tags:
 - Chainer

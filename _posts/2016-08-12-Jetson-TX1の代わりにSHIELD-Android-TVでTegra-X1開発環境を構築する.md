@@ -29,7 +29,19 @@ Jetson TX1はUbuntuをOSとして利用しており、インターフェース�
 
 （ちなみにSATVは技適に通っており日本語に対応しています。なぜ日本で販売しないのかは不明です。）
 
+### SHILEDの分解
+
+見た目の5倍くらいの重量があり分解してみるとフレームが金属製でかなり頑丈な作りになっていました。
+
+私は16GBモデルを購入したのでHDDのスペースが空いています。
+
 ![SHIELD](/images/post/2016-08-12/shield.jpg)
+
+HDDをSSDに換装したい方はPro版を購入しましょう。
+
+16GB版ではSATA→FFCケーブルやFFCコネクタが存在しません。
+
+## 始める前に
 
 現在日本語の情報は以下のPDFしかありませんので、おおまかな流れを確認しておきましょう。
 
@@ -262,7 +274,24 @@ L4Tに標準で入っているPythonは2.7.6なので、このまま`sudo pip in
 sudo apt-get install libssl-dev libbz2-dev libreadline-dev libsqlite3-dev
 pyenv install 2.7.12
 pyenv global 2.7.12
+sudo apt-get install libhdf5-dev
 pip install chainer
 ```
 
 pyenvが有効の時はsudo pipではなくpipで良いようです。
+
+Chainerがインストールできたので[Adversarial AutoEncoder](https://github.com/musyoku/adversarial-autoencoder)を学習させてみました。
+
+||Tegra X1|Geforce GTX 970M|
+|1 epoch|3分|1分|
+
+画像処理系の小さいモデルならデスクトップ版GPUとあまり差がない速度が出ました。
+
+RNNなどの巨大なモデルではおそらくまともに学習できないんじゃないかと思います。
+
+（そもそもメモリが3GBしかない）
+
+
+## CUDA Samplesの比較
+
+![nbody](/images/post/2016-08-12/970m_vs_x1.jpg)
