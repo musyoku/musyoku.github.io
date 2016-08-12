@@ -293,6 +293,19 @@ RNNなどの巨大なモデルではおそらくまともに学習できない�
 
 （そもそもメモリが3GBしかない）
 
+## CPUの比較
+
+[VPYLM](https://github.com/musyoku/vpylm)で可変長文字n-gramモデルを学習させました。
+
+SHIELDとMacbook Proの比較です。
+
+||Tegra X1|Intel Core i5 2.6GHz|
+|コア数|8|2|
+|学習時間|780文/秒|1720文/秒|
+
+Boostのビルドも10分ほどで終わりました。
+
+CPUもそこそこ速いです。
 
 ## CUDA Samplesの比較
 
