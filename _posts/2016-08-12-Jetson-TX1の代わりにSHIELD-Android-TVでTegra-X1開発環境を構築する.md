@@ -27,7 +27,7 @@ Jetson TX1はUbuntuをOSとして利用しており、インターフェース�
 
 しかしTegra X1自体は他のNVIDIA製品にも組み込まれており、その中でもSHIELD Android TVは$199（米Amazonで23,000円で購入可能）と安価であり、USB3.0x2、micro USBx1、HDMIx1、Wifi、Bluetooth、Gigabit Ethernet、microSDカードスロット、とインターフェースもそれなりに多いハードなので、海外ではこれにUbuntuを入れてJetson TX1の代わりに使う方法が公開されています。
 
-（ちなみにSATVは技適に通っており日本語に対応しています。なぜ日本で販売しないのかは不明です。）
+（ちなみにSHIELDは技適に通っており日本語に対応しています。なぜ日本で販売しないのかは不明です。）
 
 ### SHILEDの分解
 
