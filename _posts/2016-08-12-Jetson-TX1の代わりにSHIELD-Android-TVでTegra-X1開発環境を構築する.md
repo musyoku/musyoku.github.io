@@ -283,7 +283,9 @@ pyenvが有効の時はsudo pipではなくpipで良いようです。
 Chainerがインストールできたので[Adversarial AutoEncoder](https://github.com/musyoku/adversarial-autoencoder)を学習させてみました。
 
 ||Tegra X1|Geforce GTX 970M|
-|1 epoch|3分|1分|
+|CUDA Cores|256|1280|
+|浮動小数点演算|512.0 GFLOPS|2,657.3 GFLOPS|
+|1 epochの学習時間|3分|1分|
 
 画像処理系の小さいモデルならデスクトップ版GPUとあまり差がない速度が出ました。
 
