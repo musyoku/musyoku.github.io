@@ -217,25 +217,33 @@ JetpackはLANを通じてホスト側からSHIELDに必要なコンポーネン�
 
 [Jetpack for L4Tのダウンロード](https://developer.nvidia.com/embedded/jetpack)
 
-ダンロード後起動するとまず対象のJetsonを選択しますが、私は64bit版のL4Tを入れているのでJetson TX1(64-bit)を選びました。
+ダンロード後、
+
+```
+sudo ./JetPack-L4T-2.2.1-linux-x64.run
+```
+
+で起動するとまず対象のJetsonを選択しますが、私は64bit版のL4Tを入れているのでJetson TX1(64-bit)を選びました。
+
+![jetpack](/images/post/2016-08-12/jetpack_1.png)
 
 次にインストールしたいコンポーネントを選択します。
 
 Linux for Tegraはすでに入っているのでno actionにしておきます。
 
-![jetpack](/images/post/2016-08-12/jetpack_1.png)
+![jetpack](/images/post/2016-08-12/jetpack_2.png)
 
 転送先のSHIELDのIPアドレスとユーザー名（Ubuntu）、パスワード（Ubuntu）を入れます。
 
-![jetpack](/images/post/2016-08-12/jetpack_2.png)
+![jetpack](/images/post/2016-08-12/jetpack_3.png)
 
 転送が始まります。
 
+![jetpack](/images/post/2016-08-12/jetpack_4.png)
+
 私はL4TをSDカードに入れているため非常に時間がかかりました。
 
-![jetpack](/images/post/2016-08-12/jetpack_3.png)
-
-![jetpack](/images/post/2016-08-12/jetpack_4.png)
+この時`sudo`のパスワードを聞かれるので席を離れていると先に進めないことがあります。
 
 ## CUDA Samplesを動かす
 
