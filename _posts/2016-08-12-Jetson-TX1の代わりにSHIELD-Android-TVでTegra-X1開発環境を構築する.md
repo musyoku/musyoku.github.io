@@ -19,7 +19,7 @@ excerpt_separator: <!--more-->
 
 ## はじめに
 
-半精度（fp16）で1TFLOPの演算性能があるモバイル向けGPUのNVIDIA [Tegra X1](http://www.nvidia.co.jp/object/tegra-x1-processor-jp.html)が昨年リリースされ、その開発環境として[Jetson TX1](http://www.nvidia.co.jp/object/embedded-systems-jp.html)が日本でも今年3月にようやく発売されました。
+半精度（fp16）で1TFLOPSの演算性能があるモバイル向けGPUのNVIDIA [Tegra X1](http://www.nvidia.co.jp/object/tegra-x1-processor-jp.html)が昨年リリースされ、その開発環境として[Jetson TX1](http://www.nvidia.co.jp/object/embedded-systems-jp.html)が日本でも今年3月にようやく発売されました。
 
 Jetson TX1はUbuntuをOSとして利用しており、インターフェースも多く自由度の高い開発が行えるのですが、米国価格$599が例によって日本円で10万円前後という簡単には手の出せない値段になっています。
 
