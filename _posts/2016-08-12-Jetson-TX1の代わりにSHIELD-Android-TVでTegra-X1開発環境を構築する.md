@@ -47,6 +47,12 @@ HDDをSSDに換装したい方はPro版を購入しましょう。
 
 [Shield Android TVはJetson TX1の代わりに使えるか?](https://demotomohiro.github.io/hardware/jetson_tk1/slides/ShieldTV%20Linux.pdf)
 
+またSHIELDに入れたUbuntuでは仮想コンソールがモニターに映りません。
+
+Ubuntuが壊れて起動しなくなった場合などに対処できないので注意しましょう。
+
+（もしかしたら私が知らない別の方法があるのかもしれませんが）
+
 ## SHIELDのWifiのMACアドレスを調べる
 
 Android TVを起動しWifiに接続するとMACアドレスが見れるようになります。
@@ -183,6 +189,23 @@ sudo apt-mark hold xserver-xorg-core
 ```
 
 を実行しNVIDIAのドライバが上書きされるのを防ぎます。
+
+## 初期設定
+
+### Wifi
+
+`/lib/firmware/brcm`内の`fw_bcmdhd.bin`と`nvram.txt`を、先ほどダウンロードした`satvL4t24`の中に入っているものと置き換えます。
+
+その後`nvram.txt`を開きSHIELDのWifiのMACアドレスを正しいものに変更し、Ubuntuを再起動するとWifiに繋がります。
+
+### ターミナル
+
+右クリックからターミナルを開けるようにします。
+
+```
+sudo apt-get install nautilus-open-terminal
+nautilus -q
+```
 
 ## Jetpack for L4TでCUDAをインストール
 
