@@ -297,8 +297,6 @@ L4Tに標準で入っているPythonは2.7.6なので、このまま`sudo pip in
 
 参考：[pyenvとvirtualenvで環境構築](http://qiita.com/Kodaira_/items/feadfef9add468e3a85b)
 
-途中で.bash_profileを編集する部分がありますが今回は.bashrcに対して同様の編集を行います。
-
 またエラーが大量に出るので以下を実行して再度Python 2.7.12を入れます。
 
 ```
