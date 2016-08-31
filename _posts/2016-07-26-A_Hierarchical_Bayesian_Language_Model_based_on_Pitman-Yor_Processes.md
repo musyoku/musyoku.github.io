@@ -85,6 +85,8 @@ $$
 
 我々の目標は真の$\boldsymbol\Theta$を推定することなので、HPYLMではギブスサンプリングを用いて推定します。
 
+### $\boldsymbol\Theta$のサンプリング
+
 まず${\rm RemoveCustomer(\boldsymbol u,w)}$によりレストラン$\boldsymbol u$から$w$を削除します。
 
 削除された後の残りの客全ての配置を$\lnot\boldsymbol\Theta$とし、$\lnot\boldsymbol\Theta$のもとで$w$の配置を再サンプリングします（${\rm AddCustomer}(\boldsymbol u, w)$）。
