@@ -46,9 +46,9 @@ cd /usr/src/linux-headers-3.10.96-tegra/
 sudo make modules_prepare
 ```
 
-```3.10.96-tegra```の部分は環境によります。
+`3.10.96-tegra`の部分は環境によります。
 
-これで```make```と```sudo make install```が通るので一見ビルドに成功したかに見えますが、
+これで`make`と`sudo make install`が通るので一見ビルドに成功したかに見えますが、
 
 ```
 sudo modprobe v4l2loopback
