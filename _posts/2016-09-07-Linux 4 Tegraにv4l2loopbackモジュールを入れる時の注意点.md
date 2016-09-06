@@ -64,11 +64,11 @@ modprobe: ERROR: could not insert 'v4l2loopback': Exec format error
 
 この原因はv4l2loopback.koのversion magicが（私の環境では）3.10.96になっていなければならないのに3.10.96-tegraになっているため不一致と判断されるからです。
 
-（```insmod v4l2loopback```しても同様のエラーが出るので```dmesg```すると原因がわかります）
+（`insmod v4l2loopback`しても同様のエラーが出るので`dmesg`すると原因がわかります）
 
 強制無視するオプションがあるのですがなぜかそれをしても全くエラーが消えませんでした。
 
-そこで```/usr/src/linux-headers-3.10.96-tegra/include/generated/utsrelease.h```を開き、
+そこで`/usr/src/linux-headers-3.10.96-tegra/include/generated/utsrelease.h`を開き、
 
 ```
 #define UTS_RELEASE "3.10.96-tegra"
@@ -80,7 +80,7 @@ modprobe: ERROR: could not insert 'v4l2loopback': Exec format error
 #define UTS_RELEASE "3.10.96"
 ```
 
-に変え、もう一度```make```からやり直したところうまくいきました。
+に変え、もう一度`make`からやり直したところうまくいきました。
 
 以下は[FLIR ONE](http://www.flir.jp/flirone/content/?id=62912)というスマホ用の熱画像センサモジュールをSHIELDで使ってみた例です。
 
