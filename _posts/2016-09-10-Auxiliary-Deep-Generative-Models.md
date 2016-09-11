@@ -56,6 +56,10 @@ ADGMとSDGMはともに以下に示す5つのニューラルネットから構�
 
 ![ADGMとSDGM](/images/post/2016-09-10/adgm_arch.png)
 
+ここからの説明は全てADGMをもとに行います。
+
+SDGMの場合は$p_{\boldsymbol \theta}(\boldsymbol a \mid \boldsymbol x,y,\boldsymbol z)$が$p_{\boldsymbol \theta}(\boldsymbol a \mid y,\boldsymbol z)$に、$p_{\boldsymbol \theta}(\boldsymbol x\mid y,\boldsymbol z)$が$p_{\boldsymbol \theta}(\boldsymbol x \mid \boldsymbol a, y,\boldsymbol z)$に置き換わります。
+
 ### 誤差関数
 
 VAEの時と同様のやり方で変分下限にマイナスをかけたものを誤差とします。
