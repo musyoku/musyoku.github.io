@@ -17,6 +17,8 @@ excerpt_separator: <!--more-->
 
 Auxiliary Deep Generative Models(ADGM)は半教師ありのMNISTのクラス分類(100 labels)において、現在世界最高精度のエラー率0.96%を達成したモデルです。
 
+私のChainer実装は[GitHub](https://github.com/musyoku/adgm)で公開しています。
+
 また著者自身による[Lasagne実装](https://github.com/larsmaaloee/auxiliary-deep-generative-models)が公開されていますので、試したい方はそちらを利用することもできます。
 
 ## モデル
@@ -194,3 +196,25 @@ $$
 	\end{align}\
 $$
 
+のように近似します。
+
+## MNISTの学習結果
+
+$N_{MC}=1, 5$としてADGMとSDGMを学習させました。
+
+100 labelsのMNISTのバリデーションデータの分類精度は以下のようになりました。
+
+![graph](/images/post/2016-09-10/adgm_graph.png)
+
+
+## おわりに
+
+まだ[VAT](http://arxiv.org/abs/1507.00677)と[Ladder Networks](https://arxiv.org/abs/1507.02672)を実装していないのでなんとも言えませんが、ADGMはVAEより扱いやすく精度も出るので重宝しそうです。
+
+そういえば現時点でChainerはバージョン1.15.0.1がリリースされましたが、私の環境には入らなかったので1.12で実装しています。
+
+1.15からはzerogradsが非推奨になるようなのでコードを少し変更しなければならないと思います。
+
+## 関連
+- [VAE](/2016/07/02/semi-supervised-learning-with-deep-generative-models/)
+- [AAE](/2016/08/09/Adversarial-AutoeEncoder%E3%81%A7%E5%8D%8A%E6%95%99%E5%B8%AB%E3%81%82%E3%82%8A%E5%AD%A6%E7%BF%92/)
