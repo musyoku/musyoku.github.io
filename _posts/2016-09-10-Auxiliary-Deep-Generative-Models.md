@@ -215,6 +215,21 @@ $N_{MC}=1, 5$としてADGMとSDGMを学習させました。
 シードが悪かったのか99%を超えることは出来ませんでした。
 
 
+## アナロジー
+
+隠れ変数$z$を固定し、ラベル$y$を変えた時に生成される$x$を可視化してみました。
+
+### ADGM
+
+![analogy_adgm](/images/post/2016-09-10/analogy_adgm.png)
+
+### SDGM
+
+![analogy_sdgm](/images/post/2016-09-10/analogy_sdgm.png)
+
+アナロジーはADGMのほうが綺麗にできていると思います。
+
+
 ## おわりに
 
 まだ[VAT](http://arxiv.org/abs/1507.00677)と[Ladder Networks](https://arxiv.org/abs/1507.02672)を実装していないのでなんとも言えませんが、ADGMはVAEより扱いやすく精度も出るので重宝しそうです。
