@@ -200,6 +200,10 @@ $$
 
 のように近似します。
 
+式(19)の中身ですが、これは$p_{\boldsymbol \theta}(\boldsymbol a^{(l)} \mid \boldsymbol x,y,\boldsymbol z^{(l)})$、$p_{\boldsymbol \theta}(\boldsymbol x\mid y,\boldsymbol z^{(l)})$、$p(y)p(\boldsymbol z^{(l)})$、$q_{\boldsymbol \phi}(\boldsymbol a^{(l)} \mid \boldsymbol x)$、$q_{\boldsymbol \phi}(\boldsymbol z^{(l)} \mid \boldsymbol a^{(l)},\boldsymbol x, y)$それぞれを個別に求めてから計算します。
+
+この計算や$y$の周辺化の実装は[前回のVAEの記事](/2016/07/02/semi-supervised-learning-with-deep-generative-models/)を参考にしてください。
+
 ## MNISTの学習結果
 
 $N_{MC}=1, 5$としてADGMとSDGMを学習させました。
@@ -217,7 +221,7 @@ $N_{MC}=1, 5$としてADGMとSDGMを学習させました。
 
 ただ重みの初期化に敏感な気がします。
 
-そういえば現時点でChainerはバージョン1.15.0.1がリリースされましたが、私の環境には入らなかったので1.12で実装しています。
+また現時点でChainerはバージョン1.15.0.1がリリースされていますが、私の環境には入らなかったので1.12で実装しています。
 
 1.15からはzerogradsが非推奨になるようなのでコードを少し変更しなければならないと思います。
 
