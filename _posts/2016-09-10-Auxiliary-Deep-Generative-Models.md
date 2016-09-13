@@ -13,6 +13,8 @@ excerpt_separator: <!--more-->
 - [Auxiliary Deep Generative Models](http://arxiv.org/abs/1602.05473) を読んだ
 - Chainer 1.12でADGMとSDGMを実装した
 
+<!--more-->
+
 ## はじめに
 
 Auxiliary Deep Generative Models(ADGM)は半教師ありのMNISTのクラス分類(100 labels)において、現在世界最高精度のエラー率0.96%を達成したモデルです。
@@ -206,10 +208,14 @@ $N_{MC}=1, 5$としてADGMとSDGMを学習させました。
 
 ![graph](/images/post/2016-09-10/adgm_graph.png)
 
+シードが悪かったのか99%を超えることは出来ませんでした。
+
 
 ## おわりに
 
 まだ[VAT](http://arxiv.org/abs/1507.00677)と[Ladder Networks](https://arxiv.org/abs/1507.02672)を実装していないのでなんとも言えませんが、ADGMはVAEより扱いやすく精度も出るので重宝しそうです。
+
+ただ重みの初期化に敏感な気がします。
 
 そういえば現時点でChainerはバージョン1.15.0.1がリリースされましたが、私の環境には入らなかったので1.12で実装しています。
 
