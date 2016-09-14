@@ -231,6 +231,8 @@ $N_{MC}=1, 5$としてADGMとSDGMを学習させました。
 
 まだ[VAT](http://arxiv.org/abs/1507.00677)と[Ladder Networks](https://arxiv.org/abs/1507.02672)を実装していないのでなんとも言えませんが、ADGMはVAEより扱いやすく精度も出るので重宝しそうです。
 
+たとえば私の環境（GTX 970M）ではVAEのM1+M2を80時間学習させてようやく95%を超えたのを、ADGMは1〜2時間で到達できます。
+
 ただ重みの初期化に敏感な気がします。
 
 また現時点でChainerはバージョン1.15.0.1がリリースされていますが、私の環境には入らなかったので1.12で実装しています。
@@ -238,5 +240,7 @@ $N_{MC}=1, 5$としてADGMとSDGMを学習させました。
 1.15からはzerogradsが非推奨になるようなのでコードを少し変更しなければならないと思います。
 
 ## 関連
+
 - [VAE](/2016/07/02/semi-supervised-learning-with-deep-generative-models/)
+
 - [AAE](/2016/08/09/Adversarial-AutoeEncoder%E3%81%A7%E5%8D%8A%E6%95%99%E5%B8%AB%E3%81%82%E3%82%8A%E5%AD%A6%E7%BF%92/)
