@@ -207,6 +207,12 @@ sudo apt-get install nautilus-open-terminal
 nautilus -q
 ```
 
+### キーボードレイアウト
+
+```
+setxkbmap -layout jp
+```
+
 ## Jetpack for L4TでCUDAをインストール
 
 Jetpackを使うと簡単にCUDAやCUDA SamplesをSHIELDにインストールできます。
