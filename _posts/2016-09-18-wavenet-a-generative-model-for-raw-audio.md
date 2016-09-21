@@ -165,7 +165,11 @@ Residualブロックの畳み込み層に関してはバイアスありなしど
 
 ## 実験
 
-あまりに学習に時間がかかるため今後結果が出たら載せます。
+5秒ほどのBGMを学習させてみました。
+
+[🎶 BGM](https://drive.google.com/file/d/0ByQaxyG1S5JRWUZrQkpaMTJRNFk/view)
+
+現在日本人の音声データを学習させているので結果が出たら載せます。
 
 ## 終わりに
 
