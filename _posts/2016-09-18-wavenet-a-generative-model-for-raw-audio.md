@@ -165,9 +165,11 @@ Residualブロックの畳み込み層に関してはバイアスありなしど
 
 ## 実験
 
-5秒ほどのBGMを学習させてみました。
+5秒ほどのBGMを学習させて生成させてみました。
 
-[🎶 BGM](https://drive.google.com/file/d/0ByQaxyG1S5JRWUZrQkpaMTJRNFk/view)
+[result.wav](https://drive.google.com/file/d/0ByQaxyG1S5JRWUZrQkpaMTJRNFk/view)
+
+今回は生成というよりは丸暗記ですが、WaveNetはどのような音も学習することができます。
 
 現在日本人の音声データを学習させているので結果が出たら載せます。
 
