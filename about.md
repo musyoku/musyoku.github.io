@@ -6,4 +6,4 @@ permalink: /about/
 
 ## プロフィール
 
-Chainerはいいぞ
+![Chainerはいいぞ](/images/chainer_is_good.png)
