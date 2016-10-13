@@ -43,7 +43,7 @@ $$
 	\end{align}\
 $$
 
-$E_{\Theta}(\boldsymbol x)$はエネルギー関数、$Z_{\Theta}$は正規化項です。
+$E_{\Theta}(\boldsymbol x)$はエネルギー関数、$Z_{\Theta}$は正規化項（分配関数）です。
 
 またエネルギー関数は"expert"と呼ばれる項の和になっています。
 

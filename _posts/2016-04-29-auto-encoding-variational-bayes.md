@@ -136,7 +136,7 @@ $$
 	\end{align}
 $$
 
-これは、$L$個の$\boldsymbol z^{(l)}$（$l=0,1,...,L$）を$q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x^{(i)})$からサンプリングし、それぞれの$\boldsymbol z^{(l)}$とデータ$\boldsymbol x^{(i)}$から求めた${\rm log}p_{\boldsymbol \theta}(\boldsymbol x^{(i)}\mid\boldsymbol z^{(l)})$の平均を期待値$\double E$の推定として用いていることを表しています。
+これは、$L$個の$\boldsymbol z^{(l)}$（$l=1,...,L$）を$q_{\boldsymbol \phi}(\boldsymbol z\mid\boldsymbol x^{(i)})$からサンプリングし、それぞれの$\boldsymbol z^{(l)}$とデータ$\boldsymbol x^{(i)}$から求めた${\rm log}p_{\boldsymbol \theta}(\boldsymbol x^{(i)}\mid\boldsymbol z^{(l)})$の平均を期待値$\double E$の推定として用いていることを表しています。
 
 そもそも期待値は本質的には平均のことですので、この推定は当然のことです。
 
