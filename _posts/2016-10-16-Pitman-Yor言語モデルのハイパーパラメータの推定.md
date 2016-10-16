@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Pitman-Yor言語モデルのハイパーパラメータの推定
+title: Pitman-Yor言語モデルのハイパーパラメータの推定に関して
 category: 論文
 tags:
 - HPYLM
@@ -10,7 +10,7 @@ excerpt_separator: <!--more-->
 
 ## 概要
 
-- Pitman-Yor言語モデルのハイパーパラメータの推定における式の詳細な導出について
+- Pitman-Yor言語モデルのハイパーパラメータの推定における更新式の詳細な導出について
 
 ## はじめに
 
@@ -43,19 +43,48 @@ $$
 	\end{align}\
 $$
 
-この式も説明なく出てくるので、ここでは導出のやり方を説明します。
+この式も説明なく出てくるので、ここではまずこの式の導出のやり方を説明します。
 
-ここでは論文(11)式の、次に観測される単語$x_{c\cdot+1}$が$w$である確率
+まず論文(10)式の、次に観測される客$x_{c\cdot+1}$の確率
+
+$$
+	\begin{align}
+		p(x_{c\cdot+1} \mid x_{1}, x_{2}, ..., x_{c\cdot}, \boldsymbol \Theta) = 
+			\sum_{k=1}^{t_{\cdot}}
+			\frac {c_k-d}{\theta+c_{\cdot}}\delta_{\phi_k}
+			+\frac {\theta+dt_{\cdot}}{\theta+c_{\cdot}}G_0(w)\nonumber
+	\end{align}\
+$$
+
+から、次に観測される客が座るテーブル$k_{c\cdot+1}$がテーブル$K$になる確率を求めておくと、
+
+$$
+	\begin{align}
+		p(k_{c\cdot+1} = K \mid x_{1}, x_{2}, ..., x_{c\cdot}, \boldsymbol \Theta) = 
+			\frac {c_K-d}{\theta+c_{\cdot}}\delta_{\phi_K}
+			+\frac {\theta+dt_{\cdot}}{\theta+c_{\cdot}}G_0(w)
+	\end{align}\
+$$
+
+となります。
+
+ここで、$\delta_{\phi_k}$は質量$1$の点（point mass）ですので、ただの数字の$1$とみてかまいません。
+
+また$c_k$は$k$番目のテーブルの客数、$c_{\cdot}$は総客数です。
+
+ちなみに論文の式(11)は、
 
 $$
 	\begin{align}
 		p(x_{c\cdot+1}=w \mid \boldsymbol \Theta) = 
 			\frac {c_w-dt_w}{\theta+c_{\cdot}}
-			+\frac {\theta+dt_{\cdot}}{\theta+c_{\cdot}}G_0(w)
+			+\frac {\theta+dt_{\cdot}}{\theta+c_{\cdot}}G_0(w)\nonumber
 	\end{align}\
 $$
 
-を用います。
+次に観測される単語$x_{c\cdot+1}$が$w$である確率であって、どのテーブルかは考慮されないため注意が必要です。
+
+（式(4)で$w$を提供している全てのテーブルについて足し合わせるとこの式が得られます）
 
 まず中華料理店過程（CRP）で、基底分布$G_0$から単語$w_1$が生成された状態を考えます。
 
@@ -73,7 +102,7 @@ $$
 
 となります。
 
-次にこの状態からさらに経験分布から$w_1$が生成された状態を考えると、
+次にこの状態から、経験分布から$w_1$が生成された状態を考えると、
 
 ![CRP](/images/post/2016-10-16/p_seating_arrangement_2.png)
 
@@ -154,3 +183,45 @@ $$
 $$
 
 を式(9)に掛けると式(10)が得られます。
+
+次に$w_3$が$G_0$から生成されたとすると、
+
+![CRP](/images/post/2016-10-16/p_seating_arrangement_6.png)
+
+この時の$p(\boldsymbol \Theta)$は
+
+$$
+	\begin{align}
+		p(\boldsymbol \Theta) = G_0(w_1)G_0(w_2)G_0(w_3)\frac{1-d}{\theta+1}\frac{\theta+d}{\theta+2}\frac{1-d}{\theta+3}\frac{2-d}{\theta+4}\frac{\theta+2d}{\theta+5}
+	\end{align}\
+$$
+
+となります。
+
+次に$G_0$から$w_1$がもう一度生成されたとします。
+
+![CRP](/images/post/2016-10-16/p_seating_arrangement_7.png)
+
+この時の$p(\boldsymbol \Theta)$は
+
+$$
+	\begin{align}
+		p(\boldsymbol \Theta) = G_0(w_1)^2G_0(w_2)G_0(w_3)\frac{1-d}{\theta+1}\frac{\theta+d}{\theta+2}\frac{1-d}{\theta+3}\frac{2-d}{\theta+4}\frac{\theta+2d}{\theta+5}\frac{\theta+3d}{\theta+6}
+	\end{align}\
+$$
+
+となります。
+
+最後に経験分布から$w_1$が生成されたとすると、
+
+![CRP](/images/post/2016-10-16/p_seating_arrangement_8.png)
+
+この時の$p(\boldsymbol \Theta)$は
+
+$$
+	\begin{align}
+		p(\boldsymbol \Theta) = G_0(w_1)^2G_0(w_2)G_0(w_3)\frac{1-d}{\theta+1}\frac{\theta+d}{\theta+2}\frac{1-d}{\theta+3}\frac{2-d}{\theta+4}\frac{\theta+2d}{\theta+5}\frac{\theta+3d}{\theta+6}\frac{3-2d}{\theta+7}
+	\end{align}\
+$$
+
+となります。
