@@ -163,4 +163,3 @@ $$
 ## 応用例
 
 - [変分オートエンコーダ](/2016/07/02/semi-supervised-learning-with-deep-generative-models/)
-- 変分RNN（開発中）
