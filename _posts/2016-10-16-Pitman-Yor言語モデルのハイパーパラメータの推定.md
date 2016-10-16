@@ -10,7 +10,7 @@ excerpt_separator: <!--more-->
 
 ## 概要
 
-- Pitman-Yor言語モデルのハイパーパラメータの推定における更新式の詳細な導出について
+- Pitman-Yor言語モデルのハイパーパラメータのサンプリングにおける更新式の詳細な導出について
 
 ## はじめに
 
@@ -116,7 +116,7 @@ $$
 
 となります。
 
-これは式(4)の第1項で総客数$c_{\cdot}=1$、単語$w_1$を提供しているテーブル数$t_{w_1}=1$とすることで得られる確率を式(5)に掛けたものになっています。
+これは式(4)の第1項で総客数$c_{\cdot}=1$、テーブル$k=1$の客数$c_1=1$とすることで得られる確率を式(5)に掛けたものになっています。
 
 （CRPでは単語は、$G_0$と、現在の客の配置からなる経験分布の混合分布から生成されます。経験分布から生成されたときは式(4)の第1項を考えます。）
 
@@ -142,7 +142,7 @@ $$
 	\end{align}\
 $$
 
-を式(6)に掛けると式(8)が得られます。
+を式(6)に掛けると式(7)が得られます。
 
 図では客は3人いますが、$c_{\cdot}=2$であることに注意が必要です。（3人目の客を生成するための確率ですので、客数を3にしてしまってはいけません）
 
@@ -174,7 +174,7 @@ $$
 
 となります。
 
-式(4)の第1項で$c_{w_2}=2$、$t_{w_2}=1$、$c_{\cdot}=4$として得られた確率
+式(4)の第1項で2番目のテーブルの客数$c_2=2$、総客数$c_{\cdot}=4$として得られた確率
 
 $$
 	\begin{align}
@@ -220,8 +220,107 @@ $$
 
 $$
 	\begin{align}
-		p(\boldsymbol \Theta) = G_0(w_1)^2G_0(w_2)G_0(w_3)\frac{1-d}{\theta+1}\frac{\theta+d}{\theta+2}\frac{1-d}{\theta+3}\frac{2-d}{\theta+4}\frac{\theta+2d}{\theta+5}\frac{\theta+3d}{\theta+6}\frac{3-2d}{\theta+7}
+		p(\boldsymbol \Theta) = G_0(w_1)^2G_0(w_2)G_0(w_3)\frac{1-d}{\theta+1}\frac{\theta+d}{\theta+2}\frac{1-d}{\theta+3}\frac{2-d}{\theta+4}\frac{\theta+2d}{\theta+5}\frac{\theta+3d}{\theta+6}\frac{1-d}{\theta+7}
 	\end{align}\
 $$
 
 となります。
+
+ここまで来ると式(14)と式(1)の関係が見えてくると思います。
+
+ただしここでは階層を考えていないので、論文の$\boldsymbol u$の記号は省略します。
+
+まず分母の$(\theta+1)(\theta+2)(\theta+3)(\theta+4)(\theta+5)(\theta+6)(\theta+7)$は$[\theta]^{(t_{\cdot})}_1$に対応します。
+
+$G_0(w_1)^2G_0(w_2)G_0(w_3)$は$\prod_w G_0(w)^{t_w}$です。
+
+論文では$c_{0w\cdot}$となっていますがこれは$w$を提供しているテーブル数です。
+
+分子は２つに分割します。
+
+まず$$(\theta+d)(\theta+2d)(\theta+3d)$$は$$[\theta]^{t_{\cdot}}_{d}$$に対応し、$$(1-d)(1-d)(2-d)(1-d)$$は$$\prod_w \prod_{k=1}^{t_{\cdot}}[1-d]^{(c_{cwk}-1)}_1$$に対応します。
+
+階層を考えるときも上記と同様にすることで、式(1)を導出することができます。
+
+## ハイパーパラメータのサンプリング
+
+次に$d$と$\theta$の更新式を、論文の付録Cをもとに導出します。
+
+補助変数を用いたサンプリング手法となっていますが、この手法はEscoberらの[Bayesian Density Estimation and Inference Using Mixtures](https://people.eecs.berkeley.edu/~jordan/courses/281B-spring04/readings/escobar-west.pdf)の6章「Learning about $\alpha$ and further illustration」に基づいています。
+
+始めに式(1)を変形します。
+
+$$
+	\begin{align}
+		p(\boldsymbol \Theta) &= \prod_w G_0(w)^{c_0w\cdot}\prod_{\boldsymbol u} 
+			\frac{
+				[\theta_{\mid \boldsymbol u \mid}+d_{\mid \boldsymbol u \mid}]^{(t_{\boldsymbol u \cdot})-1}_{d_{\mid \boldsymbol u \mid}}
+			}{
+				[\theta_{\mid \boldsymbol u \mid}+1]^{(c_{\boldsymbol u \cdot\cdot})-1}_{1}
+			}
+			\prod_w \prod_{k=1}^{t_{\boldsymbol u \cdot}}
+			[1-d_{\mid \boldsymbol u \mid}]^{(c_{\boldsymbol uwk - 1})}_{1}\\
+		[a]^{(0)}_b &= [a]^{-1}_b = 1\nonumber\\
+		[a]^{(c)}_b &= a(a+b)\cdot\cdot\cdot(a+(c-1)b) = \frac{b^c\Gamma(a/b+c)}{\Gamma(a/b)}\nonumber
+	\end{align}\
+$$
+
+ここからはこの式をもとに説明を行います。
+
+またベータ積分の定義
+
+$$
+	\begin{align}
+			\frac{\Gamma(p)\Gamma(q)}{\Gamma(p + q)}=
+			\frac{(p-1)!(q-1)!}{(p+q-1)!}=
+			\int_0^1x^{p-1}(1-x)^{q-1}dx
+	\end{align}\
+$$
+
+を使います。
+
+まず式(15)の分母に注目し変形すると、
+
+$$
+	\begin{align}
+			\frac{1}{[\theta_{\mid \boldsymbol u \mid}+1]^{(c_{\boldsymbol u \cdot\cdot})}_{1}} &=
+			\frac{\Gamma(\theta_{\mid \boldsymbol u \mid} + 1)}{\Gamma(\theta_{\mid \boldsymbol u \mid} + c_{\boldsymbol u \cdot\cdot})}\nonumber\\
+			&=\frac{\Gamma(\theta_{\mid \boldsymbol u \mid} + 1)}{\Gamma(\theta_{\mid \boldsymbol u \mid} + 1 + c_{\boldsymbol u \cdot\cdot} - 1)}\nonumber\\
+			&=\frac{\Gamma(\theta_{\mid \boldsymbol u \mid} + 1)\Gamma(c_{\boldsymbol u \cdot\cdot} - 1)}{\Gamma(\theta_{\mid \boldsymbol u \mid} + 1 + c_{\boldsymbol u \cdot\cdot} - 1)\Gamma(c_{\boldsymbol u \cdot\cdot} - 1)}\nonumber\\
+			&=\frac{1}{\Gamma(c_{\boldsymbol u \cdot\cdot} - 1)}
+			\int_0^1x_{\boldsymbol u}^{\theta_{\mid \boldsymbol u \mid}}(1-x_{\boldsymbol u})^{c_{\boldsymbol u \cdot\cdot-2}}dx
+	\end{align}\
+$$
+
+となります。
+
+その他の変形は論文に載っているので省略しますが、最終的に式(15)は
+
+$$
+	\begin{align}
+		p(\boldsymbol \Theta) &= \prod_w G_0(w)^{c_0w\cdot}\prod_{\boldsymbol u}
+			\frac{1}{\Gamma(c_{\boldsymbol u \cdot\cdot} - 1)}
+			\int_0^1x_{\boldsymbol u}^{\theta_{\mid \boldsymbol u \mid}}(1-x_{\boldsymbol u})^{c_{\boldsymbol u \cdot\cdot-2}}dx
+			\prod_{i=1}^{t_{\boldsymbol u\cdot-1}}
+			\sum_{y_{\boldsymbol u i}=0,1}\theta_{\mid \boldsymbol u \mid}^{y_{\boldsymbol u i}}(d_{\mid \boldsymbol u \mid}i)^{1-y_{\boldsymbol u i}}
+			\prod_w\prod_{k=1}^{t_{\boldsymbol u\cdot}}\sum_{z_{\boldsymbol uwkj}=0,1}(j-1)^{z_{\boldsymbol uwkj}}(1-d_{\mid \boldsymbol u\mid})^{1-z_{\boldsymbol uwkj}}
+	\end{align}\
+$$
+
+と表すことができます。
+
+この式(18)は補助変数$x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}$について、周辺化を行ったものと考えることができます。
+
+つまり、
+
+$$
+	\begin{align}
+		p(\boldsymbol \Theta, x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}) &= \prod_w G_0(w)^{c_0w\cdot}\prod_{\boldsymbol u}
+			\frac{1}{\Gamma(c_{\boldsymbol u \cdot\cdot} - 1)}
+			\int_0^1x_{\boldsymbol u}^{\theta_{\mid \boldsymbol u \mid}}(1-x_{\boldsymbol u})^{c_{\boldsymbol u \cdot\cdot-2}}dx
+			\prod_{i=1}^{t_{\boldsymbol u\cdot-1}}
+			\sum_{y_{\boldsymbol u i}=0,1}\theta_{\mid \boldsymbol u \mid}^{y_{\boldsymbol u i}}(d_{\mid \boldsymbol u \mid}i)^{1-y_{\boldsymbol u i}}
+			\prod_w\prod_{k=1}^{t_{\boldsymbol u\cdot}}\sum_{z_{\boldsymbol uwkj}=0,1}(j-1)^{z_{\boldsymbol uwkj}}(1-d_{\mid \boldsymbol u\mid})^{1-z_{\boldsymbol uwkj}}
+		p(\boldsymbol \Theta) &= \int_{x_{\boldsymbol u}}\int_{y_{\boldsymbol u i}}\int_{z_{\boldsymbol uwkj}}p(\boldsymbol \Theta, x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj})
+	\end{align}\
+$$
