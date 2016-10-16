@@ -12,6 +12,8 @@ excerpt_separator: <!--more-->
 
 - Pitman-Yor言語モデルのハイパーパラメータのサンプリングにおける更新式の詳細な導出について
 
+<!--more-->
+
 ## はじめに
 
 最近Deep LearningのRNN言語モデル（というかLSTM）が流行っていますが、私は[教師なし形態素解析](http://chasen.org/~daiti-m/paper/nl190segment.pdf)などにも応用できるベイズ階層言語モデルに注目し、過去に[階層Pitman-Yor言語モデル（HPYLM）](/2016/07/26/A_Hierarchical_Bayesian_Language_Model_based_on_Pitman-Yor_Processes/)や[可変長n-gram言語モデル（VPYLM）](/2016/07/28/Pitman-Yor%E9%81%8E%E7%A8%8B%E3%81%AB%E5%9F%BA%E3%81%A5%E3%81%8F%E5%8F%AF%E5%A4%89%E9%95%B7n-gram%E8%A8%80%E8%AA%9E%E3%83%A2%E3%83%87%E3%83%AB/)を実装してきました。（教師なし形態素解析も実装済みですので今後記事を書く予定です）
@@ -309,7 +311,7 @@ $$
 
 と表すことができます。
 
-この式(18)は補助変数$x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}$について、周辺化を行ったものと考えることができます。
+この式(18)は補助変数$x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}$について、周辺化を行っているものとして考えることができます。
 
 つまり、
 
@@ -317,10 +319,141 @@ $$
 	\begin{align}
 		p(\boldsymbol \Theta, x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}) &= \prod_w G_0(w)^{c_0w\cdot}\prod_{\boldsymbol u}
 			\frac{1}{\Gamma(c_{\boldsymbol u \cdot\cdot} - 1)}
-			\int_0^1x_{\boldsymbol u}^{\theta_{\mid \boldsymbol u \mid}}(1-x_{\boldsymbol u})^{c_{\boldsymbol u \cdot\cdot-2}}dx
+			x_{\boldsymbol u}^{\theta_{\mid \boldsymbol u \mid}}(1-x_{\boldsymbol u})^{c_{\boldsymbol u \cdot\cdot-2}}dx
 			\prod_{i=1}^{t_{\boldsymbol u\cdot-1}}
-			\sum_{y_{\boldsymbol u i}=0,1}\theta_{\mid \boldsymbol u \mid}^{y_{\boldsymbol u i}}(d_{\mid \boldsymbol u \mid}i)^{1-y_{\boldsymbol u i}}
-			\prod_w\prod_{k=1}^{t_{\boldsymbol u\cdot}}\sum_{z_{\boldsymbol uwkj}=0,1}(j-1)^{z_{\boldsymbol uwkj}}(1-d_{\mid \boldsymbol u\mid})^{1-z_{\boldsymbol uwkj}}
-		p(\boldsymbol \Theta) &= \int_{x_{\boldsymbol u}}\int_{y_{\boldsymbol u i}}\int_{z_{\boldsymbol uwkj}}p(\boldsymbol \Theta, x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj})
+			\theta_{\mid \boldsymbol u \mid}^{y_{\boldsymbol u i}}(d_{\mid \boldsymbol u \mid}i)^{1-y_{\boldsymbol u i}}
+			\prod_w\prod_{k=1}^{t_{\boldsymbol u\cdot}}(j-1)^{z_{\boldsymbol uwkj}}(1-d_{\mid \boldsymbol u\mid})^{1-z_{\boldsymbol uwkj}}\\
+		p(\boldsymbol \Theta) &= \int_{x_{\boldsymbol u}}\sum_{y_{\boldsymbol u i}}\sum_{z_{\boldsymbol uwkj}}p(\boldsymbol \Theta, x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj})
 	\end{align}\
 $$
+
+と考えます。
+
+さらにハイパーパラメータの$d$と$\theta$を確率変数とみなし、式(19)を
+
+$$
+	\begin{align}
+		p(\boldsymbol \Theta, x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj} \mid  \theta_0,..., \theta_{\mid \boldsymbol u \mid}, d_0,...,d_{\mid \boldsymbol u \mid}) &= \prod_w G_0(w)^{c_0w\cdot}\prod_{\boldsymbol u}
+			\frac{1}{\Gamma(c_{\boldsymbol u \cdot\cdot} - 1)}
+			x_{\boldsymbol u}^{\theta_{\mid \boldsymbol u \mid}}(1-x_{\boldsymbol u})^{c_{\boldsymbol u \cdot\cdot-2}}dx
+			\prod_{i=1}^{t_{\boldsymbol u\cdot-1}}
+			\theta_{\mid \boldsymbol u \mid}^{y_{\boldsymbol u i}}(d_{\mid \boldsymbol u \mid}i)^{1-y_{\boldsymbol u i}}
+			\prod_w\prod_{k=1}^{t_{\boldsymbol u\cdot}}(j-1)^{z_{\boldsymbol uwkj}}(1-d_{\mid \boldsymbol u\mid})^{1-z_{\boldsymbol uwkj}}
+	\end{align}\
+$$
+
+であると考えます。
+
+ここで1つのハイパーパラメータに着目し、ベイズの定理からその事後分布を考えます。
+
+例えば$d_0$であれば
+
+$$
+	\begin{align}
+		p(d_0, x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj} \mid \theta_0,..., \theta_{\mid \boldsymbol u \mid}, d_1,...,d_{\mid \boldsymbol u \mid} \boldsymbol \Theta)
+			&\propto 
+			p(d_0)\prod_w G_0(w)^{c_0w\cdot}\prod_{\boldsymbol u}
+			\frac{1}{\Gamma(c_{\boldsymbol u \cdot\cdot} - 1)}
+			x_{\boldsymbol u}^{\theta_{\mid \boldsymbol u \mid}}(1-x_{\boldsymbol u})^{c_{\boldsymbol u \cdot\cdot-2}}dx
+			\prod_{i=1}^{t_{\boldsymbol u\cdot-1}}
+			\theta_{\mid \boldsymbol u \mid}^{y_{\boldsymbol u i}}(d_0i)^{1-y_{\boldsymbol u i}}
+			\prod_w\prod_{k=1}^{t_{\boldsymbol u\cdot}}(j-1)^{z_{\boldsymbol uwkj}}(1-d_0)^{1-z_{\boldsymbol uwkj}}
+	\end{align}\
+$$
+
+となります。
+
+（$\propto$は比例を意味します）
+
+ここで$p(d_0 \mid x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}, \boldsymbol \Theta)$を以下のように定義します。
+
+$$
+	\begin{align}
+		p(d_0 \mid x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}, \boldsymbol \Theta)
+			&\propto 
+			p(d_0)\prod_{i=1}^{t_{\boldsymbol u\cdot-1}}
+			(d_0i)^{1-y_{\boldsymbol u i}}
+			\prod_w\prod_{k=1}^{t_{\boldsymbol u\cdot}}(1-d_0)^{1-z_{\boldsymbol uwkj}}\\
+
+	\end{align}\
+$$
+
+これは式(22)から$d_0$の影響を受ける項のみを取り出したものです。
+
+$d_0$は事前分布としてベータ分布$Beta(a_0, b_0)$を仮定しているため、式(23)は
+
+$$
+	\begin{align}
+		p(d_0 \mid x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}, \boldsymbol \Theta)
+			&\propto 
+			d_0^{a-1}(1-d_0)^{b-1}
+			\prod_{i=1}^{t_{\boldsymbol u\cdot-1}}
+			(d_0i)^{1-y_{\boldsymbol u i}}
+			\prod_w\prod_{k=1}^{t_{\boldsymbol u\cdot}}(1-d_0)^{1-z_{\boldsymbol uwkj}}\nonumber\\
+			&=
+			d_0^{
+				a_0
+				+\sum_{i=1}^{t_{\boldsymbol u-1}}
+				(1-y_{\boldsymbol u i})
+				-1
+			}
+			(1-d_0)^{
+				b_0+\sum_w\sum_{k=1}^{t_{\boldsymbol u\cdot}}(1-z_{\boldsymbol uwkj})-1
+			}\nonumber\\
+			&=
+			Beta(
+				a_0
+				+\sum_{\boldsymbol u:\mid\boldsymbol u\mid=0,t_{\boldsymbol u\cdot}\geq2}
+				\sum_{i=1}^{t_{\boldsymbol u}-1}(1-y_{\boldsymbol u i})
+				,
+				b_0
+				+\sum_{\boldsymbol u,w,k:\mid\boldsymbol u\mid=0,c_{\boldsymbol uwk}\geq2}
+				\sum_{j=1}^{c_{\boldsymbol uwk}-1}(1-z_{\boldsymbol uwkj})
+			)
+
+	\end{align}\
+$$
+
+となります。
+
+$y_{\boldsymbol ui}$は、式(22)から影響を与える項を取り出すとベルヌーイ分布の形をしていることがわかります。
+
+ただしベルヌーイ分布では足して1になる制約があるため、事後分布を以下のように定義します。
+
+$$
+	\begin{align}
+		p(y_{\boldsymbol ui} \mid d_0, \theta_0, \boldsymbol \Theta) \propto
+		(\frac{\theta_0}{\theta_0 + d_0i})^{y_{\boldsymbol ui}}
+		(\frac{d_0i}{\theta_0 + d_0i})^{1-y_{\boldsymbol ui}}
+	\end{align}\
+$$
+
+よって$y_{\boldsymbol ui}$は以下のベルヌーイ分布からサンプリングし値を決定します。
+
+$$
+	\begin{align}
+		y_{\boldsymbol ui} \sim Bernoulli\left(\frac{\theta_0}{\theta_0 + d_0i}\right)
+	\end{align}\
+$$
+
+$z_{\boldsymbol uwkj}$も式(22)から影響を与える項を取り出すとベルヌーイ分布の形をしているため、$y_{\boldsymbol ui}$と同様に
+
+$$
+	\begin{align}
+		p(z_{\boldsymbol uwkj} \mid d_0, \theta_0, \boldsymbol \Theta) &\propto
+		(\frac{j-1}{j-d_0})^{z_{\boldsymbol uwkj}}
+		(\frac{1-d_0}{j-d_0})^{1-z_{\boldsymbol uwkj}}\\
+		z_{\boldsymbol uwkj} &\sim Bernoulli\left(\frac{j-1}{j-d_0}\right)
+	\end{align}\
+$$
+
+のようにサンプリングし値を決定します。
+
+$y_{\boldsymbol ui}$と$z_{\boldsymbol uwkj}$が決まれば、式(24)から新しい$d_0$をサンプリングします。
+
+$\theta_{\mid\boldsymbol u\mid}$の更新式も同様にして導出することができますが今回は省略します。
+
+## おわりに
+
+このサンプリング手法でなぜ大丈夫なのかがまだ理解できていません。
+
