@@ -311,7 +311,7 @@ $$
 
 と表すことができます。
 
-この式(18)は補助変数$x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}$について、周辺化を行っているものとして考えることができます。
+この式(18)は補助変数$x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}$について、周辺化を行って消去したものとして考えることができます。
 
 つまり、
 
