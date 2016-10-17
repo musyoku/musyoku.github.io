@@ -386,7 +386,7 @@ $$
 	\begin{align}
 		p(d_0 \mid x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj}, \boldsymbol \Theta)
 			&\propto 
-			d_0^{a-1}(1-d_0)^{b-1}
+			d_0^{a_0-1}(1-d_0)^{b_0-1}
 			\prod_{i=1}^{t_{\boldsymbol u\cdot-1}}
 			(d_0i)^{1-y_{\boldsymbol u i}}
 			\prod_w\prod_{k=1}^{t_{\boldsymbol u\cdot}}(1-d_0)^{1-z_{\boldsymbol uwkj}}\nonumber\\
