@@ -136,11 +136,11 @@ $$
 
 となります。
 
-今回は基底分布から生成されたため、式(4)の第二項で$c_{\cdot}=2$、$t_{\cdot}=1$として得られた確率
+今回は基底分布から生成されたため、式(4)の第二項で$c_{\cdot}=2$、$t_{\cdot}=1$として得られる、3人目の客が2番目のテーブルに座る確率
 
 $$
 	\begin{align}
-		p(x_3=w_2 \mid \boldsymbol \Theta) = \frac {\theta+d}{\theta+2}G_0(w_2)
+		p(k_3=2 \mid \boldsymbol \Theta) = \frac {\theta+d}{\theta+2}G_0(w_2)
 	\end{align}\
 $$
 
@@ -176,11 +176,11 @@ $$
 
 となります。
 
-式(4)の第1項で2番目のテーブルの客数$c_2=2$、総客数$c_{\cdot}=4$として得られた確率
+式(4)の第1項で2番目のテーブルの客数$c_2=2$、総客数$c_{\cdot}=4$として得られる、5人目の客が2番目のテーブルに座る確率
 
 $$
 	\begin{align}
-		p(x_5=w_2 \mid \boldsymbol \Theta) = \frac {2-d}{\theta+4}
+		p(k_5=2 \mid \boldsymbol \Theta) = \frac {2-d}{\theta+4}
 	\end{align}\
 $$
 
