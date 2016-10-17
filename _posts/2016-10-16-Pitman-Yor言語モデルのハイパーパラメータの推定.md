@@ -350,7 +350,7 @@ $$
 
 $$
 	\begin{align}
-		p(d_0, x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj} \mid \theta_0,..., \theta_{\mid \boldsymbol u \mid}, d_1,...,d_{\mid \boldsymbol u \mid} \boldsymbol \Theta)
+		p(d_0, x_{\boldsymbol u},y_{\boldsymbol u i},z_{\boldsymbol uwkj} \mid \theta_0,..., \theta_{\mid \boldsymbol u \mid}, d_1,...,d_{\mid \boldsymbol u \mid}, \boldsymbol \Theta)
 			&\propto 
 			p(d_0)\prod_w G_0(w)^{c_0w\cdot}\prod_{\boldsymbol u}
 			\frac{1}{\Gamma(c_{\boldsymbol u \cdot\cdot} - 1)}
