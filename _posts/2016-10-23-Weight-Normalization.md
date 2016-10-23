@@ -16,7 +16,7 @@ excerpt_separator: <!--more-->
 
 ## はじめに
 
-Weight Normalizationは、ニューラルネットの重みベクトル$w$を
+Weight Normalizationは、ニューラルネットの重みベクトル$\boldsymbol w$を
 
 $$
 	\begin{align}
@@ -26,7 +26,7 @@ $$
 
 のように、ベクトル$\boldsymbol v$とスカラー$g$に分解します。
 
-まあｔ，これらのパラメータで誤差関数$L$を微分した時の勾配はそれぞれ
+また、これらのパラメータで誤差関数$L$を微分した時の勾配はそれぞれ
 
 $$
 	\begin{align}
