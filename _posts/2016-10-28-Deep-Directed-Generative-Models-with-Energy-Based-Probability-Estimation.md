@@ -158,9 +158,13 @@ $H(P_{\boldsymbol \Phi}(\boldsymbol x))$はエントロピーです。
 
 負のエントロピーを減少させる（つまりエントロピーを増大させる）ことで、生成されるサンプルが多様性を持つようになるため、この項は局所解を避ける正則化項として働きます。
 
-ただしこのエントロピーは解析的に求められないのですが、論文によるとBatch Normalizationレイヤーのスケールパラメータを正規分布の標準偏差とみなし、正規分布のエントロピーを計算することで近似することができるそうです。
+このエントロピーは解析的に求められないのですが、論文によるとBatch Normalizationレイヤーのスケールパラメータを正規分布の標準偏差とみなし、正規分布のエントロピーを計算することで近似することができるそうです。
 
 ## 実装
+
+私の実装はGithubで公開しています。
+
+[https://github.com/musyoku/ddgm](https://github.com/musyoku/ddgm)
 
 論文に実験の詳細がほとんどかかれていないため試行錯誤を要しましたが、今のところ得られた知見は以下のとおりです。
 
@@ -177,10 +181,6 @@ $H(P_{\boldsymbol \Phi}(\boldsymbol x))$はエントロピーです。
 またエントロピーの計算ではBatch Normalizationのスケールパラメータを使うのですが、スケールにも誤差を逆伝播し値を更新する必要があります。
 
 私はchainerのBatchNormalizationレイヤーのgammaを取ってきて計算していますが、正しく学習できているか不明です。
-
-実装はGithubで公開しています。
-
-[https://github.com/musyoku/ddgm](https://github.com/musyoku/ddgm)
 
 ### product of expertの計算について
 
@@ -213,6 +213,8 @@ Adversarial AutoEncoderのときに使ったガウス混合分布と渦巻き型
 [https://gfycat.com/DarlingShowyHypsilophodon](https://gfycat.com/DarlingShowyHypsilophodon)
 
 [https://gfycat.com/UnrulyMisguidedHornedviper](https://gfycat.com/UnrulyMisguidedHornedviper)
+
+灰色が真の分布、赤い点はDGMからのサンプリングです。
 
 ### MNIST
 
