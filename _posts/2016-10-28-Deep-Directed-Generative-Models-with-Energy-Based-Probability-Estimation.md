@@ -182,6 +182,26 @@ $H(P_{\boldsymbol \Phi}(\boldsymbol x))$はエントロピーです。
 
 [https://github.com/musyoku/ddgm](https://github.com/musyoku/ddgm)
 
+### product of expertの計算について
+
+式(5)の計算について注意点があります。
+
+この式は${\rm log}(1+{\rm exp}(x))$の形をしていますが、これはsoftplus関数と呼ばれるもので、
+
+$$
+	\begin{align}
+		{\rm log}\left(1+e^{x}\right)\nonumber
+		&= {\rm max}(x, 0) + {\rm log}\left(1+{\rm exp}(-\mid x \mid)\right)\nonumber\\
+		&= {\rm softplus}(x)
+	\end{align}\
+$$
+
+chainerのfunctions.softplusを使って計算することができます。
+
+しかし、functions.softplusの現在の実装（v1.17）ではオーバーフローを起こす可能性があるため、私がGithubに上げたコードではsoftplus関数を修正し、tanhを用いたオーバーフローを起こさない等価な式で置き換えています。
+
+普通は起きないと思うのでそれほど心配することはありませんが。
+
 ## 実験
 
 ### 2次元データ
