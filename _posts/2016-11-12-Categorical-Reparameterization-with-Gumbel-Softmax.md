@@ -12,6 +12,8 @@ excerpt_separator: <!--more-->
 - [Categorical Reparameterization with Gumbel-Softmax](https://arxiv.org/abs/1611.01144) を読んだ
 - [Auxiliary Deep Generative Models](https://arxiv.org/abs/1602.05473)に組み込んで実験した
 
+<!--more-->
+
 ## はじめに
 
 Deep Learningなどでクラス分類を行う場合、カテゴリカル分布と呼ばれる分布を用いて属するクラスの確率を求めると思います。
