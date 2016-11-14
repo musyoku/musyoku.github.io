@@ -204,6 +204,8 @@ $$
 
 この計算や$y$の周辺化の実装は[前回のVAEの記事](/2016/07/02/semi-supervised-learning-with-deep-generative-models/)を参考にしてください。
 
+また[Gumbel-Softmaxを使った高速化](http://musyoku.github.io/2016/11/12/Categorical-Reparameterization-with-Gumbel-Softmax/)もあります。合わせてお読みください。
+
 ## MNISTの学習結果
 
 $N_{MC}=1, 5$としてADGMとSDGMを学習させました。
