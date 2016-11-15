@@ -167,3 +167,7 @@ Alice was beginning to think that walk with an M , " and that you weren't to tal
 私の最終目的はPythonでNPYLMを用いた教師なし形態素解析をすることで、HPYLMやVPYLMはその副産物です。
 
 今回は、C++でメインの処理とインターフェースを作りPythonから利用する方法が知りたかったので練習として作成しました。
+
+## 追記
+
+今気づきましたがオーダーの推定値に0があるのはバグの可能性が高いのでコードを見直します。
