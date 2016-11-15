@@ -48,8 +48,8 @@ LeCun先生の論文[Energy-based Generative Adversarial Network](https://arxiv.
 以下に二乗誤差で学習する例を示します。
 
 ```
-from link import Linear, BatchNormalization
-from function import Activation
+from layers import Linear, BatchNormalization
+from functions import Activation
 from chain import Chain
 
 x = np.random.normal(scale=1, size=(128, 28*28)).astype(np.float32)
