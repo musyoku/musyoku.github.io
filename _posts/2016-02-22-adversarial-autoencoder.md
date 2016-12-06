@@ -4,8 +4,6 @@ title: Adversarial Autoencoders [arXiv:1511.05644]
 category: 論文
 tags:
 - Chainer
-- 実装
-- 論文読み
 - Adversarial Autoencoder
 excerpt_separator: <!--more-->
 ---
