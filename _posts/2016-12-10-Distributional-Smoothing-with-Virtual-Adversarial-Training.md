@@ -3,8 +3,7 @@ layout: post
 title: Distributional Smoothing with Virtual Adversarial Training [arXiv:1507.00677]
 category: 論文
 tags:
-- VPYLM
-- HPYLM
+- Chainer
 excerpt_separator: <!--more-->
 ---
 
