@@ -308,10 +308,121 @@ $n_{(t_{i-2}, t_{i-1}, t_i)}$はトライグラムのカウントです。
 
 $n_{(t_{i-2}, t_{i-1}, t_i)}$と$n_{(t_i, w_i)}$はともに$i-1$番目までの観測結果のカウントであることに注意が必要です。
 
+ちなみにこのカウントは添字$i$とは無関係です。
+
+たとえば$t_{i-2}=1,t_{i-1}=4,t_{i}=3$の場合と、$t_{i-9997}=1,t_{i-9998}=4,t_{i-9999}=3$の場合では、ともに同じカウント$n_{(1,4,3)}$を参照します。
+
 ### 品詞の推定
 
+今回のモデルで品詞を推定するにはギブスサンプリングを用いて品詞タグの事後分布からサンプリングします。
 
+$$
+	\begin{align}
+		P(\boldsymbol t \mid \boldsymbol w, \alpha, \beta) \propto P(\boldsymbol w \mid \boldsymbol t, \beta)P(\boldsymbol t \mid \alpha)\\
+	\end{align}\
+$$
 
+ただし$\boldsymbol t$の要素を一つづつサンプリングして更新していくため、実際は以下の$t_i$の条件付き確率から品詞をサンプリングします。
+
+$$
+	\begin{align}
+		P(t_i \mid \boldsymbol t_{-1}, \boldsymbol w, \alpha, \beta) \propto 
+		\frac{n_{t_i, w_i} + \beta}{n_{t_i} + W_t\beta}\cdot
+		\frac{n_{(t_{i-2}, t_{i-1}, t_i)} + \alpha}{n_{(t_{i-2}, t_{i-1})} + T\alpha}\cdot
+		\frac{n_{(t_{i-1}, t_{i}, t_{i+1})} + I(t_{i-2} = t_{i-1} = t_i = t_{i+1}) + \alpha}{n_{(t_{i-1}, t_{i})} + I(t_{i-2} = t_{i-1} = t_i) + T\alpha}\cdot\\
+		\frac{n_{(t_{i}, t_{i+1}, t_{i+2})} + I(t_{i-2} = t_i = t_{i+2} , t_{i-1} = t_{i+1}) + I(t_{i-1} = t_i = t_{i+1} = t_{i+2}) + \alpha}{n_{(t_{i}, t_{i+1})} + I(t_{i-2} = t_i , t_{i-1} = t_{i+1}) + T\alpha}\cdot
+	\end{align}\
+$$
+
+$I(\cdot)$は引数が真のときに1を返し、それ以外の場合は0を返す関数であり、トライグラムカウントや品詞-単語ペアのカウントを補正する項になっています。
+
+この部分の説明は後で行ないます。
+
+### $\alpha,\beta$の推定
+
+ディリクレ分布を調整するハイパーパラメータの$\alpha$と$\beta$は定数にしてもよいのですが、メトロポリス・ヘイスティングス法で最適な値に更新することができます。
+
+これについては以下の文献が詳しいです。
+
+[http://ebsa.ism.ac.jp/ebooks/sites/default/files/ebook/1881/pdf/vol3_ch10.pdf](http://ebsa.ism.ac.jp/ebooks/sites/default/files/ebook/1881/pdf/vol3_ch10.pdf)
+
+メトロポリス・ヘイスティングス法では提案分布と呼ばれる分布を任意に設定し、そこからのサンプルを採択確率によって採択するか棄却するかを決定します。
+
+論文によると$\alpha$の推定では提案分布を平均$\alpha$、分散$(0.1\cdot\alpha)^2$の正規分布としています。
+
+この提案分布を用いて、真の$\alpha$の分布である$\pi(\alpha)$からサンプリングを行う手順は以下のとおりです。
+
+- 新しい$\alpha^{new}$を提案分布$q(\alpha^{new} \mid \alpha^{(t)}) = {\cal N}(\alpha^{(t)}, (0.1\cdot\alpha^{(t)})^2)$から発生させる
+- $u$を一様分布${\cal U}(0,1)$から発生させ、以下に従って更新する
+
+$$
+	\begin{align}
+		\alpha^{t+1} = 
+			\begin{cases}
+				\alpha^{new} & {\rm if} \  u \leq {\cal A}(\alpha^{(t)}, \alpha^{new})\\
+				\alpha^{(t)} & {\rm otherwise}.
+			\end{cases}\
+	\end{align}\
+$$
+
+${\cal A}(\alpha^{(t)}, \alpha^{new})$が採択確率で、以下のように求めます。
+
+$$
+	\begin{align}
+		{\cal A}(\alpha^{(t)}, \alpha^{new}) = {\rm min}\left\{1, \frac{\pi(\alpha^{new})q(\alpha^{(t)} \mid \alpha^{new})}{\pi(\alpha^{(t)})q(\alpha^{new}\mid\alpha^{(t)})}\right\}
+	\end{align}\
+$$
+
+論文によると$\pi(\alpha) = p(\boldsymbol t \mid \boldsymbol w, \alpha)$にするというニュアンスの書き方になっているため、確率ではなく$\alpha$の尤度を用いるようです。
+
+（$p(\boldsymbol t \mid \boldsymbol w, \alpha)$は$\boldsymbol t$と$\boldsymbol w$が固定されているため$\alpha$の関数とみなすことができますが、$\alpha$を動かすことで$\boldsymbol t$を与えた$\alpha$として尤もらしい値が何なのかを計算することができ、これを尤度と言います）
+
+また論文の"a term correcting for the asymmetric proposal distribution"とあるのはおそらく$\frac{q(\alpha^{(t)} \mid \alpha^{new})}{q(\alpha^{new}\mid\alpha^{(t)})}$のことであると考えられます。
+
+なぜ"asymmetric"なのかというと、もし両方とも分散が同じであれば（"symmetric"であれば）$q(\alpha^{(t)} \mid \alpha^{new}) = q(\alpha^{new}\mid\alpha^{(t)})$となって消えるからです。
+
+この項は正規分布の密度関数を考えると簡単に値を求めることができます。
+
+$$
+	\begin{align}
+		\sigma^{new} &= 0.1\cdot\alpha^{new}\\
+		\sigma^{(t)} &= 0.1\cdot\alpha^{(t)}\\
+		\frac{q(\alpha^{(t)} \mid \alpha^{new})}{q(\alpha^{new}\mid\alpha^{(t)})} &= 
+		\frac
+		{
+			\frac{1}{\sqrt{2\pi(\sigma^{new})^2}}{\rm exp}\left( -\frac{(\alpha^{(t)} - \alpha^{new})^2}{2\cdot{\sigma_{\alpha^{new}}}^2}\right)
+		}
+		{
+			\frac{1}{\sqrt{2\pi(\sigma^{(t)})^2}}{\rm exp}\left( -\frac{(\alpha^{(new)} - \alpha^{(t)})^2}{2\cdot{\sigma_{\alpha^{(t)}}}^2}\right)
+		}\\
+		&= \frac{\alpha^{(t)}}{\alpha^{new}}{\rm exp}
+		\left(
+			\frac{(\alpha^{new} - \alpha^{(t)})^2}{2\cdot{\sigma_{\alpha^{(t)}}}^2}
+			-\frac{(\alpha^{(t)} - \alpha^{new})^2}{2\cdot{\sigma_{\alpha^{new}}}^2}
+		\right)
+	\end{align}\
+$$
+
+$\sigma^{new} = \sigma^{(t)}$とすると正規分布が"symmetric"になり、上の比は常に$1$になります。
+
+以上より採択確率は以下のようになります。
+
+$$
+	\begin{align}
+		{\cal A}(\alpha^{(t)}, \alpha^{new}) = {\rm min}\left\{1, \frac{
+			p(\boldsymbol t \mid \boldsymbol w, \alpha^{new})
+		}{
+			p(\boldsymbol t \mid \boldsymbol w, \alpha^{(t)})
+		}
+		\cdot
+		\frac{\alpha^{(t)}}{\alpha^{new}}{\rm exp}
+		\left(
+			\frac{(\alpha^{new} - \alpha^{(t)})^2}{2\cdot{\sigma_{\alpha^{(t)}}}^2}
+			-\frac{(\alpha^{(t)} - \alpha^{new})^2}{2\cdot{\sigma_{\alpha^{new}}}^2}
+		\right)
+		\right\}
+	\end{align}\
+$$
 
 
 
