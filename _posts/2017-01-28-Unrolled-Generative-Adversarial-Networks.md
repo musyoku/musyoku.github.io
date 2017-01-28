@@ -97,3 +97,97 @@ Chainer 1.20で実装しました。
 
 [https://github.com/musyoku/unrolled-gan](https://github.com/musyoku/unrolled-gan)
 
+計算の流れは以下のようになります。（$K=2$）
+
+![image](/images/post/2017-01-29/unrolled_gan.png)
+
+実装も既存のGANがあれば十数行追加するだけでです。
+
+私は重みの退避と再設定機能だけ追加しました。
+
+```
+def cache_discriminator_weights(self):
+	self.cached_weights = {}
+	xp = self.xp
+	optimizer = self.discriminator.optimizer
+	for name, param in optimizer.target.namedparams():
+		with cuda.get_device(param.data):
+			self.cached_weights[name] = xp.copy(param.data)
+
+def restore_discriminator_weights(self):
+	optimizer = self.discriminator.optimizer
+	for name, param in optimizer.target.namedparams():
+		with cuda.get_device(param.data):
+			if name not in self.cached_weights:
+				raise Exception()
+			param.data = self.cached_weights[name]
+```
+
+パラメータの学習ですが、まず$K$回Discriminatorを更新します。
+
+この時1回目の更新で得られた重みをコピーして保存しておきます。
+
+その後Generatorを更新してから保存したDiscriminatorの重みで現在のDiscriminatorの重みを上書きします。
+
+## 実験
+
+今回の手法はGANの拡張と言うよりは、従来のGANが今回の手法の特殊なケースだっというものなので、すでに実装しているGANをほとんど変えずに使うことができます。
+
+そこで前回実装した[Improved Techniques for Training GANs](/2016/12/23/Improved-Techniques-for-Training-GANs/)のタスクをそのままUnrolled GANで行いました。
+
+## Mixture of Gaussians Dataset
+
+まず論文で主張されている、Unrolled GANは"mode collapse"が起こりにくい、ということを確認します。
+
+用いるデータは平均をずらした正規分布の混合分布から生成させたデータです。
+
+Generatorの入力ノイズは論文通りに256次元とします。
+
+1つめのデータは8つの正規分布の混合分布で以下のような形をしています。
+
+![image](/images/post/2017-01-29/circle_true.png)
+
+左が散布図で右がKDE（Kernel Density Estimation）です。
+
+学習結果は以下のようになりました。
+
+![image](/images/post/2017-01-29/circle_256.png)
+
+上の2段が通常のGANで下の2段がUnrolled GANです。
+
+通常のGANは学習に失敗し、最頻値（mode）のうちの1つに集まってしまいました。
+
+これが"mode collapse"と呼ばれる現象だと思います。
+
+それに対して5回のunrollingを行うGANでは学習初期から生成点が分散し、目標分布をうまく捉えることができています。
+
+次に以下のような10個の正規分布の混合分布のデータを用いてGANを学習させました。
+
+![image](/images/post/2017-01-29/double_true.png)
+
+結果は以下のとおりです。
+
+![image](/images/post/2017-01-29/double_256.png)
+
+このデータでもUnrolled GANは安定して目標分布を捉えています。
+
+ただしこの実験には一つ疑問があり、データ$x$が2次元なのに対しノイズ$z$が256次元なのは多すぎであると考えられます。
+
+そこで$z$を16次元にして上記2つのデータセットで再実験した結果が以下になります。
+
+![image](/images/post/2017-01-29/circle_16.png)
+
+![image](/images/post/2017-01-29/double_16.png)
+
+通常のGANが謎の粘りを見せ最終的には両者とも分布を正しく捉えることができました。
+
+しかしここでも通常GANは不安定な部分があるのに対し、Unrolled GANは学習初期から安定していることがわかります。
+
+
+## MNISTの半教師あり学習
+
+前回の[Improved Techniques for Training GANs](/2016/12/23/Improved-Techniques-for-Training-GANs/)では、MNISTの半教師あり学習をGANでやるとほぼワンショット学習でも高い認識精度が得られることが分かりました。
+
+そこでUnrolled GANで同様にMNISTの半教師あり学習を行ないました。
+
+
