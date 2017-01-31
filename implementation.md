@@ -8,6 +8,11 @@ permalink: /implementation/
 
 ## Deep Learning
 
+### [Unrolled Generative Adversarial Networks](https://github.com/musyoku/unrolled-gan/)
+
+- GANの学習を安定化させるテクニックの実装です
+- 実装難易度: **1**
+
 ### [Improved Techniques for Training GANs](https://github.com/musyoku/improved-gan/)
 
 - GANの学習を安定化させるテクニックの実装です
@@ -21,6 +26,7 @@ permalink: /implementation/
 ### [Distributional Smoothing with Virtual Adversarial Training](https://github.com/musyoku/vat/)
 
 - クラス分類の汎化性能を高めます
+- 予測分布$p(y \mid x)$が乱れてしまうようなノイズ$r$をデータ$x$に加え、$p(y \mid x+r)$が滑らかになるように学習します
 - MNISTの半教師あり学習でほぼワンショット学習を達成できます
 - 実装難易度: **2**
 
@@ -53,7 +59,7 @@ permalink: /implementation/
 
 - 人間とほぼ同等な品質の音声生成ができるモデルです
 - 具体的なことが何も書かれていないため実装者によるところが大きいです
-- 計算量が大きすぎるため個人では実験することが困難だと思われます
+- 計算量が大きすぎるため個人では実験することが困難だと思います
 - 実装難易度: **3**
 
 ### [Semi-Supervised Learning with Deep Generative Models](https://github.com/musyoku/variational-autoencoder/)
@@ -89,14 +95,16 @@ permalink: /implementation/
 - 文字列データから教師なしで文字nグラムモデルと単語nグラムモデルを学習します
 - 単語nグラムの学習の際に文字列の単語分割を推定します
 - 学習が進むにつれて自然な単語分割を教師なしで獲得できます
-- ノンパラメトリックベイズの知識が必要なため、論文の解読に1ヵ月、実装に3ヶ月を要しました
+- ノンパラメトリックベイズの知識が必要なため、論文の解読に2ヵ月、実装に3ヶ月を要しました
 - デバッグが非常に辛いです
+- 現時点の最高難易度(2017/01)
 - 実装難易度: **6**
 
 ### [Pitman-Yor過程に基づく可変長n-gram言語モデル](https://github.com/musyoku/vpylm-python/)
 
 - VPYLMです
 - 言語モデルは通常バイグラムやトライグラムのように文脈長が固定ですが、これを可変長にできるようにしたモデルです
+- 可変長といえばRNN言語モデルなどもそうですが、VPYLMの利点はどのオーダーからデータが生成されたかを予測することができ、必要最低限のオーダーでモデルが学習されていきます
 - 実装難易度: **4**
 
 ### [A Hierarchical Bayesian Language Model based on Pitman-Yor Processes](https://github.com/musyoku/hpylm/)
@@ -104,7 +112,13 @@ permalink: /implementation/
 - HPYLMです
 - 言語モデルのスムージングをベイズ的に行えます
 - Kneser-NeyスムージングがHPYLMの近似であることが判明しました
-- 実装難易度: **4**
+- 実装難易度: **3**
+
+### [A Fully Bayesian Approach to Unsupervised Part-of-Speech Tagging](https://github.com/musyoku/unsupervised-pos-tagging/tree/master/bayesian-hmm/)
+
+- ベイズ的なアプローチにより教師なし品詞推定が行なえます
+- 品詞数は事前に要設定
+- 実装難易度: **3**
 
 ## ツール類
 
