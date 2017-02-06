@@ -289,7 +289,7 @@ $$
 
 は$t_{i-1}=t, t_{i-2}=t',\boldsymbol \tau^{(t,t')}$が与えられたときに$t_i$が${\rm Mult}(\boldsymbol \tau^{(t,t')})$から生成されることを表しています。
 
-可能な品詞タグの総数を$\mid T \mid$とすると、品詞の遷移確率$\boldsymbol \tau^{(t,t')}$は$\mid T \mid$個パラメータを持つ多項分布になります。
+可能な品詞タグの総数を$\mid T \mid$とすると、品詞の遷移確率$\boldsymbol \tau^{(t,t')}$は$\mid T \mid$個のパラメータを持つ多項分布になります。
 
 また単語の多項分布のパラメータ$\boldsymbol \omega^{(t)}$ですが、これの要素数は単語の総数$\mid W \mid$ではなく、品詞$t$として可能な単語の総数$\mid W_t \mid$個の要素からなります。
 
