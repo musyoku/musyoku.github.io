@@ -190,7 +190,9 @@ MNISTではweight decay版はあまり見栄えがよくありません。
 
 $n_{\rm critic}=2$で実験を行いました。
 
-生成結果です。
+weight decay版は学習が遅すぎたのでclipping版のみ結果を載せます。
+
+まず生成結果です。
 
 ![image](/images/post/2017-02-04/anime_gen.png)
 
