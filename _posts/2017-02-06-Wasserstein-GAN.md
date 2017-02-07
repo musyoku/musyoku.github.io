@@ -50,7 +50,7 @@ $f$はLipschitzな関数で$f:\cal X \to \double R$ということなので、�
 
 [リプシッツ写像](http://surgery.matrix.jp/lectures/josai/gen_top/gt2004a.pdf)によると、任意の$x, x' \in \cal X$を結ぶ直線の傾きがある実数を超えないような関数のことを言うそうです。
 
-ここで、パラメータ$\boldsymbol w$のニューラルネットでリプシッツな関数$f$を表現することができれば、Wassetstein距離は以下の最大化問題を解くことで近似できます。
+パラメータ$\boldsymbol w$のニューラルネットでリプシッツな関数$f$を表現することができれば、Wassetstein距離は以下の最大化問題を解くことで近似できます。
 
 $$
 	\begin{align}
@@ -109,6 +109,8 @@ WGANにおけるDiscriminatorは、本物のデータに対し大きな値を出
 $f_w(x) - f_w(\hat x)$がWasserstein距離を表しているため、Generatorは$f_w(\hat x)$を最大化することでWasserstein距離を最小化します。
 
 また$f_w(x)$がミニバッチ平均なのは$f:\cal X \to \double R$を満たすためです。
+
+$f_w(x)$はスカラーを出力する必要があるため、実際はDiscriminatorの出力を`sum`で総和を取ってスカラーに変換しますが、あらかじめ出力層のユニット数を1にしておくといったことはしなくても良さそうです。
 
 論文によると$\boldsymbol w$と$\boldsymbol \theta$は交互に更新しますが、$\boldsymbol w$を$n_{\rm critic}$回更新してから$\boldsymbol \theta$を1回だけ更新します。
 
