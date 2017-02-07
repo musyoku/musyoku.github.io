@@ -143,6 +143,8 @@ gan.backprop_generator(loss_generator)
 	- Leaky ReLUかReLUを使う
 - Batch NormalizationをDiscriminatorに入れると学習に失敗することがある
 	- 今回はDCGAN以外に使わなかった
+- 重みの初期値に気をつける
+	- $[-0.01, 0.01]$を超えたものはclipされるため、初期値の分散が大きいと全て-0.01か0.01になる
 
 ## $\boldsymbol w$のclippingについて
 
