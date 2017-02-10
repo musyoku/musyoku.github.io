@@ -214,7 +214,7 @@ WGANのメリットとして、Wasserstein距離が学習を重ねるに連れ�
 
 >**In no experiment did we see evidence of mode collapse for the WGAN algorithm.**
 
-確かにWGANはmode collapseを回避できています。
+確かにWGANはmode collapseを回避できているように見えます。
 
 MNISTやアニメ顔画像の結果を見ると回避しすぎて生成結果がモヤモヤしていますが、もっと生成結果が綺麗になる手法があればWGANはかなり強い生成モデルになるのではないでしょうか。
 
