@@ -1,6 +1,6 @@
 ---
 layout: post
-title: The Infinite Hidden Markov Modelによる教師なし品詞推定
+title: Infinite Hidden Markov Modelによる教師なし品詞推定
 category: 実装
 tags:
 - 自然言語処理
