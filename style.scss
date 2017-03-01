@@ -410,3 +410,25 @@ code.highlighter-rouge {
   padding: 2px 4px;
   margin: 0 2px;
 }
+
+
+.site-name a{
+  background-image: url("/images/logo_kemono.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  width: 600px;
+  height: 80px;
+  display: block;
+  overflow: hidden;
+  text-indent: 100%;
+  white-space: nowrap;
+  margin-top: -20px;
+}
+
+.site-description {
+  display: none;
+}
+
+.site-avatar {
+  display: none;
+}
