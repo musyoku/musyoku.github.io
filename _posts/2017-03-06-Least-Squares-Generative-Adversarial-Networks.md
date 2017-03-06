@@ -67,7 +67,7 @@ loss_g = 0.5 * (F.sum((d_fake - c) ** 2)) / batchsize_fake
 
 ## Mixture of Gaussians Dataset
 
-8つの正規分布の混合分布からデータが生成されているデータです。
+8つの正規分布の混合分布から生成されているデータです。
 
 mode collapseが起こりやすいようにノイズ$z$を256次元にしています。
 
