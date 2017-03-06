@@ -1,6 +1,6 @@
 ---
 layout: post
-title: PythonでNPYLMによる教師なし形態素解析をする
+title: PythonでNPYLMによる教師なし形態素解析
 category: 実装
 tags:
 - 自然言語処理
