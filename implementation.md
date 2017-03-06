@@ -8,6 +8,20 @@ permalink: /implementation/
 
 ## Deep Learning
 
+### [Least Squares GAN](https://github.com/musyoku/LSGAN/)
+
+- 正解ラベルに対する二乗誤差を用いて学習を行うGANです
+- 綺麗な画像が生成されます
+- なぜかMNISTを全く生成してくれませんでした（バグ？）
+- 実装難易度: **1**
+
+### [Wasserstein GAN](https://github.com/musyoku/wasserstein-gan/)
+
+- Wasserstein距離を最小化することで学習を行うGANです
+- mode collapseの回避能力に優れています
+- 実験を行った範囲では生成される画像が実データにあまり近くありませんでした
+- 実装難易度: **2**
+
 ### [Unrolled Generative Adversarial Networks](https://github.com/musyoku/unrolled-gan/)
 
 - GANの学習を安定化させるテクニックの実装です
@@ -97,7 +111,6 @@ permalink: /implementation/
 - 学習が進むにつれて自然な単語分割を教師なしで獲得できます
 - ノンパラメトリックベイズの知識が必要なため、論文の解読に2ヵ月、実装に3ヶ月を要しました
 - デバッグが非常に辛いです
-- 現時点の最高難易度(2017/01)
 - 実装難易度: **6**
 
 ### [Pitman-Yor過程に基づく可変長n-gram言語モデル](https://github.com/musyoku/vpylm-python/)
