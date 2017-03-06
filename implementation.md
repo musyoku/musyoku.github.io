@@ -133,6 +133,13 @@ permalink: /implementation/
 - 品詞数は事前に要設定
 - 実装難易度: **3**
 
+
+### [The Infinite Hidden Markov Model](https://github.com/musyoku/unsupervised-pos-tagging/tree/master/infinite-hmm/)
+
+- ベイズ的なアプローチにより教師なし品詞推定が行なえます
+- 品詞数もデータから推定できます
+- 実装難易度: **4**
+
 ## ツール類
 
 ### [Python tools for unsupervised POS tagging](https://github.com/musyoku/unsupervised-pos-tagging/)
