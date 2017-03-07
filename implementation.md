@@ -104,6 +104,13 @@ permalink: /implementation/
 
 ## 自然言語処理
 
+### [無限木構造隠れMarkovモデルによる階層的品詞の教師なし学習](https://github.com/musyoku/unsupervised-pos-tagging/tree/master/infinite-tree-hmm/)
+
+- 木構造棒折り過程を階層化して状態遷移確率を表すHMMです
+- 状態数と状態の階層構造をデータから学習します
+- デバッグが非常に辛いです
+- 実装難易度: **6**
+
 ### [ベイズ階層言語モデルによる教師なし形態素解析](https://github.com/musyoku/python-npylm/)
 
 - 文字列データから教師なしで文字nグラムモデルと単語nグラムモデルを学習します
@@ -117,7 +124,7 @@ permalink: /implementation/
 
 - VPYLMです
 - 言語モデルは通常バイグラムやトライグラムのように文脈長が固定ですが、これを可変長にできるようにしたモデルです
-- 可変長といえばRNN言語モデルなどもそうですが、VPYLMの利点はどのオーダーからデータが生成されたかを予測することができ、必要最低限のオーダーでモデルが学習されていきます
+- 可変長といえばRNN言語モデルなどがありますが、VPYLMの利点はどのオーダーからデータが生成されたかを推定することができ、必要最低限のオーダーでモデルが学習されていきます
 - 実装難易度: **4**
 
 ### [A Hierarchical Bayesian Language Model based on Pitman-Yor Processes](https://github.com/musyoku/hpylm/)
@@ -132,7 +139,6 @@ permalink: /implementation/
 - ベイズ的なアプローチにより教師なし品詞推定が行なえます
 - 品詞数は事前に要設定
 - 実装難易度: **3**
-
 
 ### [The Infinite Hidden Markov Model](https://github.com/musyoku/unsupervised-pos-tagging/tree/master/infinite-hmm/)
 
