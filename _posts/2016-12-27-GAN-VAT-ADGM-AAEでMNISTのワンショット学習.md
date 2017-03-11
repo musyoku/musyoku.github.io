@@ -171,3 +171,8 @@ GANによる半教師あり学習については[以前の記事](/2016/12/23/Im
 ちなみにVATは今まで作ってきた半教師あり学習の中では異常なくらい収束が早いです。
 
 100ラベルの場合数分回すとシードによらず98%を超えます。
+
+## 関連
+
+- [Learning Discrete Representations via Information Maximizing Self Augmented Training](/2017/03/11/Learning-Discrete-Representations-via-Information-Maximizing-Self-Augmented-Training/)
+	- MNISTを98%の精度で分類できる手法です
