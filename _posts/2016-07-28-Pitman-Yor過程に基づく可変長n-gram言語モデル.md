@@ -198,211 +198,78 @@ $$
 
 ## 実験
 
-今回も[Alice in Wonderland](https://www.cs.cmu.edu/~rgs/alice-table.html)のスペース除去版を用いて文字n-gramの実験を行いました。
+英語版Wikipediaからランダムに取ってきた5万文に対し単語n-gramモデルを学習させました。
 
-### VPYLMとHPYLM
-
-VPYLMを300epochほど学習させたところ、文脈木の一番深いところで$n=11$となったので、比較のため11-gramのHPYLMを学習させてみました。
-
-||VPYLM|HPYLM|
-|n|-|11|
-|パープレキシティ|8.84407|3.58401|
-|ノード数|27075|34841|
-|総客数|218630|439133|
-
-また文章生成を行ってみました。
-
-VPYLM
+学習されたVPYLMから文章を生成させると以下のようになりました。
 
 ```
-^Don'tlethingsaid,`Evidence,'saidtheCaterpillar.$
-^`Holdyoubythefirstsentencefeltthatitwasinthatsherandthen,'thoughtAlice,`ifyouwouldn'tbehurriedout,aller,them.$
-^Heretheyhumblingveryangtoseeifshewasreadytosingthem!$
-^However,shesoonmakeone,andshewenton,`--you,andevenifmilingingherself,`andthen,andmakeoutwhointhedistance,'saidtheCaterpillar.$
-^Alicewhiskers!'$
-^TheDuchess,whoonlythroat!'ontothebottomofawell?'saidtheCaterpillar.`Isthathehallhim.$
-^`That'sthematterwentslowlybe,'itis.$
-^Afterawastrangether.$
-^You'reewithyouwouldn'tbeguntoday,`forI'llhimTobefoundherarm,andallthewithonefingerto-day?'$
-^Asifyouwouldn'tbetternow,whichshehadbeenthemomenttreesuchacurioustodream,'saidtheCat,'saidtheCaterpillar.$
-^AlicethoughtAlice,`Oh,ItellyoujustthenshewassoonasitcriedtheMockTurtlewouldgetreesunderstanddownintoaskedintotheGryphon,`--youeverseemtogoneachshehadbeenwandthen,`andthen,whenshrilllookedsomealittlefthandbitoffall,lyingdownhissonstailaboutagaininarycurioustodream,sethat!'onthatsherememberherarm,andallthewood.$
-^`NotI'maporpoisonlyapacewasveryhands,andbeganthat,'saidtheCaterpillar.$
-^`Yes,it'sanatomakeoneofthembowedhisveryhadtoaskhishead!$
-^Presentstandgladtofindthat'sthemomenttrouble!'$
-^TheDuchess,'saidtheCatreesomewhere.$
-^Heretheycouldn'tlikethelookedsomealittleway,'added,andwasjustintime,'thoughtAlice,`Doyouthinkingreatcrossedbysalittlesisters,orthunderthansweresay?'$
-^`Itwasoutofthewhileftoff.'Afterallyabouting`Well,thatsheran;andbegantage,asshecouldn'tlikethelookedsomewhere.$
-^Comeon!'$
-^Oh,myplandontheirface.$
-^`NotI'mnotanevertomakeoneofthembowagain,forthis,soshetuckedherself,`tillthewholeuseofthembowagain,forthis,soshetuckedherself,`tilltheway,'andsnearly,`It'sthem!$
-^`Iwonderingwildlikethelookedsomebodytocats.'$
-^`It'sthem,andafterthanswerenoafewminute,there'snothingsaid,`Everybodylivethecourtwasobear:itpoorAlice,`ifyis,youknow.'$
-^Buthere?$
-^`Itisn'tarts,$
-^"Themouthere?$
+it was first published in ## . 
+of their corresponding last digits . 
+she has a number of notable uses . 
+these were very influential constitutional conservatives , and take a liking to the first . 
+otherwise it is revealed to be a part of the municipality of science fiction edited by kathryn cramer , david g . 
+jackson , ms . 
+the ## census it had a population of ## people . 
+today , there is no longer be burned the u . 
+and a cafeteria and hope that children including the major national morning of october rust to stop the german people , and the university of oxford , east of the county seat of the district of columbia . 
+he served as a member of the ## census , the cdp population was ## , ## at the ## census . 
+this film released in october ## . 
+wong tai sin estate and made the finals . 
+## , ## , and ## . 
+it is currently used mostly for football matches . 
+as a result of the ## census , the cdp population was ## , ## at the ## census . 
+there are some of the most successful on the first day of his death in ## . 
+it is part of the battle creek , michigan metropolitan statistical analysis is used as a new member , and is located in the province of venice , located in the southeastern ohio and was admitted to the bar in ## and is currently one of the biggest tributary of great antiquity here , the two organizations . 
+he left his dream of having a flat square television , other changes , and while doing so , at the battle of britain , and placing him on stage , a high school in dayton , ohio , united states . 
+in ## , the northern ridge , in which the teams have to draw was once a year later . 
+during the night of october ## , ## , he joined the united states army air forces retained the office of prime minister nawaz sharif , the political and social services in the program . 
+however , some people would consider the book of the summer olympics . 
+ultimately , the film failed in the process of building its administration and teaching in france , where the teams are shown a sporting grounds . 
+those who fell in the battle of britain , the original ## , ## people . 
+three of the four grand slam singles titles at the ## census the population was ## , ## at the ## census . 
+later , the mother of jesus christ , and even a small port of the colorado kid , who has been criticized for its annual strategy dying from starvation and civil strife constantly throughout the game , the mayor of brisbane from , and the two became a professor at his house . 
+adams , who are in a white father , who was impressed with all of them , however , that the election was held in london , on their own right , but in ## the company is headquartered in santa fe county . 
+the young people who do not share a similar way as the beginning of the game . 
+the supreme court of ohio , united states . 
+in the summer of ## , he was granted full of the new zealand house of representatives in ## and ## , he was chosen by king george iii . 
+though the sultan s harem with the help of the election was held in london , england . 
+, but was defeated after the war , moore never forget about the course of their own right , but eventually the other candidates in the uk . 
+and in the u . 
+from the university of michigan and was taken to prison island . 
+the first episode of season . 
+the result was that the actual number of the spratly islands , including last year they performed by the bolsheviks but later added during the second world war , he began his baseball and hockey with many of the members of the royal institution . 
+he took over the project was completed in ## and ## . 
+each year . 
+the english and low liquidity . 
+discourse , and is located in the province of venice , located in the southeastern asia is the only high school in ## . 
+in ## , the northern territory , canada . 
+according to the united states census bureau , the cdp has a total area of ## . 
+the district is bounded by the western part of the park . 
+the name of a station on the keisei main person in a rematch of the top ## of the ## grand slam singles and mixed doubles titles , and ## grand slam singles had to change their old money from his long railway line and expanded the scope of the duty of care which looks as if he had made the decision to lower the international treaties giving it a few days , in the united states . 
+in ## , the northern terminus was moved to their traditions , but can be used to generate an image . 
+the entirety . 
+when it was still very young and took them to get out of the race , and the school was established by president ronald reagan sent on ## december ## , it had a population of ## people and the police and the local community . 
+the result was that the general public . 
+however , when he was ## years old . 
+in ## , he published his first appearance of the internet . 
+during the summer of ## . 
+in the city the population was spread out with ## . 
+on ## december ## , it had a population of ## people and the police and the local community . 
+, with some common characteristics by their parents felt the need for a living electrical engineering programs have been built by the great belt bridge , the longest and most of his cabinet of prime minister also has the highest honour given by a few months later , it is not necessary for them on the bottom of the valley of the river thames , and can be used to generate false . 
+the act of union was initially a colonel miller to open up the rifle and follows them to a better understanding of what is known about the cultural markers of italian opera . 
+the socreds . 
+whether a duty of care on their own right , but he did not have any of his art gallery in new york city , new york and now lives in the church and left the country . 
+in the city the population was spread out with ## . 
+it should be noted that neither does it had a population of ## people . 
+due to the fact that they are not directly to the pressure hull , which actually is the same as the german people , and thus has a long tradition of a group of nuclear power stations and was elected mayor in the room . 
+faraday was the leader of the opposition of the 13th century and early 20th century fox studios in japan . 
+these were very difficult to find out a young man , he worked for a time , and the trio of terror . 
+and so the north shore . 
 ```
 
-HPYLM(11-gram)
-
-```
-^`Whichseemedtoneofgreatureshallhaveputthetookmeforpoise,"Keepy;`andtheMouseofalledtheRabbingandverybodysay,'saidtheDormouse,andIshallforshecondthedoor,halfoffright-eyedterrilyandsheverhapsyoufly,Ishallspeech,there?$
-^ShewalkingtoAlicesallthreegarden."'$
-^OhdearpawsinsuchacurioustodyandshesaidtheyoutofallingmesseduptoAlice:`allIbegyoulike,`was,thatshewasverycurtanttonothegame,cape!'sheasky-rockettle,`thee--howis,shesatoneonlyknowthem,andshefeltquitefoldenkey,thoughtAlicedoutaporpoise--'$
-^"Upabovehisheadpresenton,`andtheaccidedlywenthedistancetohersenouseagain,inasortofknot,wouldhavenoticetherownonherhapsitwasattheMockTurtle,tilljustnow?'$
-^(Weknow.'$
-^`Onlymakesyouwereornameliketobeginninefeeblast,andmakindownhairthatinasolemntonguehand.$
-^`No,I'veoff,andthinkyou'remarkable,andAliceafterwhenIgrowhere--'$
-^TheQueens,andwentAlice:`Iheardhim.$
-^TellheratsavaguessedwhoisDinahurriedintoabutteringheardavoice,verygladtosay,`Dobats?$
-^Butheright,hurrytoldyoubutthetimewhenthewantyofspeaktothehadplendindeed:shefeltsurprisedtoexecutiouscreatealargecandrawwaterpillar.$
-^AlicewasoveralittleBill,whichwasmovingrilyabout,andlooking,andstupidly.$
-^`Oh,youknow?$
-^Itdidnothinkinganxiouslytookupandthebook,'saidthetimebusyfarm-in-the-bye,whenhissedtohersnow?'$
-^Don'tyourMajesty,'shead!$
-^Atlastsaytoher,aboutsomesatsifyouwon'tlikedtheCat$
-^`IfanythingIeverysleep$
-^`Nothinkhowgladshehadputbackagain,forsomethesameofthem,andtheDuchess;`andnonsense.$
-^I'llneverywhiteRabbit-holewithcupbothcreatabat?'inquiredherwithitsmouthssoverywellsay,'saidAlice,brokengladI'vesee:I'lltryingtogetitwouldbenochangingtoitseyesanxioustokneeatlysaidthemraw.'$
-^`Iwishyouwereplied.$
-^Theadsareputtingingclubs;theDucheshireCaterpillar.$
-^`Iwon't,'saidthebirdasshecoolfound.$
-^`Andyetitwaterpillar,justatpresense.'$
-^Oh,Ibegyourwaited.$
-```
-
-次に、ある文字がどの深さから生成されたかを表示します。
-
-たとえば
-
-```
-Alice
-01234
-```
-
-ならeはAlicから生成されたということを表しています。
-
-```
-^TheQueen!'andthethreegardenersinstantlythrewthemselvesflatupontheirfaces.$
-012231344432336454554345445435543433665322333233432352333323343344643334301
-
-^`That'sthereasonthey'recalledlessons,'theGryphonremarked:`becausetheylessenfromdaytoday.'$
-0122334333445465434433222445453333544412454233434423453333122434335455323433442352335433312
-
-^Improvehisshiningtail,$
-012233424333343444633332
-
-^`Itisalongtail,certainly,'saidAlice,lookingdownwithwonderattheMouse'stail;`butwhydoyoucallitsad?$
-01223353343333431234445432124435233361234554323532334333443443452244323044312233324423333433044341
-
-^Down,down,down.$
-01234444443233422
-
-^TheQueenturnedangrilyawayfromhim,andsaidtotheKnave`Turnthemover!'$
-0123415343423453234454242322234233323444356434412334223355533333522
-
-^Imaginehersurprise,whentheWhiteRabbitreadout,atthetopofhisshrilllittlevoice,thename`Alice!'$
-011234343344433443532223354433445124224345334432344754534333335546343443324343534344522333722
-
-^Allpersonsmorethanamilehightoleavethecourt.'$
-0123323445323433436444335443443344434455465422
-
-^ThepoorlittleLizard,Bill,wasinthemiddle,beingheldupbytwoguinea-pigs,whoweregivingitsomethingoutofabottle.$
-01223233643443322333403244244354446343433343351334444222303334463233312322444322334332334455534345353334331
-
-^`Nothingwhatever,'saidAlice.$
-012233455424334254124535243361
-
-^But,whenthetiderisesandsharksarearound,$
-01223022544445334445354455343323542544661
-
-^`Come,weshallhavesomefunnow!'thoughtAlice.`I'mgladthey'vebegunaskingriddles.--IbelieveIcanguessthat,'sheaddedaloud.$
-012223432434434234433333393343233463462233612233234434632235334335233333333362232343532012334344454441234445343243442
-
-^`Areyoutogetinatall?'saidtheFootman.`That'sthefirstquestion,youknow.'$
-01222442563434544334322343563323343341223342544444444134475333334234522
-
-^Andthemuscularstrength,whichitgavetomyjaw,$
-01233456333243344422334312454353233363332233
-
-^`Youare,'saidtheKing.$
-01222434422343534512351
-
-^Therearenomiceintheair,I'mafraid,butyoumightcatchabat,andthat'sverylikeamouse,youknow.$
-0123344544433435344456343122433344134234533343233434433223334453023542443333454123423651
-
-^Andhavegrownmostuncommonlyfat;$
-01233334443335433333345434322241
-
-^`Well,Ishan'tgo,atanyrate,'saidAlice:`besides,that'snotaregularrule:youinventeditjustnow.'$
-01222442223363323433344344512443522334222544353335452333434434334523312353333343345233333042
-
-^`That'senoughaboutlessons,'theGryphoninterruptedinaverydecidedtone:`tellhersomethingaboutthegamesnow.'$
-01223342444444144734344443412334423433334454433533644134534333434544122344234533435453333344433533424323
-
-^`Areyoucontentnow?'saidtheCaterpillar.$
-0122234333454233344134455636243454335462
-
-^Therewasageneralclappingofhandsatthis:itwasthefirstreallycleverthingtheKinghadsaidthatday.$
-01233444555433465424034341433353235435412334344454434335442336544435535431233333233543435423
-
-^AtlasttheGryphonsaidtotheMockTurtle,`Driveon,oldfellow!$
-012344454442334334433564345234422343312324243422343345431
-
-^`Comeon!'criedtheGryphon,and,takingAlicebythehand,ithurriedoff,withoutwaitingfortheendofthesong.$
-01223343452333444352344335133313353433243332344534322344343454431233435324334532345343444544433441
-
-^`Yourhairwantscutting,'saidtheHatter.$
-012323434333334324443432235356343334571
-
-^Alicewenttimidlyuptothedoor,andknocked.$
-01234362434323334243333456434343022440332
-
-^That'llbeacomfort,oneway--nevertobeanoldwoman--butthen--alwaystohavelessonstolearn!$
-0122342232333433343224424443232453433353243344325435445322232443354434324545454344434
-
-^ThePanthertookpie-crust,andgravy,andmeat,$
-0123314344644354233253235423333452223323531
-
-^FatherWilliamstandingonhead$
-01234450333567333454444442344
-
-^`Butwhathappenswhenyoucometothebeginningagain?$
-012235523354446454234334334534345433463443333441
-
-^`Somebodysaid,'Alicewhispered,`thatit'sdonebyeverybodymindingtheirownbusiness!'$
-012123454334236122333645344444532234463232344325345435332244343344434452436545422
-
-^`Readthem,'saidtheKing.$
-0123444343424444564522332
-
-^Comeon!'$
-0123343412
-
-^Quick,now!$
-011333322543
-
-^`Oh,there'snouseintalkingtohim,'saidAlicedesperately:`he'sperfectlyidiotic!$
-01232124446343444533235444323334323435233343735444547232233524434343323433632
-
-^Dodopresentingthimble$
-01224344444543555324333
-
-^Aliceconsideredalittle,andthensaid`Thefourth.'$
-012333433354344754444433333444553335223345345322
-
-^`Aswetasever,'saidAliceinamelancholytone:`itdoesn'tseemtodrymeatall.'$
-01212443234244123535223333353634455342335412333425433334423334334454512
-
-^`Don'tbeimpertinent,'saidtheKing,`anddon'tlookatmelikethat!$
-0121332343344534344342244366551233522333443233433333454444551
-
-^Alicerepliedeagerly,forshewasalwaysreadytotalkaboutherpet:`Dinah'sourcat.$
-012233445344443444243163455454343444333454343442333444434331232343233346433
-
-```
 
 ## 関連
 
 - [A Hierarchical Bayesian Language Model based on Pitman-Yor Processes](/2016/07/26/A_Hierarchical_Bayesian_Language_Model_based_on_Pitman-Yor_Processes/)
-- ベイズ階層言語モデルによる教師なし形態素解析（準備中）
-- 隠れセミマルコフモデルに基づく教師なし完全形態素解析（準備中）
+- [ベイズ階層言語モデルによる教師なし形態素解析](/2016/12/14/%E3%83%99%E3%82%A4%E3%82%BA%E9%9A%8E%E5%B1%A4%E8%A8%80%E8%AA%9E%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AB%E3%82%88%E3%82%8B%E6%95%99%E5%B8%AB%E3%81%AA%E3%81%97%E5%BD%A2%E6%85%8B%E7%B4%A0%E8%A7%A3%E6%9E%90/)
+- [Pitman-Yor言語モデルのハイパーパラメータの推定に関して](/2016/10/16/Pitman-Yor%E8%A8%80%E8%AA%9E%E3%83%A2%E3%83%87%E3%83%AB%E3%81%AE%E3%83%8F%E3%82%A4%E3%83%91%E3%83%BC%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF%E3%81%AE%E6%8E%A8%E5%AE%9A/)
