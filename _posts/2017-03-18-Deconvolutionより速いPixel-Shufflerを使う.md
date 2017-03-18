@@ -21,10 +21,6 @@ Pixel Shufflerは[Real-Time Single Image and Video Super-Resolution Using an Eff
 
 Deconvolutionの仕組みと問題点については[Deconvolution and Checkerboard Artifacts](http://distill.pub/2016/deconv-checkerboard/)がよくまとまっています。
 
-私がDeconvolutionを使っていて面倒だと感じている点は目標とする拡大倍率と出力の縦横のサイズを得るために必要なpaddingやフィルタサイズの算出です。
-
-各層で2倍ずつ拡大していくDeconvolutionの場合でも、層によってpaddingの値が0になったり1になったりします。
-
 ## Sub-Pixel Convolution
 
 まず記号を定義しておきます。
@@ -281,17 +277,7 @@ def __call__(self, x):
 
 [LSGAN](/2017/03/06/Least-Squares-Generative-Adversarial-Networks/)と[WGAN](/2017/02/06/Wasserstein-GAN/)でGeneratorをDeconvolution・Pixel Shufflerの2通りで学習させました。
 
-層の数や各層の入出力チャネル数は全て同一になっており、Generatorは以下のようにLinearでベクトルをマップに変換し、Deconvolution（またはPixelShuffler）で画像を拡大していき、$96\times96$の画像を生成しています。
-
-```
-(512,) -> (512, 6, 6) -> (256, 12, 12) -> (128, 24, 24) -> (64, 48, 48) -> (3, 96, 96)
-```
-
-Deconvolutionの場合は上の入出力チャネル数をそのままDeconvolution2Dに渡せば良いのですが、Pixel Shufflerは上述のように出力チャネル数を決めると入力チャネル数が一意に決定してしまい、これが下層の出力チャネル数と合わないためConvolutionでチャネル数を調整する必要があります。
-
-今回はフィルタサイズ$3\times3$でpaddingを$1$にした畳み込みを行うことで調整を行いました。
-
-チャネル数を変更するだけならフィルタサイズ$1\times1$の畳み込みもよく用いられますが、時間がなかったので今回は実験していません。
+層の数や各層の入出力チャネル数は全て同一になっています。
 
 ## LSGAN
 
