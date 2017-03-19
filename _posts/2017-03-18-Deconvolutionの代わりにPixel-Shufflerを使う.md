@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Deconvolutionより速いPixel Shufflerを使う
+title: Deconvolutionの代わりにPixel Shufflerを使う
 category: 実装
 tags:
 - Chainer
@@ -11,29 +11,27 @@ excerpt_separator: <!--more-->
 
 - ChainerでPixel Shufflerを実装した
 
+<!--more-->
+
 ## はじめに
 
-昨年に[Twitter社が発表した超解像の論文](https://arxiv.org/abs/1609.04802)を読んでいたところ、画像の拡大によく用いられるDeconvolutionではなく、Pixel Shufflerと呼ばれる仕組みを利用しており、気になったので調べました。
+昨年に[Twitter社が発表した超解像の論文](https://arxiv.org/abs/1609.04802)を読んでいたところ、画像の拡大によく用いられるDeconvolutionを使わず、Pixel Shufflerと呼ばれる仕組みを利用して超解像を行っており、気になったので調べました。
 
 Pixel Shufflerは[Real-Time Single Image and Video Super-Resolution Using an Efficient Sub-Pixel Convolutional Neural Network](https://arxiv.org/abs/1609.05158)で提案されたもので（正式にはSub-Pixel Convolution）、入力特徴マップの各ピクセルを並べ替えて高解像度な特徴マップを出力します。
 
 今回はDCGANのGeneratorをDeconvolutionとPixel Shufflerの両方で構成して実験しました。
 
-Deconvolutionの仕組みと問題点については[Deconvolution and Checkerboard Artifacts](http://distill.pub/2016/deconv-checkerboard/)がよくまとまっています。
-
-私がDeconvolutionを使っていて面倒だと感じている点は目標とする拡大倍率と出力の縦横のサイズを得るために必要なpaddingやフィルタサイズの算出です。
-
-各層で2倍ずつ拡大していくDeconvolutionの場合でも、層によってpaddingの値が0になったり1になったりします。
+ちなみにDeconvolutionの問題点については[Deconvolution and Checkerboard Artifacts](http://distill.pub/2016/deconv-checkerboard/)がよくまとまっています。
 
 ## Sub-Pixel Convolution
 
 まず記号を定義しておきます。
 
-入力特徴マップの高さを$H_{in}$、幅を$W_{in}$とし、出力特徴マップのチャネル数を$C_{out}$とします。
+入力マップの高さを$H_{in}$、幅を$W_{in}$とし、出力マップのチャネル数を$C_{out}$とします。
 
 また拡大倍率を$r$とします。
 
-論文の図によると、以下のように特徴マップを並べ替えて高解像な出力を得ます。
+論文の図によると、以下のように入力マップを並べ替えて高解像な出力を得ます。
 
 ![image](/images/post/2017-03-18/subpixel_conv.jpg)
 
@@ -41,7 +39,7 @@ Deconvolutionの仕組みと問題点については[Deconvolution and Checkerbo
 
 （この「チャネル数$\times$高さ$\times$幅」の並びはChainerに合わせています。TensorFlowでは「幅$\times$高さ$\times$チャネル数」の並びになっているため注意が必要です。これ以降はChainerに合わせて表記します）
 
-例えば入力特徴マップが$8\times2\times2$で倍率$r=2$の場合、出力特徴マップは$2\times4\times4$となり、2倍に拡大された特徴マップが出力されます。
+例えば入力マップが$8\times2\times2$で倍率$r=2$の場合、出力マップは$2\times4\times4$となり、2倍に拡大されたものが出力されます。
 
 ${\cal PS}$は具体的には以下のように表されます。
 
@@ -81,9 +79,9 @@ Pixel Shufflerはレイヤーとして用いるので、入力マップは自分
 
 そこでPixel ShufflerレイヤーにConvolutionレイヤーを追加し、下層が出力した特徴マップを畳み込んでPixel Shufflerの要求を満たす形にし、その後${\cal PS}$によって目的の高解像マップを得ます。
 
-Convolution部分は各ライブラリの標準機能を使うと実装できます。
+（実際には${\cal PS}$自体はただの配列操作であり、学習すべき重みを持っていないためConvolutionレイヤーが必ず必要になります）
 
-${\cal PS}$の実装ですが、式(1)を見ると、以下のように`reshape`と`transpose`を用いると実装できることに気づきます。
+${\cal PS}$の実装ですが、式(1)を見ると、以下のように`reshape`と`transpose`を用いると実装できることが分かります。
 
 ```
 out_map = np.reshape(in_map, (batchsize, 1, r * r, out_channels * in_height * in_width, 1))
@@ -254,12 +252,12 @@ ${\cal PS}$が具体的にどういう値を出力するかを確認できます
 
 これらの実装では`concat`や`separate`などを用いていますが、いずれにしても一発で出すことはできないようです。
 
-私のやり方をChainerで行う場合は以下のようになります。
+ChainerでConvolutionと組み合わせて行う場合は以下のようなコードになります。
 
 ```
 def __call__(self, x):
 	r = self.r
-	out = self.conv(x)
+	out = self.conv(x) # 畳み込み
 	batchsize = out.shape[0]
 	in_channels = out.shape[1]
 	out_channels = in_channels / (r ** 2)
@@ -281,7 +279,7 @@ def __call__(self, x):
 
 [LSGAN](/2017/03/06/Least-Squares-Generative-Adversarial-Networks/)と[WGAN](/2017/02/06/Wasserstein-GAN/)でGeneratorをDeconvolution・Pixel Shufflerの2通りで学習させました。
 
-層の数や各層の入出力チャネル数は全て同一になっており、Generatorは以下のようにLinearでベクトルをマップに変換し、Deconvolution（またはPixelShuffler）で画像を拡大していき、$96\times96$の画像を生成しています。
+層の数や各層の入出力チャネル数は全て同一になっており、Generatorは以下のようにLinearでノイズベクトルをマップに変換し、Deconvolution（またはPixelShuffler）で画像を拡大していき、$96\times96$の画像を生成しています。
 
 ```
 (512,) -> (512, 6, 6) -> (256, 12, 12) -> (128, 24, 24) -> (64, 48, 48) -> (3, 96, 96)
@@ -319,9 +317,10 @@ Deconvolutionの場合は上の入出力チャネル数をそのままDeconvolut
 ![image](/images/post/2017-03-18/wgan_ps.png)
 ![image](/images/post/2017-03-18/wgan_analogy_ps.png)
 
-実行速度ですが、1000epochの学習にDeconvolution版は2354分、Pixel Shuffler版は1450分かかったため、Pixel Shufflerの方が1.62倍速いです。
+実行速度ですが、1000epochの学習にDeconvolution版は3485分、Pixel Shuffler版は2199分かかったため、Pixel Shufflerの方が1.58倍速いです。
 
 WGANは出力画像が歪みやすいので改善していきたいです。
 
 ## おわりに
 
+今後DCGANを作って実験するときはPixel Shufflerをデフォルトにしようと思います。
