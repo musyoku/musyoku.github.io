@@ -91,6 +91,16 @@ out_map = np.transpose(out_map, (0, 1, 2, 4, 3, 5))
 out_map = np.reshape(out_map, (batchsize, out_channels, out_height, out_width))
 ```
 
+### 追記（2017/03/26）
+
+コメントを頂きましたが、3行で書けるそうです。
+
+```
+out_map = np.reshape(in_map, (batchsize, r, r, out_channels, in_height, in_width))
+out_map =  np.transpose(out_map, (0, 3, 4, 1, 5, 2))
+out_map = np.reshape(out_map, (batchsize, out_channels, out_height, out_width))
+```
+
 numpyによる${\cal PS}$の実装とテストコードをGistにあげておきました。
 
 [https://gist.github.com/musyoku/849094afca2889d9024f59e683fa7036](https://gist.github.com/musyoku/849094afca2889d9024f59e683fa7036)
@@ -274,6 +284,27 @@ def __call__(self, x):
 ```
 
 すごく遅そうですが実はDeconvolutionより速いです。
+
+### 追記（2017/03/26）
+
+より短く書けることが分かりました。
+
+```
+def __call__(self, x):
+  r = self.r
+  out = self.conv(x) # 畳み込み
+  batchsize = out.shape[0]
+  in_channels = out.shape[1]
+  out_channels = in_channels / (r ** 2)
+  in_height = out.shape[2]
+  in_width = out.shape[3]
+  out_height = in_height * r
+  out_width = in_width * r
+  out = F.reshape(out, (batchsize, r, r, out_channels, in_height, in_width))
+  out = F.transpose(out, (0, 3, 4, 1, 5, 2))
+  out = F.reshape(out, (batchsize, out_channels, out_height, out_width))
+  return out
+```
 
 ## 実験
 
