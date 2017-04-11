@@ -45,7 +45,7 @@ ${\cal PS}$は具体的には以下のように表されます。
 
 $$
 	\begin{align}
-		{\cal PS}(T)_{c,y,x} = T_{C_{out}\cdot r \cdot {\rm mod}(y,r) + C_{out}\cdot {\rm mod}(x,r) + c,\lfloor \frac{1}{y} \rfloor,\lfloor \frac{1}{x} \rfloor}
+		{\cal PS}(T)_{c,y,x} = T_{C_{out}\cdot r \cdot {\rm mod}(y,r) + C_{out}\cdot {\rm mod}(x,r) + c,\lfloor \frac{y}{r} \rfloor,\lfloor \frac{x}{r} \rfloor}
 	\end{align}\
 $$
 
@@ -53,12 +53,12 @@ $T$は入力マップ、$c$は出力マップのチャネル位置、$y$は出�
 
 $\lfloor \cdot \rfloor$は床関数（floor）です。
 
-この式が意味することは、出力マップ$T'$の位置$c,y,x$の値が、入力マップ$T$の位置$$C_{out}\cdot r \cdot {\rm mod}(y,r) + C_{out}\cdot {\rm mod}(x,r) + c,\lfloor \frac{1}{y} \rfloor,\lfloor \frac{1}{x} \rfloor$$の値になるということです。
+この式が意味することは、出力マップ$T'$の位置$c,y,x$の値が、入力マップ$T$の位置$$C_{out}\cdot r \cdot {\rm mod}(y,r) + C_{out}\cdot {\rm mod}(x,r) + c,\lfloor \frac{y}{r} \rfloor,\lfloor \frac{x}{r} \rfloor$$の値になるということです。
 
 プログラムのコード風に書くと
 
 ```
-t_out[c,y,x] = t_in[c_out * r * mod(y, r) + c_out * mod(x, r) + c, floor(1 / y), floor(1 / x)]
+t_out[c,y,x] = t_in[c_out * r * mod(y, r) + c_out * mod(x, r) + c, floor(y / r), floor(x / r)]
 ```
 
 のようになります。
