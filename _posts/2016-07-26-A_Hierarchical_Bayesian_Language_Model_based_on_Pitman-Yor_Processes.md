@@ -153,8 +153,8 @@ $$
 
 $$
 	\begin{align}
-		{\rm WordProbability}(\boldsymbol u, w)&=\nonumber\\
-		P(w\mid \boldsymbol u, \boldsymbol\Theta)&=\frac{c_{\boldsymbol uw\cdot} - d_{\mid\boldsymbol u\mid}t_{\boldsymbol uw}}{\theta_{\mid\boldsymbol u\mid}+c_{\boldsymbol u\cdot\cdot}}
+		{\rm WordProbability}(\boldsymbol u, w)&=P(w\mid \boldsymbol u, \boldsymbol\Theta)\\
+		&=\frac{c_{\boldsymbol uw\cdot} - d_{\mid\boldsymbol u\mid}t_{\boldsymbol uw}}{\theta_{\mid\boldsymbol u\mid}+c_{\boldsymbol u\cdot\cdot}}
 		+\frac{\theta_{\mid\boldsymbol u\mid}+d_{\mid\boldsymbol u\mid}t_{\boldsymbol u\cdot}}{\theta_{\mid\boldsymbol u\mid}+c_{\boldsymbol u\cdot\cdot}}{\rm WordProbability}(\pi(\boldsymbol u), w)\nonumber
 	\end{align}\
 $$
@@ -163,7 +163,7 @@ $$
 
 ### AddCustomer($\boldsymbol u$, $w$)
 
-文脈$\boldsymbol u$のもとで単語$w$が観測された時、深さ1に対応するノード（HPYLMでは常にn-1の深さのノードに追加する）に$w$を追加します。
+文脈$\boldsymbol u$のもとで単語$w$が観測された時、深さn-1に対応するノード（HPYLMでは常にn-1の深さのノードに追加する）に$w$を追加します。
 
 追加する際は、
 
