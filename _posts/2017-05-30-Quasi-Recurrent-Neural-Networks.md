@@ -55,17 +55,15 @@ $$
     \boldsymbol Z &= {\rm tanh}(\boldsymbol W_z * \boldsymbol X)\\
     \boldsymbol F &= {\rm \sigma}(\boldsymbol W_f * \boldsymbol X)\\
     \boldsymbol O &= {\rm \sigma}(\boldsymbol W_o * \boldsymbol X)\\
-    \boldsymbol C &= {\rm \sigma}(\boldsymbol W_c * \boldsymbol X)\\
+    \boldsymbol I &= {\rm \sigma}(\boldsymbol W_i * \boldsymbol X)\\
   \end{align}\
 $$
 
 $*$は1次元の畳込みを表しています。
 
-ここで$\boldsymbol Z$などが大文字なっていますが、これは行列を表しています。
+ここで$\boldsymbol Z$などが大文字なっていますが、これは行列を表しており、時刻$t$の出力ベクトル$\boldsymbol z_t$を$t=1$から$T$まで集めたものになっています。
 
-これは時刻$t$の出力ベクトル$\boldsymbol z_t$を$t=1$から$T$まで集めたものになっています。
-
-$\boldsymbol F$や$\boldsymbol O$、$\boldsymbol C$も同様です。
+$\boldsymbol F$や$\boldsymbol O$、$\boldsymbol I$も同様です。
 
 これはどういうことかというと、QRNNではゲートの値を全時刻同時に計算します。
 
@@ -113,7 +111,7 @@ $\boldsymbol h_t$がその層の時刻$t$での出力になります。
 
 その後forループで各時刻の$h_t$を順に計算していきます。
 
-実装の際は、式(1)～式(4)を個別に実行するのではなく、$W_z$、$W_c$、$W_o$、$W_c$をまとめた１つの重み$W$で畳み込んでから分割したほうが速いです。
+実装の際は、式(1)～式(4)を個別に実行するのではなく、$W_z$、$W_f$、$W_o$、$W_i$をまとめた１つの重み$W$で畳み込んでから分割したほうが速いです。
 
 たとえばfo-poolingであれば必要になるのは$W_f$と$W_o$の2つなので、
 
@@ -133,8 +131,10 @@ F, O = split_axis(WX, 2, axis=1)
 これらプーリング部分のコードを抜き出して載せておきます。
 
 ```
+from chainer import link, functions, links, initializers
+
 class QRNN(link.Chain):
-  def __init__(self, in_channels, out_channels, kernel_size=2, pooling="f", zoneout=0, wgain=1., weightnorm=False):
+  def __＄ｈinit__(self, in_channels, out_channels, kernel_size=2, pooling="f", zoneout=0, wgain=1., weightnorm=False):
     self.num_split = len(pooling) + 1
     if weightnorm:
       wstd = 0.05
@@ -150,7 +150,7 @@ class QRNN(link.Chain):
 
   def __call__(self, X, skip_mask=None):
     pad = self._kernel_size - 1
-    WX = self.W(X)[:, :, :-pad]
+    WX = self.W(X)[..., :-pad]
 
     return self.pool(functions.split_axis(WX, self.num_split, axis=1), skip_mask=skip_mask)
 
@@ -186,10 +186,10 @@ class QRNN(link.Chain):
 
     T = Z.shape[2]
     for t in xrange(T):
-      zt = Z[:, :, t]
-      ft = F[:, :, t]
-      ot = 1 if O is None else O[:, :, t]
-      it = 1 - ft if I is None else I[:, :, t]
+      zt = Z[..., t]
+      ft = F[..., t]
+      ot = 1 if O is None else O[..., t]
+      it = 1 - ft if I is None else I[..., t]
       xt = 1 if skip_mask is None else skip_mask[:, t, None]  # will be used for seq2seq to skip PAD
 
       if self.ct is None:
@@ -213,7 +213,7 @@ class QRNN(link.Chain):
 
 CNNで時系列データを扱う場合、未来の信号を畳み込んではいけません。
 
-つまり、時刻$t$の出力を計算する時に、時刻$t+1$以降のデータが畳み込まれないように注意する必要があります。
+時刻$t$の出力を計算する時に、時刻$t+1$以降のデータが畳み込まれないように注意する必要があります。
 
 これは適切にパディングを設定することで回避できます。
 
@@ -235,3 +235,41 @@ Chainerではパディングを入れると両端に挿入されるので、出�
 pad = self.kernel_size - 1
 WX = self.W(X)[..., :-pad]
 ```
+
+## Zoneout
+
+QRNNの正則化としてzoneoutが提案されています。
+
+zoneoutは$h_{t-1}$の要素を確率的に選択し、変更を加えずに$h_t$にコピーします。
+
+これは忘却ゲート$\boldsymbol f_t$の各要素を確率的に選び値を1で上書きすることと同じなので、ドロップアウトを応用することで実現できます。
+
+（ドロップアウトは確率的に0になるため、1から引く必要があります）
+
+式で書くと以下の2通りが考えられます。
+
+どちらを使っても構いません。
+
+$$
+  \begin{align}
+    \boldsymbol F &= 1 - {\rm dropout}(1-\sigma(\boldsymbol W_f * \boldsymbol X))\\
+    \boldsymbol F &= 1 - {\rm dropout}(\sigma(-\boldsymbol W_f * \boldsymbol X))\\
+  \end{align}\
+$$
+
+コードは以下のようになります。
+
+```
+def zoneout(self, U):
+  if self._using_zoneout and chainer.config.train:
+    return 1 - dropout(functions.sigmoid(-U), 0.1)
+  return functions.sigmoid(U)
+```
+
+ちなみにQRNNの論文の初版はzoneoutの式が誤っているので注意が必要です。
+
+## Encoder–Decoder
+
+QRNNはEncoder–Decoderモデルにも適用することができます。
+
+まずAttentionなしのモデルは以下のようになります。
