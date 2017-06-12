@@ -251,6 +251,23 @@ tr:nth-child(2n) {
   }
 }
 
+
+.masthead {
+  padding-top: 5px;
+}
+.site-avatar {
+  display: none;
+}
+.site-info {
+  background-image: url(/images/logo_5000.png);
+  width: 700px;
+  background-size: 100%;
+  height: 90px;
+}
+
+.site-name, .site-description {
+  display: none;
+}
 nav {
   float: right;
   margin-top: 23px; // @TODO: Vertically middle align
