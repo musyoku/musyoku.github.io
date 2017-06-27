@@ -104,3 +104,10 @@ model = Chain(
 （Python歴が浅いので本当にこれで良いのか不安はあります）
 
 動作確認用のコードは[musyoku/chainer-sequential-chain](https://github.com/musyoku/chainer-sequential-chain)にあります。
+
+# 追記
+
+ResNetももっと簡単に書きたくなったので別のものを作りました。
+
+[musyoku/chainer-stream](https://github.com/musyoku/chainer-stream)
+
