@@ -38,13 +38,13 @@ Generatorの出力分布を$\double P_{\theta}$、データ分布を$\double P_r
 
 $$
 	\begin{align}
-		W(\double P_r, \double P_{\theta}) = \sum_{\mid\mid f \mid\mid_L \leq 1} 
+		W(\double P_r, \double P_{\theta}) = \sup_{\mid\mid f \mid\mid_L \leq 1} 
 		\double E_{x \sim \double P_r}[f(x)]
 		- \double E_{x \sim \double P_{\theta}}[f(x)]
 	\end{align}\
 $$
 
-$sup$は上限（supremum）を表します。
+$\sup$は上限（supremum）を表します。
 
 $f$はLipschitzな関数で$f:\cal X \to \double R$ということなので、実数値を出力する関数ということなのでしょう。
 
