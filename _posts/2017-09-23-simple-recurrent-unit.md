@@ -42,6 +42,7 @@ $$
 
 $\boldsymbol{\tilde{x}}_t$、$\boldsymbol{f}_t$、$\boldsymbol{r}_t$、$\boldsymbol{c}_t$、$\boldsymbol{h}_t$は全て$d$次元のベクトルです。
 
+$t=1,2,...,l$で$\odot$はベクトルの要素同士の積を表します。
 
 ポイントは$\boldsymbol{h}_{t-1}$がどこにも含まれていないことと、$\boldsymbol{h}_t$に入力である$\boldsymbol{x}_t$が足されていることです。
 
@@ -49,7 +50,7 @@ $\boldsymbol{\tilde{x}}_t$、$\boldsymbol{f}_t$、$\boldsymbol{r}_t$、$\boldsym
 
 セル$$\boldsymbol{c}_t$$についても文脈$$\boldsymbol{c}_{t-1}$$と忘却ゲート$$\boldsymbol{f}_t$$との要素積になっているため、ベクトルの要素ごとに独立して値を計算することができます。
 
-また式(5)で入力$\boldsymbol{x}_t$が出力にショートカットしているので、ResNetと同様に多層になっても誤差が消失しにくいと考えられます。
+また式(5)で入力$\boldsymbol{x}_t$が出力にショートカットしているので、ResNetと同様に多層になっても誤差が消失しにくいと考えられます。（実際は誤差に$$(1 - \boldsymbol{r}_t)$$が掛けられていくので消失するかもしれません。）
 
 QRNNと同様、式(1)〜(3)は全時刻同時に計算し、$$\boldsymbol{c}_t$$を時刻$t=0$から$l$まで順に計算していきます。
 
@@ -85,35 +86,64 @@ $$
   		\boldsymbol{W}_z\\
   		\boldsymbol{W}_f\\
   		\boldsymbol{W}_r\\
-  	\end{pmatrix}\\
-  	\boldsymbol{U}^\top &= \begin{pmatrix}
+  	\end{pmatrix}\nonumber\\
+  	\boldsymbol{X} &= (\boldsymbol{x}_1, \boldsymbol{x}_2, ..., \boldsymbol{x}_l)	\nonumber\\
+  	\boldsymbol{U} &= \begin{pmatrix}
   		\boldsymbol{W}_z\\
   		\boldsymbol{W}_f\\
   		\boldsymbol{W}_r\\
-  	\end{pmatrix}
-  	[\boldsymbol{x}_1, \boldsymbol{x}_2, ..., \boldsymbol{x}_l]	\\
+  	\end{pmatrix}  	(\boldsymbol{x}_1, \boldsymbol{x}_2, ..., \boldsymbol{x}_l)	\nonumber\\
+  	&= \boldsymbol{W}\boldsymbol{X}\nonumber\\
   	\boldsymbol{B} &= \begin{pmatrix}
   		\boldsymbol{b}_f\\
   		\boldsymbol{b}_r\\
-  	\end{pmatrix}\\
-  	\boldsymbol{U^{(z)}}_t &= \boldsymbol{W}_z\boldsymbol{x}_t\\
-  	\boldsymbol{U^{(f)}}_t &= \boldsymbol{W}_f\boldsymbol{x}_t\\
-  	\boldsymbol{U^{(r)}}_t &= \boldsymbol{W}_r\boldsymbol{x}_t\\
-  	\boldsymbol{\tilde{x}}_t &= \boldsymbol{U^{(z)}}_t\\
+  	\end{pmatrix}\nonumber\\
+  	\boldsymbol{U^{(z)}}_t &= \boldsymbol{W}_z\boldsymbol{x}_t\nonumber\\
+  	\boldsymbol{U^{(f)}}_t &= \boldsymbol{W}_f\boldsymbol{x}_t\nonumber\\
+  	\boldsymbol{U^{(r)}}_t &= \boldsymbol{W}_r\boldsymbol{x}_t\nonumber\\
+  	\boldsymbol{z}_t &= \boldsymbol{U^{(z)}}_t\nonumber\\
   	\boldsymbol{f}_t &= \sigma(\boldsymbol{U^{(f)}}_t + \boldsymbol{b}_f)\\
   	\boldsymbol{r}_t &= \sigma(\boldsymbol{U^{(r)}}_t + \boldsymbol{b}_r)\\
-  	\boldsymbol{c}_t &= \boldsymbol{f}_t \odot \boldsymbol{c}_{t-1} + (1 - \boldsymbol{f}_t) \odot \boldsymbol{\tilde{x}}_t\\
-  	&= \boldsymbol{f}_t \odot (\boldsymbol{c}_{t-1} - \boldsymbol{\tilde{x}}_t) + \boldsymbol{\tilde{x}}_t\\
-  	\boldsymbol{h}_t &= \boldsymbol{r}_t \odot g(\boldsymbol{c}_t) + (1 - \boldsymbol{r}_t) \odot \boldsymbol{x}_t\\
-  	&= \boldsymbol{r}_t \odot (g(\boldsymbol{c}_t) - \boldsymbol{x}_t) + \boldsymbol{x}_t\\
+  	\boldsymbol{c}_t &= \boldsymbol{f}_t \odot \boldsymbol{c}_{t-1} + (1 - \boldsymbol{f}_t) \odot \boldsymbol{z}_t\nonumber\\
+  	&= \boldsymbol{f}_t \odot (\boldsymbol{c}_{t-1} - \boldsymbol{z}_t) + \boldsymbol{z}_t\\
+  	\boldsymbol{h}_t &= \boldsymbol{r}_t \odot g(\boldsymbol{c}_t) + (1 - \boldsymbol{r}_t) \odot \boldsymbol{x}_t\nonumber\\
+  	&= \boldsymbol{r}_t \odot \bigl(g(\boldsymbol{c}_t) - \boldsymbol{x}_t\bigr) + \boldsymbol{x}_t\\
   \end{align}\
 $$
 
-式(16)と(18)の変形は計算グラフ上で誤差逆伝播を考える際に役立ちます。
+式(8)と(9)の変形は計算グラフ上で誤差逆伝播を考える際に役立ちます。
+
+それぞれのサイズは以下のようになっています。
+
+$$
+  \begin{align}
+  	\boldsymbol{W} &\in \double R^{3d \times d} \nonumber \\
+  	\boldsymbol{X} &\in \double R^{d \times l} \nonumber \\
+  	\boldsymbol{U} &\in \double R^{3d \times l} \nonumber \\
+  	\boldsymbol{B} &\in \double R^{2d} \nonumber \\
+  	\boldsymbol{U^{(z)}}_t &\in \double R^{d} \nonumber \\
+  	\boldsymbol{U^{(f)}}_t &\in \double R^{d} \nonumber \\
+  	\boldsymbol{U^{(r)}}_t &\in \double R^{d} \nonumber \\
+  \end{align}\
+$$
+
+実際はミニバッチを用いるので以下のようになります。
+
+$$
+  \begin{align}
+  	\boldsymbol{W} &\in \double R^{3d \times d} \nonumber \\
+  	\boldsymbol{X} &\in \double R^{b \times d \times l} \nonumber \\
+  	\boldsymbol{U} &\in \double R^{b \times 3d \times l} \nonumber \\
+  	\boldsymbol{B} &\in \double R^{2d} \nonumber \\
+  	\boldsymbol{U^{(z)}}_t &\in \double R^{b \times d} \nonumber \\
+  	\boldsymbol{U^{(f)}}_t &\in \double R^{b \times d} \nonumber \\
+  	\boldsymbol{U^{(r)}}_t &\in \double R^{b \times d} \nonumber \\
+  \end{align}\
+$$
 
 ### 順伝播
 
-SRUでは、各時刻の入力ベクトルを連結した行列$[\boldsymbol{x}_1, \boldsymbol{x}_2, ..., \boldsymbol{x}_l]$を入力として取ります。
+SRUでは、各時刻の入力ベクトルを連結した行列$(\boldsymbol{x}_1, \boldsymbol{x}_2, ..., \boldsymbol{x}_l)$を入力として取ります。
 
 この行列のshapeを`(b, d, l)`とすると、これはチャネル$d$で高さ1、横幅$l$の画像データとみなすことができ、1次元の畳み込み（Convolution1D）を用いると$\boldsymbol{U}$を一度に計算できます。
 
@@ -193,7 +223,7 @@ void forward(const float* __restrict__ x_ptr,
 }
 ```
 
-$\boldsymbol{c}_t$の計算は要素ごとに独立してできるため、$b \times d$個のスレッドを立てて一気に計算します。
+$\boldsymbol{c}_t$の計算は要素ごとに独立してできるため、$b \times d$個のスレッドを立てて一度に計算します。
 
 各スレッド内では時刻$t=1,2,...,l$について$\boldsymbol{c}_t$を求めます。
 
@@ -214,7 +244,7 @@ $$
 
 時間を跨がない$\boldsymbol{b}_r$に関しては式を見れば明らかですが、$$\boldsymbol{c}_{t-1}$$が絡んでくる$$\boldsymbol{W}$$、$$\boldsymbol{b}_f$$、$$\boldsymbol{x}_t$$については計算グラフを考えると導出しやすいです。
 
-ここでは全時刻で共通な$$\boldsymbol{b}_f$$が時刻$t$ごとに独立している別の値だと仮定してグラフを書きます。
+まず$$\boldsymbol{b}_f$$ですが、ここでは全時刻で共通の値である$$\boldsymbol{b}_f$$が時刻$t$ごとに独立している別の値だと仮定してグラフを書きます。
 
 （後から気づきましたが図では開始時刻が0になっています。この記事では1から開始することにします。）
 
@@ -354,9 +384,9 @@ void backward(const float* __restrict__ x_ptr,
 }
 ```
 
-実装のポイントですが、式(13)(14)から$$\boldsymbol{U^{(f)}}_t$$と$$\boldsymbol{b}_f$$のgradientは同じになり、$$\boldsymbol{U^{(r)}}_t$$と$$\boldsymbol{b}_r$$のgradientも同じになることが分かります。
+実装のポイントですが、式(6)(7)から$$\boldsymbol{U^{(f)}}_t$$と$$\boldsymbol{b}_f$$のgradientは同じになり、$$\boldsymbol{U^{(r)}}_t$$と$$\boldsymbol{b}_r$$のgradientも同じになることが分かります。
 
-そのため以下のようにどちらかだけ求めれて他方にコピーすればOKです。
+そのため以下のようにどちらかだけ求めて他方にコピーすればOKです。
 
 ```
 *grad_uft_ptr = *grad_bft_ptr;
@@ -376,7 +406,11 @@ def backward_gpu(self, inputs, grad_outputs):
 
 これは現在の時刻の$$\boldsymbol{c}_t$$のgradientと足しあわせ、$$\boldsymbol{f}_t$$を書けると前の時刻に流れるgradientになります。
 
-このbackwardのコードでは$$\boldsymbol{U}$$に関する勾配を出すまでにしておき、$$\boldsymbol{W}$$に関する勾配はConvolution1Dの誤差逆伝播のコードを使うほうが高速に求められます。
+```
+incoming_grad_ct = (grad_ct + incoming_grad_ct) * ft;
+```
+
+このbackwardのCUDAカーネルでは$$\boldsymbol{U}$$に関する勾配を出すまでにしておき、$$\boldsymbol{W}$$に関する勾配はConvolution1Dの誤差逆伝播のコードを使うほうが高速に求められます。
 
 ```
 col = conv_nd.im2col_nd_gpu(grad_u, (1,), (1,), (0,), cover_all=False)
@@ -388,8 +422,48 @@ grad_b = xp.sum(grad_b, axis=(0, 2))
 grad_w = xp.tensordot(grad_u, col, ((0, 2), (0, 3))).astype(W.dtype, copy=False).reshape((feature_dimension * 3, feature_dimension))
 ```
 
+ちなみに私は最初以下のような実装をしていましたが、これは非常に遅いのでおすすめできません。
+
+```
+grad_x = xp.dot(grad_u.transpose((0, 2, 1)), W).transpose((0, 2, 1)) + grad_highway_x
+
+grad_b = xp.sum(grad_b, axis=(0, 2))
+
+grad_w = xp.broadcast_to(grad_u[..., None, :], (batchsize,) + W.shape + (seq_length,))
+grad_w = xp.sum(grad_w * X[:, None, ...], axis=(0, 3))
+```
+
 ## ベンチマーク
 
+SRUとLSTMの順伝播・誤差逆伝播の実行速度を計測しました。
 
+![benchmark](https://raw.githubusercontent.com/musyoku/images/master/sru/result.png)
+
+圧倒的にSRUの方が速いです。
 
 ## 実験
+
+Chainerのexamplesにある[LSTM](https://github.com/chainer/chainer/tree/v2/examples/ptb)と比較しました。
+
+| Model | #layers | d   | Perplexity |
+|-------|---------|-----|------------|
+| LSTM  | 2       | 640 | 89         |
+| SRU   | 2       | 640 | 92         |
+| SRU   | 2       | 320 | 92         |
+| LSTM  | 2       | 320 | 93         |
+| SRU   | 2       | 128 | 110        |
+| LSTM  | 2       | 128 | 117        |
+
+LSTM並の性能は出るようです。
+
+ChainerのLSTMのexampleは1epochがどこからどこまでなのかが分からなかったので時間の計測はしていません。
+
+最適化はMomentum SGDを使うとうまくいきます。
+
+学習率は1から始めて20epoch目くらいから0.98倍ずつ減衰すると良いです。
+
+## おわりに
+
+CUDA素人なので効率の悪いコードになっている感がありますが、もっとCUDA力を上げないといけません。
+
+QRNNも同様にCUDAで高速化できそうだと思いました。
