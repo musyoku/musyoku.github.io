@@ -149,8 +149,8 @@ SRUでは、各時刻の入力ベクトルを連結した行列$(\boldsymbol{x}_
 
 ```
 from chainer.utils import conv_nd
-col = conv_nd.im2col_nd_gpu(X, (1,), (1,), (0,), cover_all=False)
-U = xp.tensordot(col, W[..., None], ((1, 2), (1, 2))).astype(X.dtype, copy=False).transpose((0, 2, 1))
+self.col = conv_nd.im2col_nd_gpu(X, (1,), (1,), (0,), cover_all=False) # backward時にも再利用する
+U = xp.tensordot(self.col, W[..., None], ((1, 2), (1, 2))).astype(X.dtype, copy=False).transpose((0, 2, 1))
 ```
 
 ちなみに`matmul`や`dot`でも同様に計算できます。
@@ -410,16 +410,16 @@ def backward_gpu(self, inputs, grad_outputs):
 incoming_grad_ct = (grad_ct + incoming_grad_ct) * ft;
 ```
 
-このbackwardのCUDAカーネルでは$$\boldsymbol{U}$$に関する勾配を出すまでにしておき、$$\boldsymbol{W}$$に関する勾配はConvolution1Dの誤差逆伝播のコードを使うほうが高速に求められます。
+このbackwardのCUDAカーネルでは$$\boldsymbol{U}$$に関する勾配を出すまでにしておき、$$\boldsymbol{W}$$と$$\boldsymbol{x}_t$$に関する勾配はConvolution1Dの誤差逆伝播のコードを使うほうが高速に求められます。
 
 ```
-col = conv_nd.im2col_nd_gpu(grad_u, (1,), (1,), (0,), cover_all=False)
-grad_x = xp.tensordot(col, W.T[..., None], ((1, 2), (1, 2))).astype(X.dtype, copy=False).transpose((0, 2, 1)) + grad_highway_x
+grad_x = conv_nd.im2col_nd_gpu(grad_u, (1,), (1,), (0,), cover_all=False)
+grad_x = xp.tensordot(grad_x, W.T[..., None], ((1, 2), (1, 2))).astype(X.dtype, copy=False).transpose((0, 2, 1)) + grad_highway_x
 
 grad_b = xp.sum(grad_b, axis=(0, 2))
 
 # forward時に求めたcolを使う
-grad_w = xp.tensordot(grad_u, col, ((0, 2), (0, 3))).astype(W.dtype, copy=False).reshape((feature_dimension * 3, feature_dimension))
+grad_w = xp.tensordot(grad_u, self.col, ((0, 2), (0, 3))).astype(W.dtype, copy=False).reshape((feature_dimension * 3, feature_dimension))
 ```
 
 ちなみに私は最初以下のような実装をしていましたが、これは非常に遅いのでおすすめできません。
