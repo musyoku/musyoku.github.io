@@ -10,11 +10,17 @@ permalink: /implementation/
 
 ## Chainer
 
-### [chainer.Stream](https://github.com/musyoku/chainer-stream)
+### [chainer.nn](https://github.com/musyoku/chainer-nn)
 
 - ChainerのChainをもっと書きやすくするために作りました
 
 ## Deep Learning
+
+### [Training RNNs as Fast as CNNs](https://github.com/musyoku/chainer-sru)
+
+- Simple Recurrent Unit
+- RNNの高速な実装です
+- LSTMに比べて10倍程度速いです
 
 ### [Self-Normalizing Neural Networks](https://github.com/musyoku/self-normalizing-networks)
 
@@ -91,7 +97,6 @@ permalink: /implementation/
 - 人間とほぼ同等な品質の音声生成ができるモデルです
 - 具体的なことが何も書かれていないため実装者によるところが大きいです
 - 計算量が大きすぎるため個人では実験することが困難だと思います
-- 実装難易度: **3**
 
 ### [Semi-Supervised Learning with Deep Generative Models](https://github.com/musyoku/variational-autoencoder/)
 
@@ -103,7 +108,7 @@ permalink: /implementation/
 
 ### [Human-level control through deep reinforcement learning](https://github.com/musyoku/deep-q-network/)
 
-- ご存知DQNです
+- DQNです
 - 強化学習をDeepにしています
 
 ### [Deep Reinforcement Learning with Double Q-learning](https://github.com/musyoku/double-dqn/)
@@ -177,8 +182,3 @@ permalink: /implementation/
 
 - 教師なし品詞推定の代表的な手法を実装しています
 - 現在も実装途中です
-
-### [教師なし形態素解析でWordCloud](https://github.com/musyoku/unsupervised-wordcloud/)
-
-- 教師なし形態素解析によりあらゆる言語データからワードクラウドを作れます
-- 冠詞などの意味のない頻出語を除外することが今後の課題です
