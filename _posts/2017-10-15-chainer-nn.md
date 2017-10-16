@@ -21,7 +21,29 @@ excerpt_separator: <!--more-->
 
 [musyoku/chainer-nn](https://github.com/musyoku/chainer-nn)
 
-一般的なsequentialクラスと同じ形で書けます。
+`chainer.Chain`のモデル定義はもともと以下のように書きます。
+
+```
+class Model(chainer.Chain):
+
+    def __init__(self, n_in, n_hidden, n_out):
+        super(Model, self).__init__()
+        with self.init_scope():
+            self.layer1 = L.Linear(n_in, n_hidden)
+            self.layer2 = L.Linear(n_hidden, n_hidden)
+            self.layer3 = L.Linear(n_hidden, n_out)
+
+    def __call__(self, x):
+        h1 = F.relu(self.layer1(x))
+        h2 = F.relu(self.layer2(h1))
+        return self.layer3(h2)
+```
+
+Chainer v2からは`with self.init_scope()`内で`chainer.Link`を追加する必要があります。
+
+単純なネットワークならこの書き方で問題ありませんが、最近のDeep Learningは回路設計の領域に来ており、複雑大規模なネットワークを上のやり方で定義すると順伝播の計算で苦労します。
+
+今回作った`nn.Module`クラスでは、PyTorchやKerasなどの一般的なsequentialクラスと同じ形で書けます。
 
 ```
 module = nn.Module(
@@ -33,8 +55,6 @@ module = nn.Module(
 	nn.ReLU(),
 )
 ```
-
-見た目がPyTorchっぽいです。
 
 `nn.Module`は`chainer.Chain`を継承しているため、使い方は同じです。
 
@@ -60,11 +80,11 @@ module = nn.Module(
 module.additional_layer = nn.Linear(1000, 1000)
 ```
 
-見た目上は通常のオブジェクトへの要素の追加と変わりませんが、内部的には以下のように適切に`chainer.Chain`に追加されます。
+見た目上は通常のオブジェクトへの要素の追加と変わりませんが、内部的には以下のような動作になっており、適切に`chainer.Chain`に追加されます。
 
 ```
-with self.init_scope():
-	self.additional_layer = nn.Linear(1000, 1000)
+with module.init_scope():
+	module.additional_layer = L.Linear(1000, 1000)
 ```
 
 これのメリットは下層のみ共有するようなネットワークを書ける点にあります。
@@ -113,10 +133,31 @@ ln_var = module.ln_var(internal)
 z = chainer.functions.gaussian(mean, ln_var)
 ```
 
-これも内部的には`with self.init_scope():`内で`chainer.Chain`に追加されます。
+上のコードは内部的には以下のような動作をします。
 
-さらに発展として`nn.Module`を継承したクラスを考えます。
+```
+with module.init_scope():
+	module.link_1 = L.Linear(1000, 1000)
+	module.link_2 = L.Linear(1000, 1000)
 
+with module.mean.init_scope():
+	module.mean.link_1 = L.Linear(1000, 1000)
+	module.mean.link_2 = L.Linear(1000, 2)
+
+with module.ln_var.init_scope():
+	module.ln_var.link_1 = L.Linear(1000, 1000)
+	module.ln_var.link_2 = L.Linear(1000, 2)
+
+with module.init_scope():
+	module.mean_link_1 = module.mean.link_1
+	module.mean_link_2 = module.mean.link_2
+	module.ln_var_link_1 = module.ln_var.link_1
+	module.ln_var_link_2 = module.ln_var.link_2
+```
+
+ポイントは子に`chainer.Link`を追加すると親にも追加される点です。
+
+この動作のメリットは以下のように`nn.Module`を継承したクラスを考えると分かりやすいです。
 
 ```
 class Model(nn.Module):
@@ -144,9 +185,7 @@ model = Model()
 
 `model`、`model.encoder`、`model.decoder`、`model.generator`、`model.discriminator`がそれぞれ`chainer.Chain`になっています。
 
-この時、親である`model`は、子の`nn.Module`が持っている全ての`chainer.Link`を持っています。
-
-そのためモデルのパラメータを保存する際は親を保存するだけで全ての子のパラメータも保存されます。
+この時、親である`model`は、子の`nn.Module`が持っている全ての`chainer.Link`を持っているため、モデルのパラメータを保存する際は親を保存するだけで全ての子のパラメータも保存されます。
 
 ```
 chainer.serializers.save_hdf5("model.hdf5", model)
@@ -303,7 +342,7 @@ for block in module.blocks():
 		x = dropout(x)
 ```
 
-モデル定義部分を変えずに計算グラフを変えたい時に使えます。
+デバッグがやりやすいです。
 
 ## 応用例
 

@@ -13,6 +13,10 @@ excerpt_separator: <!--more-->
 
 <!--more-->
 
+## 追記（2017/10/16）
+
+[新しいバージョン](http://localhost:4000/2017/10/15/chainer-nn/)を作りました。
+
 ## はじめに
 
 Chainerでネットワークを設計する時は、ChainにLinkを追加して`__call__`で各層の出力を設計すると思います。
