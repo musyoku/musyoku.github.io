@@ -56,7 +56,7 @@ double型の限界に来ていることがわかります。
 
 そこでNPYLMでも$\alpha[t][k][j]$を$t$について正規化（つまり$k$と$j$に関する総和で割る）するとアンダーフローを回避できるのではないかと考えました。
 
-NPYLMでは$\alpha[t][k][j]$を以下のように求めます。
+NPYLMでは$\alpha[t][k][j]$を以下のように求めます。（$L$は可能な単語の最大長）
 
 $$
   \begin{align}
@@ -68,7 +68,7 @@ $$
 
 $$
   \begin{align}
-    z[t]=\sum_{m=1}^{L}\sum_{n=1}^{L}\alpha[t][m][n]
+    z[t]=\sum_{k=1}^{L}\sum_{j=1}^{L}\alpha[t][k][j]
   \end{align}\
 $$
 
@@ -77,14 +77,6 @@ $$
 $$
   \begin{align}
     \hat{\alpha}[t][k][j]=\frac{\alpha[t][k][j]}{z[t]}
-  \end{align}\
-$$
-
-これを式(1)に代入すると、新しい更新式が求められます。
-
-$$
-  \begin{align}
-    \alpha[t][k][j]=\sum_{i=1}^{L}p(c^t_{t-k+1} \mid c^{t-k-j}_{t-k-j-i+1}c^{t-k}_{t-k-j+1})\cdot \hat{\alpha}[t-k][j][i]\cdot z[t-k]
   \end{align}\
 $$
 
@@ -112,18 +104,62 @@ alpha[211][1][2] = 8.24485e-13, z[211] = 0
 alpha[211][1][3] = 4.57098e-10, z[211] = 0
 ```
 
-$\alpha[t][k][j]$が現実的な値の範囲に収まっているのに対し、$z[t]$がアンダーフローを起こしています。
+$\hat{\alpha}[t][k][j]$が現実的な値の範囲に収まっているのに対し、$z[t]$がアンダーフローを起こしています。
 
-そこで$z[t]$を直接保持するのではなく、$\log(z[t])$を用いて$\hat{\alpha}[t][k][j]$を計算できないかと考えました。
-
-対数をとると以下のようになります。
+これはなぜかというと、式(3)を式(1)に代入すると以下のようになりますが、
 
 $$
   \begin{align}
-    \log(z[t])&=\log\left(\sum_{m=1}^{L}\sum_{n=1}^{L}\alpha[t][m][n]\right)\\
-    &=\log\left(\sum_{m=1}^{L}\sum_{n=1}^{L}\sum_{i=1}^{L}p(\cdot\mid\cdot)\cdot \hat{\alpha}[t-m][n][i]\cdot z[t-m]\right)\\
-    &=\log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\sum_{i=1}^{L}\exp\Bigl(\log\bigl(p(\cdot\mid\cdot)\cdot \hat{\alpha}[t-m][n][i]\cdot z[t-m]\bigr)\Bigr)\biggr)\\
-    &=\log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\sum_{i=1}^{L}\exp\Bigl(\log\bigl(p(\cdot\mid\cdot)\cdot \hat{\alpha}[t-m][n][i]\bigr) + \log\bigl(z[t-m]\bigr)\Bigr)\biggr)
+    \alpha[t][k][j]=\sum_{i=1}^{L}p(c^t_{t-k+1} \mid c^{t-k-j}_{t-k-j-i+1}c^{t-k}_{t-k-j+1})\cdot \hat{\alpha}[t-k][j][i]\cdot z[t-k]
+  \end{align}\
+$$
+
+前向き確率を計算するには$$\hat{\alpha}[t-k][j][i]\cdot z[t-k]$$のように正規化を元に戻さなければならないため、$z[t]$がしだいに小さくなっていきます。
+
+そこで$z[t]$を直接保持するのではなく、$\log(z[t])$を用いて$\hat{\alpha}[t][k][j]$を計算できないかと考えました。
+
+式(3)の正規化後の前向き確率は以下のように変形できます。
+
+$$
+  \begin{align}
+    \hat{\alpha}[t][k][j] &= \frac{\alpha[t][k][j]}{z[t]}\nonumber\\
+    &= \exp\Bigl(\log\bigl(\frac{\alpha[t][k][j]}{z[t]}\bigr)\Bigr)\\
+    &= \exp\Bigl(\log\bigl(\alpha[t][k][j]\bigr) - \log\bigl(z[t]\bigr)\Bigr)\\
+    &= \exp\Bigl(\log\bigl(\sum_{i=1}^Lp(\cdot\mid\cdot)\cdot \hat{\alpha}[t-k][j][i]\bigr) + \log\bigl(z[t-k]\bigr) - \log\bigl(z[t]\bigr)\Bigr)\\
+  \end{align}\
+$$
+
+こうすることで$\log(z[\cdot])$と$\hat{\alpha}[\cdot][\cdot][\cdot]$のみを用いてアンダーフローを起こさずに正規化後の前向き確率を計算できます。
+
+ただし、このままでは$$\log(z[t])$$の値がわからないため、以下の手順により求めます。
+
+まず以下の値を定義します。
+
+$$
+  \begin{align}
+    \ddot{\alpha}[t][k][j]:=\sum_{i=1}^{L}p(c^t_{t-k+1} \mid c^{t-k-j}_{t-k-j-i+1}c^{t-k}_{t-k-j+1})\cdot \hat{\alpha}[t-k][j][i]
+  \end{align}\
+$$
+
+これは正規化されている$$\hat{\alpha}[t-k][j][i]$$から計算される前向き確率を表していますが、$$\ddot{\alpha}[t][k][j]$$の値は正規化されていないことに注意が必要です。（$k$と$j$について総和を取っても1になりません）
+
+式(4)より以下が成り立ちます。
+
+$$
+  \begin{align}
+    \alpha[t][k][j]&=\ddot{\alpha}[t][k][j]\cdot z[t-k]
+  \end{align}\
+$$
+
+
+次に$\ddot{\alpha}[t][k][j]$を$k$と$j$について全て求めてから、以下の式で正規化定数の対数を求めます。
+
+$$
+  \begin{align}
+    \log(z[t])
+    &=\log\biggl( \sum_{k=1}^{L}\sum_{j=1}^{L}\alpha[t][k][j] \biggr)\\
+    &=\log\biggl(\sum_{k=1}^{L}\sum_{j=1}^{L}\exp\Bigl(\log\bigl( \alpha[t][k][j] \bigr) \Bigr)\biggr)\\
+    &=\log\biggl(\sum_{k=1}^{L}\sum_{j=1}^{L}\exp\Bigl(\log\bigl(\ddot{\alpha}[t][k][j]\bigr) + \log\bigl(z[t-k]\bigr)\Bigr)\biggr)\\
   \end{align}\
 $$
 
@@ -137,54 +173,30 @@ $$
 
 $x_{ {\rm max} }$は$\exp$の中の$x_i$の最大値です。
 
-これを式(8)に適用するためには、まず$$\log\bigl(p(\cdot\mid\cdot)\cdot \hat{\alpha}[t-m][n][i]\bigr) + \log\bigl(z[t-m]\bigr)$$の最大値を求めておきます。
+これを式(12)に適用するためには、$$\log\bigl(\ddot{\alpha}[t][k][j]\bigr) + \log\bigl(z[t-k]\bigr)$$の最大値を求めておきます。
 
 この最大値を$\alpha_{ {\rm max} }$とすると、
 
 $$
   \begin{align}
-    \log(z[t]) = \log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\sum_{i=1}^{L}\exp\Bigl(\log\bigl(p(\cdot\mid\cdot)\cdot \hat{\alpha}[t-m][n][i]\bigr) + \log\bigl(z[t-m]\bigr) - \alpha_{ {\rm max} }\Bigr)\biggr) + \alpha_{ {\rm max} }
+    \log(z[t]) = \log\biggl(\sum_{k=1}^{L}\sum_{j=1}^{L}\exp\Bigl(\log\bigl(\ddot{\alpha}[t][k][j]\bigr) + \log\bigl(z[t-k]\bigr) - \alpha_{ {\rm max} }\Bigr)\biggr) + \alpha_{ {\rm max} }
   \end{align}\
 $$
 
 となります。
 
-次に式(3)を用いて正規化後の前向き確率を以下のように求めます。
+最後に、式(8)を式(7)に代入した以下の式より、正規化後の$$\hat{\alpha}[t][k][j]$$を求めます。
 
 $$
   \begin{align}
-    \hat{\alpha}[t][k][j] &= \frac{\alpha[t][k][j]}{z[t]}\nonumber\\
-    &= \exp\Bigl(\log\bigl(\frac{\alpha[t][k][j]}{z[t]}\bigr)\Bigr)\\
-    &= \exp\Bigl(\log\bigl(\alpha[t][k][j]\bigr) - \log\bigl(z[t]\bigr)\Bigr)\\
-    &= \exp\Bigl(\log\bigl(\sum_{i=1}^Lp(\cdot\mid\cdot)\cdot \hat{\alpha}[t-k][j][i]\bigr) + \log\bigl(z[t-k]\bigr) - \log\bigl(z[t]\bigr)\Bigr)\\
-  \end{align}\
-$$
-
-こうすることで$\log(z[\cdot])$と$\hat{\alpha}[\cdot][\cdot][\cdot]$を用いてアンダーフローを起こさずに正規化後の前向き確率を計算できます。
-
-実装する際は式(4)を変形した以下の形を考え、
-
-$$
-  \begin{align}
-    \ddot{\alpha}[t][k][j]&=\sum_{i=1}^{L}p(c^t_{t-k+1} \mid c^{t-k-j}_{t-k-j-i+1}c^{t-k}_{t-k-j+1})\cdot \hat{\alpha}[t-k][j][i]\\
-    \alpha[t][k][j]&=\ddot{\alpha}[t][k][j]\cdot z[t-k]
-  \end{align}\
-$$
-
-$\ddot{\alpha}[t][k][j]$を$k$と$j$について全て求めてから、以下の式で正規化定数の対数を求めます。
-
-$$
-  \begin{align}
-    \log(z[t])
-    &=\log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\exp\Bigl(\log\bigl(\ddot{\alpha}[t][m][n]\bigr) + \log\bigl(z[t-m]\bigr)\Bigr)\biggr)\\
-    &= \log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\exp\Bigl(\log\bigl(\ddot{\alpha}[t][m][n]\bigr) + \log\bigl(z[t-m]\bigr) - \alpha_{ {\rm max} }\Bigr)\biggr) + \alpha_{ {\rm max} }
+    \hat{\alpha}[t][k][j] &= \exp\Bigl(\log\bigl( \ddot{\alpha}[t][k][j] \bigr) + \log\bigl(z[t-k]\bigr) - \log\bigl(z[t]\bigr)\Bigr)\\
   \end{align}\
 $$
 
 この部分のコードです
 
 ```cpp
-double log_sum = 0;
+double sum_exp = 0;
 // 最大値を求める
 double max_log_z = 0;
 for(int k = 1;k <= std::min(t, _max_word_length);k++){
@@ -204,25 +216,25 @@ for(int k = 1;k <= std::min(t, _max_word_length);k++){
 // 求めた最大値をもとにlogsumexp
 for(int k = 1;k <= std::min(t, _max_word_length);k++){
   if(t - k == 0){
-    log_sum += exp(log(_alpha[t][k][0]) + _log_z[t - k] - max_log_z);
+    sum_exp += exp(log(_alpha[t][k][0]) + _log_z[t - k] - max_log_z);
     continue;
   }
   for(int j = 1;j <= std::min(t - k, _max_word_length);j++){
-    log_sum += exp(log(_alpha[t][k][j]) + _log_z[t - k] - max_log_z);
+    sum_exp += exp(log(_alpha[t][k][j]) + _log_z[t - k] - max_log_z);
   }
 }
-log_sum = log(log_sum) + max_log_z;
+double log_z_t = log(sum_exp) + max_log_z;
 // 正規化
 for(int k = 1;k <= std::min(t, _max_word_length);k++){
   if(t - k == 0){
-    normalized_alpha[t][k][0] = exp(log(_alpha[t][k][0]) + _log_z[t - k] - log_sum);
+    normalized_alpha[t][k][0] = exp(log(_alpha[t][k][0]) + _log_z[t - k] - log_z_t);
     continue;
   }
   for(int j = 1;j <= std::min(t - k, _max_word_length);j++){
-    normalized_alpha[t][k][j] = exp(log(_alpha[t][k][j]) + _log_z[t - k] - log_sum);
+    normalized_alpha[t][k][j] = exp(log(_alpha[t][k][j]) + _log_z[t - k] - log_z_t);
   }
 }
-_log_z[t] = log_sum;
+_log_z[t] = log_z_t;
 ```
 
 実際に$t=1000$付近の値を見てみると以下のようになりました。
