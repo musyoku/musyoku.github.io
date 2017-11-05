@@ -110,7 +110,6 @@ alpha[210][16][16] = 4.82999e-26, z[210] = 1.23516e-322
 alpha[211][1][1] = 3.0484e-12, z[211] = 0
 alpha[211][1][2] = 8.24485e-13, z[211] = 0
 alpha[211][1][3] = 4.57098e-10, z[211] = 0
-
 ```
 
 $\alpha[t][k][j]$が現実的な値の範囲に収まっているのに対し、$z[t]$がアンダーフローを起こしています。
@@ -132,19 +131,19 @@ $$
 
 $$
   \begin{align}
-    \log(\sum^N_{i=1} \exp(x_i)) = \log\{\sum^N_{i=1} \exp(x_i - x_{max})\}  + x_{max}
+    \log(\sum^N_{i=1} \exp(x_i)) = \log\{\sum^N_{i=1} \exp(x_i - x_{ {\rm max} })\}  + x_{ {\rm max} }
   \end{align}\
 $$
 
-$x_{max}$は$\exp$の中の$x_i$の最大値です。
+$x_{ {\rm max} }$は$\exp$の中の$x_i$の最大値です。
 
 これを式(8)に適用するためには、まず$$\log\bigl(p(\cdot\mid\cdot)\cdot \hat{\alpha}[t-m][n][i]\bigr) + \log\bigl(z[t-m]\bigr)$$の最大値を求めておきます。
 
-この最大値を$\alpha_{max}$とすると、
+この最大値を$\alpha_{ {\rm max} }$とすると、
 
 $$
   \begin{align}
-    \log(z[t]) = \log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\sum_{i=1}^{L}\exp\Bigl(\log\bigl(p(\cdot\mid\cdot)\cdot \hat{\alpha}[t-m][n][i]\bigr) + \log\bigl(z[t-m]\bigr) - \alpha_{max}\Bigr)\biggr) + \alpha_{max}
+    \log(z[t]) = \log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\sum_{i=1}^{L}\exp\Bigl(\log\bigl(p(\cdot\mid\cdot)\cdot \hat{\alpha}[t-m][n][i]\bigr) + \log\bigl(z[t-m]\bigr) - \alpha_{ {\rm max} }\Bigr)\biggr) + \alpha_{ {\rm max} }
   \end{align}\
 $$
 
@@ -177,14 +176,14 @@ $\ddot{\alpha}[t][k][j]$を$k$と$j$について全て求めてから、以下�
 $$
   \begin{align}
     \log(z[t])
-    &=\log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\sum_{i=1}^{L}\exp\Bigl(\log\bigl(\ddot{\alpha}[t][k][j]\bigr) + \log\bigl(z[t-m]\bigr)\Bigr)\biggr)\\
-    &= \log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\sum_{i=1}^{L}\exp\Bigl(\log\bigl(\ddot{\alpha}[t][k][j]\bigr) + \log\bigl(z[t-m]\bigr) - \alpha_{max}\Bigr)\biggr) + \alpha_{max}
+    &=\log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\exp\Bigl(\log\bigl(\ddot{\alpha}[t][m][n]\bigr) + \log\bigl(z[t-m]\bigr)\Bigr)\biggr)\\
+    &= \log\biggl(\sum_{m=1}^{L}\sum_{n=1}^{L}\exp\Bigl(\log\bigl(\ddot{\alpha}[t][m][n]\bigr) + \log\bigl(z[t-m]\bigr) - \alpha_{ {\rm max} }\Bigr)\biggr) + \alpha_{ {\rm max} }
   \end{align}\
 $$
 
 この部分のコードです
 
-```
+```cpp
 double log_sum = 0;
 // 最大値を求める
 double max_log_z = 0;
