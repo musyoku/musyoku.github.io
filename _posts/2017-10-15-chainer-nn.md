@@ -23,7 +23,7 @@ excerpt_separator: <!--more-->
 
 `chainer.Chain`のモデル定義はもともと以下のように書きます。
 
-```
+```python
 class Model(chainer.Chain):
 
     def __init__(self, n_in, n_hidden, n_out):
@@ -45,7 +45,7 @@ Chainer v2からは`with self.init_scope()`内で`chainer.Link`を追加する�
 
 今回作った`nn.Module`クラスでは、PyTorchやKerasなどの一般的なsequentialクラスと同じ形で書けます。
 
-```
+```python
 module = nn.Module(
 	nn.Linear(784, 1000),
 	nn.ReLU(),
@@ -60,7 +60,7 @@ module = nn.Module(
 
 出力を計算するには`__call__`を呼びます。
 
-```
+```python
 y = module(x)
 ```
 
@@ -68,7 +68,7 @@ y = module(x)
 
 まず`nn.Module`のオブジェクトに直接`chainer.Link`を追加できるようになりました。
 
-```
+```python
 module = nn.Module(
 	nn.Linear(1000, 1000),
 	nn.ReLU(),
@@ -82,7 +82,7 @@ module.additional_layer = nn.Linear(1000, 1000)
 
 見た目上は通常のオブジェクトへの要素の追加と変わりませんが、内部的には以下のような動作になっており、適切に`chainer.Chain`に追加されます。
 
-```
+```python
 with module.init_scope():
 	module.additional_layer = L.Linear(1000, 1000)
 ```
@@ -91,7 +91,7 @@ with module.init_scope():
 
 たとえば入力からガウス分布の平均と分散を得て出力を計算する場合は以下のように書けます。
 
-```
+```python
 module = nn.Module(
 	nn.Linear(1000, 1000),
 	nn.ReLU(),
@@ -109,7 +109,7 @@ z = chainer.functions.gaussian(mean, ln_var)
 
 さらに`nn.Module`に`nn.Module`を追加することもできます。
 
-```
+```python
 module = nn.Module(
 	nn.Linear(1000, 1000),
 	nn.ReLU(),
@@ -135,7 +135,7 @@ z = chainer.functions.gaussian(mean, ln_var)
 
 上のコードは内部的には以下のような動作をします。
 
-```
+```python
 with module.init_scope():
 	module.link_1 = L.Linear(1000, 1000)
 	module.link_2 = L.Linear(1000, 1000)
@@ -159,7 +159,7 @@ with module.init_scope():
 
 この動作のメリットは以下のように`nn.Module`を継承したクラスを考えると分かりやすいです。
 
-```
+```python
 class Model(nn.Module):
 	def __init__(self):
 		super().__init__()
@@ -187,13 +187,13 @@ model = Model()
 
 この時、親である`model`は、子の`nn.Module`が持っている全ての`chainer.Link`を持っているため、モデルのパラメータを保存する際は親を保存するだけで全ての子のパラメータも保存されます。
 
-```
+```python
 chainer.serializers.save_hdf5("model.hdf5", model)
 ```
 
 Optimizerも同様です。
 
-```
+```python
 optimizer = chainer.optimizers.SGD()
 optimizer.setup(model)
 ```
@@ -201,7 +201,7 @@ optimizer.setup(model)
 もちろん個別に行うことも可能です。
 
 
-```
+```python
 optimizer_encoder = chainer.optimizers.SGD()
 optimizer_encoder.setup(model.encoder)
 
@@ -218,7 +218,7 @@ optimizer_generator.setup(model.generator)
 この機能は階層が深くなっても動作するため、以下のような極端な例でも`model`は全ての`chainer.Link`を持っています。
 
 
-```
+```python
 class Model(nn.Module):
 	def __init__(self):
 		super().__init__()
@@ -240,7 +240,7 @@ model = Model()
 
 パラメータの初期化も親の`__init__`内で行えば、全ての子のパラメータを初期化できます。
 
-```
+```python
 class Model(nn.Module):
 	def __init__(self):
 		super().__init__()
@@ -257,7 +257,7 @@ class Model(nn.Module):
 前回に引き続きresidualな接続も可能です。
 
 
-```
+```python
 model = nn.Module(
 	nn.Residual(
 		nn.Convolution2D(None, 64, 3),
@@ -290,7 +290,7 @@ y = model(x)
 
 `nn.Residual`では、ユニット出力をユニット入力に足しあわせて最終出力とします。
 
-```
+```python
 y = layer(x)
 if isinstance(layer, Residual) and x.shape == y.shape:
 	y += x
@@ -302,7 +302,7 @@ shapeが違う場合は足さないようになっているため、徐々にチ
 
 `nn.Module`の`add`メソッドでレイヤーを追加した場合、`add`したレイヤー集合を1ブロックとみなします。
 
-```
+```python
 module = nn.Module()
 module.add(
 	nn.BatchNormalization(1000),
@@ -326,7 +326,7 @@ module.add(
 
 ブロックの中身は`blocks`を呼ぶことで取得できます。
 
-```
+```python
 use_batchnorm = True
 use_dropout = True
 
@@ -372,7 +372,7 @@ AAEでは様々なモデルでいろいろなタスクを解いているので�
 
 #### Decoder
 
-```
+```python
 decoder = nn.Module(
 	nn.Linear(ndim_z, ndim_h),
 	nn.ReLU(),
@@ -385,7 +385,7 @@ decoder = nn.Module(
 
 #### Encoder
 
-```
+```python
 encoder = nn.Module(
 	nn.Linear(ndim_x, ndim_h),
 	nn.ReLU(),
@@ -398,7 +398,7 @@ encoder.head_z = nn.Linear(ndim_h, ndim_z)
 
 #### Discriminator（$\boldsymbol z$）
 
-```
+```python
 discriminator_z = nn.Module(
 	nn.GaussianNoise(std=0.3),
 	nn.Linear(ndim_z, ndim_h),
@@ -411,7 +411,7 @@ discriminator_z = nn.Module(
 
 #### Discriminator（$\boldsymbol y$）
 
-```
+```python
 self.discriminator_y = nn.Module(
 	nn.GaussianNoise(std=0.3),
 	nn.Linear(ndim_y, ndim_h),
@@ -424,13 +424,13 @@ self.discriminator_y = nn.Module(
 
 #### Cluster Head
 
-```
+```python
 cluster_head = nn.Linear(ndim_y, ndim_z, nobias=True)
 ```
 
 これらをもとにクラスを作ります。
 
-```
+```python
 class Model(nn.Module):
 	def __init__(self, ndim_x=28*28, ndim_y=10, ndim_z=2, ndim_h=1000, cluster_head_distance_threshold=1):
 		super(Model, self).__init__()

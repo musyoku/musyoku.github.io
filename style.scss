@@ -399,6 +399,7 @@ footer {
 // @import "highlights";
 @import "svg-icons";
 @import "disqus";
+@import "highlights";
 
 
 pre {
@@ -425,9 +426,4 @@ code {
   white-space: pre;
   background: transparent;
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-}
-code.highlighter-rouge {
-  background-color: #f2f2f2;
-  padding: 2px 4px;
-  margin: 0 2px;
 }
