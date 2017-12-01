@@ -447,15 +447,26 @@ for(int landmark_index = 0;landmark_index < _model->_num_landmarks;landmark_inde
 
 学習が終われば、`struct liblinear::model*`に重みベクトルが入っています。
 
+実際にランダムフォレストのみ用いる場合と、線形回帰を組み合わせた場合を比較すると以下のようになります。
+
+![local_vs_global.png](https://raw.githubusercontent.com/musyoku/images/master/blog/2017-11-26/local_vs_global.png)
+
 ## Normalized Shape
 
 データセットの正解顔形状は顔の向きが統一されていないため、このままでは形状の回転まで含めて学習させることになってしまい、タスクが複雑になります。
 
-本手法では、前処理として顔形状の向きの正規化を行います。
+![dataset.jpg](https://raw.githubusercontent.com/musyoku/images/master/blog/2017-11-26/dataset.jpg)
+
+そのため、本手法では前処理として顔形状の向きの正規化を行います。
 
 まずデータセット全体の形状の平均を求めます。
 
+![mean.png](https://raw.githubusercontent.com/musyoku/images/master/blog/2017-11-26/mean.png)
+
 次に各データの正解形状について、並進、回転および等方性スケーリングの組み合わせによって、なるべく平均形状に近くなるように変形します。
+
+![normalized_shape_1.png](https://raw.githubusercontent.com/musyoku/images/master/blog/2017-11-26/normalized_shape_1.png)
+![normalized_shape_2.png](https://raw.githubusercontent.com/musyoku/images/master/blog/2017-11-26/normalized_shape_2.png)
 
 この変形はOpenCVの`estimateRigidTransform`関数を使えば簡単に実装できます。
 
@@ -475,8 +486,6 @@ mat = cv2.estimateRigidTransform(normalized_shape, shape, False)
 rotation_inv = mat[:, :2]
 shift_inv = mat[:, 2]
 ```
-
-実際に正規化を行うと以下のようになります。
 
 ## Data Augmentation
 
@@ -511,6 +520,16 @@ for(int data_index = 0;data_index < num_data;data_index++){
 これは68個の検出点の正解との誤差（距離）の総和を、両目の距離で割って正規化した値です。
 
 論文では300-WデータセットのCommon Subsetでエラー4.95となっていますが、私の実装では4.89となりました。
+
+## 課題
+
+この手法も含め、顔特徴点検出では学習時に正解形状を正規化するものがほとんどだと思います。
+
+そのため実際に学習済みモデルを運用すると、実データの顔の正規化ができないため精度が悪くなります。
+
+実際、ウェブカメラの映像を入力にして自分の顔で実験してみると、おおよそ顔の向きは合っているものの細かいパーツのアライメントがうまくいきませんでした。
+
+このあたりの実運用時のテクニックがよくわからないので、まだDlib並の精度は達成できていません。
 
 ## おわりに
 
