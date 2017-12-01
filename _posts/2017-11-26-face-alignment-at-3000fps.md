@@ -26,12 +26,16 @@ Dlibには目や鼻、口などの顔特徴点を検出する手法が実装さ�
 
 この分野の研究は数多く行われていますが、今回はタイトルに惹かれたので[Face Alignment at 3000 FPS via Regressing Local Binary Features](https://pdfs.semanticscholar.org/d59f/b96a60168f2baec6f5c61b82393576c33fb7.pdf)を実装しました。
 
-[musyoku/face-alignment-at-3000fps](https://github.com/musyoku/face-alignment-at-3000fps)
-
-この記事ではこの実装をもとに説明を行います。
 
 また、日本語で読める参考文献として[顔特徴点検出における形状回帰モデルの適応的設計](https://www.jstage.jst.go.jp/article/itej/69/3/69_J126/_article/-char/ja/)や[関東CV勉強会20140802（Face Alignment at 3000fps）](https://www.slideshare.net/tackson5/cv20140802face-alignment-at-3000fps)があります。
 
+## 実装
+
+コア実装をC++とBoostで行い、Pythonから利用できるようにしました。
+
+[musyoku/face-alignment-at-3000fps](https://github.com/musyoku/face-alignment-at-3000fps)
+
+この記事ではこの実装をもとに説明を行います。
 
 ## 形状回帰モデル
 
@@ -445,4 +449,73 @@ for(int landmark_index = 0;landmark_index < _model->_num_landmarks;landmark_inde
 
 ## Normalized Shape
 
+データセットの正解顔形状は顔の向きが統一されていないため、このままでは形状の回転まで含めて学習させることになってしまい、タスクが複雑になります。
+
+本手法では、前処理として顔形状の向きの正規化を行います。
+
+まずデータセット全体の形状の平均を求めます。
+
+次に各データの正解形状について、並進、回転および等方性スケーリングの組み合わせによって、なるべく平均形状に近くなるように変形します。
+
+この変形はOpenCVの`estimateRigidTransform`関数を使えば簡単に実装できます。
+
+```python
+shape = np.asarray(shape, dtype=np.float64)
+
+# 正規化用の変換を求める
+mat = cv2.estimateRigidTransform(shape, mean_shape, False)
+rotation = mat[:, :2]
+shift = mat[:, 2]
+
+# 正規化する
+normalized_shape = np.transpose(np.dot(rotation, shape.T) + shift[:, None], (1, 0))
+
+# 正規化後の形状から元に戻す変換も求めておく
+mat = cv2.estimateRigidTransform(normalized_shape, shape, False)
+rotation_inv = mat[:, :2]
+shift_inv = mat[:, 2]
+```
+
+実際に正規化を行うと以下のようになります。
+
 ## Data Augmentation
+
+本手法では、初期形状としてデータ全体の平均形状から開始しパラメータを学習していきますが、より頑健な推定ができるように初期形状を複数用いて学習を行います。
+
+実装は簡単で、全データの（正規化後の）正解形状の中からランダムにサンプリングして初期形状とします。
+
+```cpp
+for(int data_index = 0;data_index < num_data;data_index++){
+	for(int n = 0;n < _augmentation_size;n++){
+		int initial_shape_index = 0;
+		do {
+			initial_shape_index = sampler::uniform_int(0, num_data - 1);
+		} while(initial_shape_index == data_index);
+
+		// initial_shape_indexを初期形状の1つに加える
+		...
+	}
+}
+```
+
+## データセット
+
+データセットは[300 Faces In-the-Wild Challenge](https://ibug.doc.ic.ac.uk/resources/facial-point-annotations/)です。
+
+私はafw.zip, ibug.zip, lfpw.zip, helen.zipの4種類を使いました。
+
+## 評価
+
+モデルの性能評価ではinter-pupil distance normalized landmark errorと呼ばれる指標を用います。
+
+これは68個の検出点の正解との誤差（距離）の総和を、両目の距離で割って正規化した値です。
+
+論文では300-WデータセットのCommon Subsetでエラー4.95となっていますが、私の実装では4.89となりました。
+
+## おわりに
+
+この分野は歴史が長く、そのせいか論文では省略される部分があまりに多く実装に苦労しました。
+
+GitHubで見つけた[実装](https://github.com/freesouls/face-alignment-at-3000fps)は、LIBLINEARの使い方やランダムフォレストの学習方法などで非常に参考になりました。
+
+この実装がなければ私は論文を理解できなかったので感謝しています。
