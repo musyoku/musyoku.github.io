@@ -266,7 +266,7 @@ for(int data_index: data_indices){
 
 分散は${\rm Var}[X] = {\rm E}[X^2] - {\rm E}[X]$で求めます。
 
-この分割の操作は本質的にはデータを分離していることになります。
+このノードの分割の操作は、本質的にはデータを回帰に有効となるように分割する操作になっています。
 
 そのため、あるノードを分割する時に使ったデータ集合を、そのノードの特徴座標・輝度値を用いて２つに分割し、閾値以下のデータを左の子ノードの分割に用い、閾値以上のデータを右の子ノードの分割に用います。
 
@@ -320,9 +320,7 @@ for(int tree_index = 0;tree_index < 17;tree_index++){
 
 Local Binary Featuresは各検出点について独立に移動量を推定するものですが、これでは自分以外の検出点の情報を全く使わないため推定精度が低くなります。
 
-そこで本手法では、まず各検出点のローカルの推定結果を2値化し、全て結合してベクトルを作ります。
-
-次にこのベクトルを新たな特徴量として、線形回帰によって各検出点の移動量を推定します。
+そこで本手法では、まず各検出点のランダムフォレストによる推定結果を2値化し、全て結合してベクトルを作ります。
 
 ![global_linear_regression.png](https://raw.githubusercontent.com/musyoku/images/master/blog/2017-11-26/global_linear_regression_1.png)
 
@@ -336,8 +334,115 @@ Local Binary Featuresは各検出点について独立に移動量を推定す�
 
 （論文より引用）
 
-最終的に得られるベクトルは100万次元を超える巨大なものになります。（ここではちょうど100万次元とします）
+最終的に得られるベクトルは100万次元を超える巨大なものになります。
 
-次にこのベクトル$\boldsymbol \Phi_i$と重み行列$\boldsymbol W$の内積を計算し、その値を各検出点の移動量とします。
+次に、データ$i$のベクトル$\boldsymbol \Phi_i$と、各検出点$l$ごとに2つ（$x$軸方向と$y$軸方向）用意した重みベクトル$\boldsymbol W_{l, {\rm x}}, \boldsymbol W_{l, {\rm y}}$それぞれについて内積を計算し、その値を移動量とします。
 
-$$\boldsymbol \Phi_i$$は100万次元、$\boldsymbol W$は$1000000 \times 136$次元です。
+$\boldsymbol \Phi_i, \boldsymbol W_{l, {\rm x}}, \boldsymbol W_{l, {\rm y}}$が100万次元を超える巨大なベクトルなので、線形回帰を高速に実装するために[LIBLINEAR](https://www.csie.ntu.edu.tw/~cjlin/liblinear/)を用いました。
+
+ちなみにLIBLINEARはあのLIBSVMと同じ開発者です。
+
+まず2値化ベクトルを作ります。
+
+```cpp
+int num_total_trees = 0;	// 木の総数
+int num_total_leaves = 0;	// 葉の総数
+				// この値がベクトルの次元数になる
+
+for(int landmark_index = 0;landmark_index < _num_landmarks;landmark_index++){
+	Forest* forest = get_forest(stage, landmark_index);
+	num_total_trees += forest->get_num_trees();
+	num_total_leaves += forest->get_num_total_leaves();
+}
+
+// 木1つにつき1になる葉ノードは1つしかないため、feature_nodeは木の個数分+終端だけ作る
+struct liblinear::feature_node* binary_features = new liblinear::feature_node[num_total_trees + 1];
+int feature_offset = 1;		// 1になる要素の位置
+int feature_pointer = 0;
+
+for(int landmark_index = 0;landmark_index < _num_landmarks;landmark_index++){
+	// ランダムフォレストで到達した葉ノードを取得
+	Forest* forest = get_forest(stage, landmark_index);
+	std::vector<Node*> leaves;
+	forest->predict(shape, image, leaves);
+	// 目標位置までの移動量を計算
+	for(int tree_index = 0;tree_index < forest->get_num_trees();tree_index++){
+		Tree* tree = forest->get_tree_at(tree_index);
+		int num_leaves = tree->get_num_leaves();
+		Node* leaf = leaves[tree_index];
+		liblinear::feature_node &feature = binary_features[tree_index + landmark_index * _num_landmarks];
+		feature.index = feature_offset + leaf->identifier();	// 1になる要素の位置
+		feature.value = 1.0;	// 1をセット
+		feature_offset += tree->get_num_leaves();
+	}
+}
+
+// 終端には-1をセット
+liblinear::feature_node &feature = binary_features[feature_pointer];
+feature.index = -1;
+feature.value = -1;
+```
+
+省メモリのため、ベクトルの全要素を持つのではなく、1になっている要素のみ保持します。
+
+この要素を`liblinear::feature_node`で表し、要素の位置と値とセットします。
+
+```cpp
+// 木の総数、葉の総数
+int num_total_trees = 0;
+int num_total_leaves = 0;
+for(int landmark_index = 0;landmark_index < _model->_num_landmarks;landmark_index++){
+	Forest* forest = _model->get_forest(stage, landmark_index);
+	num_total_trees += forest->get_num_trees();
+	num_total_leaves += forest->get_num_total_leaves();
+}
+
+// liblinearの初期化
+struct liblinear::problem* problem = new struct liblinear::problem;
+problem->l = num_data;		// データ数
+problem->n = num_total_leaves;	// 葉の総数がベクトルの次元数になる
+problem->x = binary_features;	// 入力ベクトル（実際は1になっている要素のfeature_nodeを集めたもの）
+problem->bias = -1;
+
+struct liblinear::parameter* parameter = new struct liblinear::parameter;
+parameter->solver_type = liblinear::L2R_L2LOSS_SVR_DUAL;
+parameter->C = 0.00001;	// 正則化項の係数
+parameter->p = 0;
+
+double** targets = new double*[_model->_num_landmarks];
+for(int landmark_index = 0;landmark_index < _model->_num_landmarks;landmark_index++){
+	targets[landmark_index] = new double[_num_augmented_data];
+}
+
+// 線形回帰のパラメータを学習
+#pragma omp parallel for
+for(int landmark_index = 0;landmark_index < _model->_num_landmarks;landmark_index++){
+	// x座標の移動量の回帰
+	for(int augmented_data_index = 0;augmented_data_index < _num_augmented_data;augmented_data_index++){
+		cv::Mat1d &target_shape = _augmented_target_shapes[augmented_data_index];
+		cv::Mat1d &estimated_shape = _augmented_estimated_shapes[augmented_data_index];
+		double delta_x = target_shape(landmark_index, 0) - estimated_shape(landmark_index, 0);	// normalized delta
+		targets[landmark_index][augmented_data_index] = delta_x;
+	}
+	problem->y = targets[landmark_index];
+	liblinear::check_parameter(problem, parameter);
+	struct liblinear::model* model_x = liblinear::train(problem, parameter);
+
+	// y座標の移動量の回帰
+	for(int augmented_data_index = 0;augmented_data_index < _num_augmented_data;augmented_data_index++){
+		cv::Mat1d &target_shape = _augmented_target_shapes[augmented_data_index];
+		cv::Mat1d &estimated_shape = _augmented_estimated_shapes[augmented_data_index];
+		double delta_y = target_shape(landmark_index, 1) - estimated_shape(landmark_index, 1);	// normalized delta
+		targets[landmark_index][augmented_data_index] = delta_y;
+	}
+	problem->y = targets[landmark_index];
+	liblinear::check_parameter(problem, parameter);
+	struct liblinear::model* model_y = liblinear::train(problem, parameter);
+}
+```
+
+学習が終われば、`struct liblinear::model*`に重みベクトルが入っています。
+
+## Normalized Shape
+
+## Data Augmentation
