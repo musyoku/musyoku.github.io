@@ -23,9 +23,7 @@ HMMで長い系列の前向き・後ろ向き確率を求める際に、アン�
 
 そのため[前回の記事](/2017/04/15/forward-filtering-backward-samplingでアンダーフローを防ぐ/)では一定の範囲ごとに正規化定数を求め、総和が1になるように補正をする手法について書きました。
 
-今回はマルコフモデルにおけるスケーリング係数と同様に、セミマルコフモデルでスケーリング係数を計算しアンダーフローを抑える手法を紹介します。
-
-おまけとして範囲ごとに正規化する手法も載せますが、結論から言うとスケーリング係数を使う手法が最適です。
+今回はマルコフモデルにおけるスケーリング係数の考え方を踏まえ、セミマルコフモデルでスケーリング係数を計算しアンダーフローを抑える手法を紹介します。
 
 ## セミマルコフモデル
 
@@ -234,8 +232,8 @@ $$
 
 $$
 	\begin{align}
-		\bar{\beta}[t][k]\prod_{m=t+1}^n c[m] &= \sum_{j=1}^{n} \pi(q_{t+j} = j \mid q_t=k) \cdot \bar{\beta[t+j][j]}\prod_{m=t+j+1}^n c[m] \\
-		\Rightarrow \bar{\beta}[t][k] &= \sum_{j=1}^{n} \pi(q_{t+j} = j \mid q_t=k) \cdot \bar{\beta[t+j][j]}
+		\bar{\beta}[t][k]\prod_{m=t+1}^n c[m] &= \sum_{j=1}^{n-t} \pi(q_{t+j} = j \mid q_t=k) \cdot \bar{\beta}[t+j][j] \cdot \prod_{m=t+j+1}^n c[m] \\
+		\Rightarrow \bar{\beta}[t][k] &= \sum_{j=1}^{n-t} \pi(q_{t+j} = j \mid q_t=k) \cdot \bar{\beta}[t+j][j] \cdot 
 			\frac {1} {\prod_{m=t+1}^{t+j} c[m]}
 	\end{align}\
 $$
@@ -253,6 +251,51 @@ $$
 $$
 
 ### trigramの場合
+
+遷移確率を単語trigram確率にすることでより精密にモデル化することができます。
+
+$$
+	\begin{align}
+		\pi(q_t = k \mid q_{t-k-j}=i, q_{t-k} = j) &= P(q_t = k \mid q_{t-k-j}=i, q_{t-k} = j, \boldsymbol x) \\
+		& = P(c^t_{t-k+1} \mid c^{t-k-j}_{t-k-j-i+1}, c^{t-k}_{t-k-j+1})
+	\end{align}\
+$$
+
+bigramの場合と同様、前向き確率を同時確率で割った値を考えます。
+
+$$
+	\begin{align}
+		\bar{\alpha}[t][k][j] &= \frac {\alpha[t][k][j]} {P(x_1x_2 \cdots x_t)} \\
+		&= \frac {\alpha[t][k][j]} {\prod_{m=1}^t P(x_m \mid x_1x_2 \cdots x_{m-1})} \\
+		&= \frac {\alpha[t][k][j]} {\prod_{m=1}^t c[m]} \\
+		&= P(q_{t-k}=j, q_t=k \mid x_1x_2 \cdots x_t) \\
+
+		\hat{\alpha}[t][k][j] &= \frac {\alpha[t][k][j]} {P(x_1x_2 \cdots x_{t-1})} \\
+		&= \frac {\alpha[t][k][j]} {\prod_{m=1}^{t-1} P(x_m \mid x_1x_2 \cdots x_{m-1})} \\
+		&= \frac {\alpha[t][k][j]} {\prod_{m=1}^{t-1} c[m]} \\
+		&= P(q_{t-k}=j, q_t=k, x_t \mid x_1x_2 \cdots x_{t-1})
+	\end{align}\
+$$
+
+スケーリング係数は以下のように求めます。
+
+$$
+	\begin{align}
+		c[t] &= P(x_t \mid x_1x_2 \cdots x_{t-1}) \\
+		&= \sum_j \sum_k P(q_{t-k}=j, q_t=k, x_t \mid x_1x_2 \cdots x_{t-1}) \\
+		&= \sum_j \sum_k \hat{\alpha}[t][k][j]
+	\end{align}\
+$$
+
+$\hat{\alpha}[t][k][j]$、$\bar{\beta}[t][k]$は以下のように求めます。
+
+$$
+	\begin{align}
+		\hat{\alpha}[t][k][j] &= \sum_{i=1}^{t-k-j} \pi(q_t = k \mid q_{t-k-j}=i, q_{t-k}=j) \cdot \bar{\alpha}[t-k][j][i] \cdot \frac {1} {\prod_{m=t-k+1}^{t-1} c[m]} \\
+		\bar{\beta}[t][k][j] &= \sum_{i=1}^{n-t} \pi(q_{t+i} = i \mid q_{t-k}=j, q_t=k) \cdot \bar{\beta}[t+i][i][k]
+			 \cdot \frac {1} {\prod_{m=t+1}^{t+i} c[m]}
+	\end{align}\
+$$
 
 
 
