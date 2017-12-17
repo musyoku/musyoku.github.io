@@ -125,7 +125,7 @@ permalink: /implementation/
 
 ### [条件付確率場とベイズ階層言語モデルの統合による半教師あり形態素解析](https://github.com/musyoku/python-npycrf)
 
-- 現在実装しています
+- NPYLMとCRFを統合したモデルです
 - 実装難易度: **7**
 
 ### [無限木構造隠れMarkovモデルによる階層的品詞の教師なし学習](https://github.com/musyoku/unsupervised-pos-tagging/tree/master/infinite-tree-hmm/)
