@@ -9,7 +9,7 @@ name: ご注文は機械学習ですか？
 description: 闇の魔術に対する防衛術
 
 # URL of your avatar or profile pic (you could use your GitHub profile pic)
-avatar: http://static.beluga.fm/profile_images/225/feKPO6j83pM0/grande.jpg
+avatar: https://avatars3.githubusercontent.com/u/15250418?s=120&v=4
 
 #
 # Flags below are optional
@@ -23,7 +23,6 @@ footer-links:
   flickr:
   github: musyoku
   qiita: delete
-  beluga: 
   instagram:
   linkedin:
   pinterest:
